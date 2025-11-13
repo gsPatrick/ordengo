@@ -9,16 +9,16 @@ import api from '@/lib/api';
 
 // Importa os componentes para cada passo do fluxo
 import Step1_Summary from './_components/Step1_Summary';
-import Step2_Identify from './_components-Step2_Identify';
-import Step4_VerifyOtp from './_components-Step4_VerifyOtp';
-import Step5_Success from './_components-Step5_Success';
+import Step2_Identify from './_components/Step2_Identify';
+import Step4_VerifyOtp from './_components/Step4_VerifyOtp';
+import Step5_Success from './_components/Step5_Success';
 
 // Importa o componente de UI para exibir o estado de carregamento
 import { Skeleton } from '@/components/ui/skeleton'; 
 
 // Carrega dinamicamente o componente que usa a biblioteca de PDF para evitar erros de SSR
 const Step3_DrawSign = dynamic(
-  () => import('./_components-Step3_DrawSign'),
+  () => import('./_components/Step3_DrawSign'),
   { 
     ssr: false, // Garante que o componente só seja renderizado no cliente
     loading: () => ( // Exibe um esqueleto de UI enquanto o componente é carregado
