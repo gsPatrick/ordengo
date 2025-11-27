@@ -1,3 +1,5 @@
+// --- START OF FILE TablesTab.js ---
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -50,21 +52,25 @@ export default function TablesTab() {
   const fetchTables = useCallback(async () => {
     try {
       const response = await api.get('/tables');
-      setTables(response.data.data.tables);
+      const newTablesData = response.data.data.tables;
+      setTables(newTablesData);
       
-      // Se houver uma mesa selecionada aberta, atualiza os dados dela em tempo real
-      if (selectedTable) {
-        const updatedSelected = response.data.data.tables.find(t => t.id === selectedTable.id);
-        if (updatedSelected) {
-          setSelectedTable(updatedSelected);
-        }
-      }
+      // CORREÇÃO AQUI:
+      // Usamos o "prev" (estado atual) para garantir que só atualizamos se o modal AINDA estiver aberto.
+      // Isso evita que o modal reabra sozinho se o usuário o fechou durante a requisição.
+      setSelectedTable(prevSelected => {
+        if (!prevSelected) return null; // Se o usuário fechou, mantém null (fechado)
+        
+        const updatedSelected = newTablesData.find(t => t.id === prevSelected.id);
+        return updatedSelected || prevSelected;
+      });
+
     } catch (error) {
       console.error("Erro ao buscar mesas:", error);
     } finally {
       setLoading(false);
     }
-  }, [selectedTable]);
+  }, []); // Removido 'selectedTable' das dependências para evitar recriação desnecessária
 
   useEffect(() => {
     fetchTables();
@@ -75,6 +81,7 @@ export default function TablesTab() {
 
   // --- HELPER: Normaliza lista de dispositivos ---
   const getTableDevices = (table) => {
+    if (!table) return []; // Proteção extra
     if (table.devices && table.devices.length > 0) {
       return table.devices;
     }
@@ -114,7 +121,8 @@ export default function TablesTab() {
       await api.delete(`/tables/${id}`);
       // Atualização otimista da lista
       setTables(prev => prev.filter(t => t.id !== id));
-      if (selectedTable?.id === id) setSelectedTable(null);
+      // Se a mesa deletada for a que está aberta no modal, fecha o modal
+      setSelectedTable(prev => (prev && prev.id === id ? null : prev));
     } catch (error) {
       alert('Erro ao deletar mesa. Verifique se há pedidos abertos.');
     }
@@ -147,6 +155,8 @@ export default function TablesTab() {
 
   const handleSaveDeviceName = async (deviceId) => {
     if (!editingDeviceName.trim()) return;
+    if (!selectedTable) return;
+
     setActionLoading(true);
     try {
       const targetId = deviceId === 'primary' ? selectedTable.id : deviceId; 
