@@ -307,7 +307,7 @@ export default function PlansPage() {
                   <div className={`flex items-center justify-between border p-3 rounded-lg transition-colors ${formData.features.customBranding ? 'bg-green-50 border-green-200' : 'bg-white'}`}>
                     <div className="space-y-0.5">
                       <Label className="text-sm font-medium cursor-pointer">Whitelabel</Label>
-                      <p className="text-xs text-gray-500">Remove marca "OrdenGo".</p>
+                      <p className="text-xs text-gray-500">Remove marca &quot;OrdenGo&quot;.</p>
                     </div>
                     <Switch checked={formData.features.customBranding} onCheckedChange={c => setFormData(p => ({...p, features: {...p.features, customBranding: c}}))} />
                   </div>

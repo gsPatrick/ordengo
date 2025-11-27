@@ -364,7 +364,7 @@ export default function OnboardingWizard({ onComplete }) {
                         <input type="text" className="w-full px-4 py-2 border rounded-lg focus:ring-[#df0024]" placeholder="Ex: Pizzaria do Luigi" value={formData.publicTitle} onChange={e => setFormData({...formData, publicTitle: e.target.value})} />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Título da Aba "Sobre"</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Título da Aba &quot;Sobre&quot;</label>
                         <input type="text" className="w-full px-4 py-2 border rounded-lg focus:ring-[#df0024]" value={formData.aboutTitle} onChange={e => setFormData({...formData, aboutTitle: e.target.value})} />
                       </div>
                     </div>

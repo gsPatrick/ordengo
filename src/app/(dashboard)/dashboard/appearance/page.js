@@ -1,4 +1,3 @@
-// src/app/dashboard/appearance/page.js
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -485,7 +484,7 @@ export default function AppearancePage() {
                       <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Type size={20} className="text-[#df0024]" /> Textos</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                          <div><label className="block text-sm font-medium mb-1">Nome Comercial</label><input className="w-full px-4 py-2 border rounded-lg" value={config.publicTitle} onChange={e => setConfig({...config, publicTitle: e.target.value})} /></div>
-                         <div><label className="block text-sm font-medium mb-1">Título "Sobre"</label><input className="w-full px-4 py-2 border rounded-lg" value={config.aboutTitle} onChange={e => setConfig({...config, aboutTitle: e.target.value})} /></div>
+                         <div><label className="block text-sm font-medium mb-1">Título &quot;Sobre&quot;</label><input className="w-full px-4 py-2 border rounded-lg" value={config.aboutTitle} onChange={e => setConfig({...config, aboutTitle: e.target.value})} /></div>
                       </div>
                       <div className="space-y-4">
                          <div><label className="block text-sm font-medium mb-1">Resumo</label><textarea className="w-full px-4 py-2 border rounded-lg h-20" value={config.aboutText} onChange={e => setConfig({...config, aboutText: e.target.value})} /></div>

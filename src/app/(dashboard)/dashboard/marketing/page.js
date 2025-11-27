@@ -170,7 +170,7 @@ export default function MarketingPage() {
                     <div className="text-center py-12 bg-white rounded-xl border border-dashed">
                       <Megaphone className="mx-auto h-12 w-12 text-gray-300 mb-3" />
                       <p className="text-gray-500 font-medium">Nenhuma promoção ativa.</p>
-                      <p className="text-sm text-gray-400">Crie ofertas como "Happy Hour" para atrair clientes.</p>
+                      <p className="text-sm text-gray-400">Crie ofertas como &quot;Happy Hour&quot; para atrair clientes.</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

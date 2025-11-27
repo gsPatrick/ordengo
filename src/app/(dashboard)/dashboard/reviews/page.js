@@ -242,7 +242,7 @@ export default function ReviewsPage() {
                         {/* Comentário Texto */}
                         {review.comment ? (
                           <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm italic border-l-4 border-[#df0024]">
-                            "{review.comment}"
+                            &quot;{review.comment}&quot;
                           </div>
                         ) : (
                           <p className="text-sm text-gray-400 italic">Sem comentário escrito.</p>
