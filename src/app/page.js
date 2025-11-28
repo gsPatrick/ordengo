@@ -6,7 +6,7 @@ import SectionRelatorios from '@/componentsLP/SectionRelatorios/SectionRelatorio
 import SectionSegmentos from '@/componentsLP/SectionSegmentos/SectionSegmentos';
 import SectionFeatures from '@/componentsLP/SectionFeatures/SectionFeatures';
 import SectionDepoimentos from '@/componentsLP/SectionDepoimentos/SectionDepoimentos';
-import FAQ from '../componentsLP/FAQ/FAQ.js';
+import FAQ from '../componentsLP/FAQ/faq';
 import CTA from '@/componentsLP/CTA/CTA';       // <--- IMPORT
 import Footer from '@/componentsLP/Footer/Footer'; // <--- IMPORT
 
