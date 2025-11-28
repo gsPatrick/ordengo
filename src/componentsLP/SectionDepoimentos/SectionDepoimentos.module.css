@@ -1,0 +1,184 @@
+.section {
+  width: 100%;
+  padding: 6rem 0;
+  background-color: #fafafa;
+  /* Pattern sutil */
+  background-image: radial-gradient(#E01928 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-family: var(--font-lp);
+  font-weight: 800;
+  font-size: 2.5rem;
+  color: var(--lp-black);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-family: var(--font-lp);
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* CARROSSEL WRAPPER */
+.carouselWrapper {
+  width: 100%;
+  overflow: hidden; /* Esconde o que sai da tela */
+  
+  /* Máscara de gradiente nas laterais para suavizar entrada/saída */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  padding: 2rem 0;
+}
+
+/* TRILHA QUE SE MOVE */
+.track {
+  display: flex;
+  gap: 2rem; /* Espaço entre cards */
+  width: max-content; /* Permite que cresça horizontalmente */
+  
+  /* Animação Infinita */
+  animation: scroll 40s linear infinite;
+}
+
+/* PAUSA AO PASSAR O MOUSE */
+.track:hover {
+  animation-play-state: paused;
+}
+
+/* KEYFRAMES DO LOOP */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Move -50% porque duplicamos a lista. 
+       Ao chegar na metade exata, ele volta pro 0 imperceptivelmente. */
+    transform: translateX(-50%); 
+  }
+}
+
+/* CARD DESIGN */
+.card {
+  min-width: 350px;
+  max-width: 350px;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.card:hover {
+  /* Leve destaque ao passar o mouse no card específico */
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(224, 25, 40, 0.08);
+  border-color: rgba(224, 25, 40, 0.1);
+}
+
+.quoteIcon {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  color: rgba(224, 25, 40, 0.1);
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.text {
+  font-family: var(--font-lp);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+  margin-bottom: 2rem;
+  flex-grow: 1;
+  font-style: italic;
+}
+
+/* AUTHOR AREA */
+.author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 1.5rem;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  background: var(--lp-black);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.authorName {
+  font-family: var(--font-lp);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--lp-black);
+}
+
+.authorRole {
+  font-family: var(--font-lp);
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .track {
+    animation-duration: 30s; /* Um pouco mais rápido no mobile */
+  }
+  
+  .card {
+    min-width: 280px;
+    max-width: 280px;
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+}

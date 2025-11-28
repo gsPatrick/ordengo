@@ -1,0 +1,265 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 1.0rem 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: transparent;
+}
+
+.header.scrolled {
+  padding: 1rem 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* LOGO STYLES */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.iconBox {
+  width: 36px;
+  height: 36px;
+  background-color: var(--lp-red);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(224, 25, 40, 0.3);
+}
+
+.logoText {
+  font-family: var(--font-lp);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--lp-black);
+  letter-spacing: -0.03em;
+}
+
+/* NAVIGATION */
+.desktopNav {
+  display: none; /* Mobile first hidden */
+  gap: 2rem;
+}
+
+/* Media Query para Desktop */
+@media (min-width: 1024px) {
+  .desktopNav {
+    display: flex;
+  }
+}
+
+.navLink {
+  font-family: var(--font-lp);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--lp-dark-gray);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.navLink:hover {
+  color: var(--lp-red);
+}
+
+/* ACTIONS / BUTTONS */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loginBtn {
+  font-family: var(--font-lp);
+  font-weight: 600;
+  color: var(--lp-black);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .loginBtn {
+    display: block;
+  }
+}
+
+.loginBtn:hover {
+  color: var(--lp-red);
+}
+
+.ctaBtn {
+  background-color: var(--lp-black);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 99px; /* Pill shape */
+  font-family: var(--font-lp);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ctaBtn:hover {
+  background-color: var(--lp-red);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(224, 25, 40, 0.25);
+}
+
+/* MOBILE TOGGLE */
+.mobileToggle {
+  display: block;
+  background: none;
+  border: none;
+  color: var(--lp-black);
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .mobileToggle {
+    display: none;
+  }
+}
+
+/* MOBILE MENU DROPDOWN */
+.mobileMenu {
+  background: white;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.mobileNavList {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem;
+  gap: 1rem;
+}
+
+.mobileNavLink {
+  font-family: var(--font-lp);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--lp-black);
+  text-decoration: none;
+}
+
+/* ... estilos anteriores ... */
+
+/* TRANSIÇÃO DE LOGIN (OVERLAY) */
+.transitionOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999; /* Acima de tudo */
+  pointer-events: none; /* Permite clicar através quando invisível */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.curtain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--lp-red); /* Vermelho OrdenGO */
+}
+
+/* Logo centralizado na transição */
+.transitionLogo {
+  position: relative;
+  z-index: 10000;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transitionLogoText {
+  font-family: var(--font-lp);
+  font-weight: 800;
+  font-size: 2.5rem;
+  letter-spacing: -0.03em;
+}
+
+/* ... Mantenha o CSS anterior e ATUALIZE/ADICIONE estas partes: ... */
+
+/* LOGO CONTAINER */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  /* Removemos iconBox e logoText anteriores se não for mais usar */
+}
+
+/* CLASSE PARA A IMAGEM DO LOGO */
+.logoImage {
+  object-fit: contain;
+  width: auto;
+  height: 60px; /* Altura controlada para não estourar o header */
+}
+
+/* TRANSIÇÃO DE LOGIN (OVERLAY) */
+.transitionOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.curtain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--lp-red);
+}
+
+.transitionLogo {
+  position: relative;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* FILTRO PARA LOGO BRANCA NA TRANSIÇÃO */
+/* Se sua logo já for branca, remova isso. 
+   Se for colorida/preta, isso a torna branca para contrastar com o fundo vermelho. */
+.whiteLogoFilter img {
+  filter: brightness(0) invert(1); 
+  height: 100px; /* Um pouco maior na transição */
+}

@@ -1,0 +1,121 @@
+.section {
+  width: 100%;
+  /* Degradê baseado na imagem: Laranja avermelhado -> Vermelho OrdenGO */
+  background: linear-gradient(135deg, #FF6B4A 0%, #E01928 100%);
+  padding: 4rem 0; /* Padding compacto para caber na tela */
+  overflow: hidden;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr; /* Lado do MacBook um pouco maior */
+  gap: 3rem;
+  align-items: center;
+}
+
+/* --- COLUNA ESQUERDA (TEXTO) --- */
+.contentColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title {
+  font-family: var(--font-lp);
+  font-weight: 800;
+  font-size: 2.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.description {
+  font-family: var(--font-lp);
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  max-width: 450px;
+}
+
+/* Bolinhas de Paginação (Visual Only) */
+.dotsRow {
+  display: flex;
+  gap: 12px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.activeDot {
+  background-color: #fff;
+  transform: scale(1.2);
+}
+
+.dot:hover {
+  background-color: #fff;
+}
+
+/* --- COLUNA DIREITA (VISUAL) --- */
+.visualColumn {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.laptopWrapper {
+  width: 100%;
+  max-width: 800px; /* Limita o tamanho para não estourar em monitores gigantes */
+  /* Sombra suave abaixo do note */
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+  transform: perspective(1000px); /* Prepara para 3D leve se quiser */
+}
+
+.laptopImage {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 1024px) {
+  .section {
+    padding: 3rem 0;
+  }
+  
+  .container {
+    grid-template-columns: 1fr; /* Empilha no mobile/tablet */
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .contentColumn {
+    align-items: center; /* Centraliza texto no mobile */
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .description {
+    max-width: 100%;
+  }
+
+  .laptopWrapper {
+    max-width: 600px; /* Menor no mobile */
+    margin: 0 auto;
+  }
+}

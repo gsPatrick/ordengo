@@ -1,0 +1,154 @@
+.section {
+  padding: 3rem 0; /* Reduzido de 6rem para caber na tela */
+  background-color: var(--lp-white);
+  overflow: hidden;
+  text-align: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header */
+.headerContent {
+  margin-bottom: 2rem; /* Reduzido de 4rem */
+}
+
+.title {
+  font-family: var(--font-lp);
+  font-weight: 800;
+  font-size: 2.25rem; /* Levemente menor */
+  color: var(--lp-black);
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 2.75rem;
+  }
+}
+
+/* Tablet Device Mockup (CSS Pure) */
+.deviceWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 750px; /* Reduzido de 900px para visualização completa */
+  perspective: 1000px;
+  margin-bottom: 1.5rem; /* Menos margem inferior */
+}
+
+.tabletFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/10;
+  background-color: #111;
+  border-radius: 28px; /* Ajustado proporção */
+  padding: 14px; /* Borda mais fina */
+  box-shadow: 
+    inset 0 0 0 2px #333,
+    0 15px 40px rgba(0,0,0,0.2);
+  z-index: 10;
+  transform: rotateX(5deg);
+  transition: transform 0.5s ease;
+}
+
+.tabletFrame:hover {
+  transform: rotateX(0deg) scale(1.02);
+}
+
+.cameraDot {
+  position: absolute;
+  top: 50%;
+  left: 6px;
+  width: 5px;
+  height: 5px;
+  background-color: #333;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.screenArea {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #1f1c1d;
+}
+
+.slideImageWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.screenImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Sombra Projetada */
+.shadow {
+  position: absolute;
+  bottom: -30px; /* Mais perto do tablet */
+  left: 5%;
+  width: 90%;
+  height: 30px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 70%);
+  z-index: 1;
+  transform: rotateX(60deg);
+}
+
+/* Paginação */
+.pagination {
+  display: flex;
+  gap: 10px;
+  margin-top: 0.5rem; /* Mais perto do tablet */
+  margin-bottom: 2rem;
+  z-index: 20;
+}
+
+.dot {
+  width: 10px; /* Bolinhas um pouco menores */
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background-color: #ccc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.activeDot {
+  background-color: transparent;
+  border-color: var(--lp-black);
+  transform: scale(1.2);
+}
+
+/* Footer Texto */
+.footerContent {
+  max-width: 700px;
+}
+
+.subtitle {
+  font-family: var(--font-lp);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--lp-black);
+  margin-bottom: 0.75rem;
+}
+
+.description {
+  font-family: var(--font-lp);
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.5;
+}

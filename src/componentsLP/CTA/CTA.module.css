@@ -1,0 +1,126 @@
+.section {
+  width: 100%;
+  padding: 8rem 0; /* Espaço generoso para "respirar" */
+  background: linear-gradient(135deg, #E01928 0%, #bd1320 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Efeito de Fundo Animado (Círculos sutis movendo) */
+.backgroundEffects {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.1;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  filter: blur(80px);
+  animation: float 10s infinite ease-in-out;
+}
+
+.circle1 { width: 400px; height: 400px; top: -100px; left: -100px; }
+.circle2 { width: 300px; height: 300px; bottom: -50px; right: -50px; animation-delay: -5s; }
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, 50px); }
+}
+
+/* Conteúdo */
+.container {
+  position: relative;
+  z-index: 10;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Tipografia de Impacto */
+.eyebrow {
+  font-family: var(--font-lp);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+  display: inline-block;
+  background: rgba(255,255,255,0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+}
+
+.title {
+  font-family: var(--font-lp);
+  font-weight: 900; /* Extra Bold */
+  font-size: 4rem; /* Tamanho Gigante */
+  line-height: 1.05;
+  margin-bottom: 3rem;
+  letter-spacing: -0.03em;
+}
+
+/* Botão Clean e Poderoso */
+.buttonWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.button {
+  background-color: white;
+  color: var(--lp-red);
+  font-family: var(--font-lp);
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding: 1.2rem 3.5rem;
+  border-radius: 99px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.button:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+}
+
+/* Animação de brilho passando no botão */
+.button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+  transition: 0.5s;
+}
+
+.button:hover::after {
+  left: 100%;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .section { padding: 6rem 0; }
+  .title { font-size: 2.5rem; margin-bottom: 2rem; }
+  .button { width: 100%; justify-content: center; padding: 1.2rem 2rem; font-size: 1.1rem; }
+}

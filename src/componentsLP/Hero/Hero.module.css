@@ -1,0 +1,223 @@
+.heroSection {
+  position: relative;
+  min-height: 100vh; /* Ocupa a tela toda */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* Importante para o shape vermelho não criar scroll horizontal */
+  padding-top: 80px; /* Compensar Header fixo */
+      padding-bottom: 0; 
+    margin-bottom: 0;
+}
+
+.container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+}
+
+/* ================== COLUNA ESQUERDA ================== */
+
+.textColumn {
+  z-index: 10;
+  max-width: 600px;
+}
+
+.preHeading {
+  font-family: var(--font-lp);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--lp-red);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Ícone estilizado (se quiser via CSS) */
+.preHeading::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E01928' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.title {
+  font-family: var(--font-lp);
+  font-weight: 800;
+  font-size: 3.5rem;
+  line-height: 1.1;
+  color: var(--lp-black);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  font-family: var(--font-lp);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 2.5rem;
+  max-width: 90%;
+}
+
+.ctaButton {
+  background-color: var(--lp-black);
+  color: white;
+  font-family: var(--font-lp);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border-radius: 8px; /* Borda levemente arredondada como na imagem */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  margin-bottom: 3rem;
+}
+
+.ctaButton:hover {
+  background-color: var(--lp-red);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(224, 25, 40, 0.2);
+}
+
+/* STATS ROW */
+.statsRow {
+  display: flex;
+  gap: 3rem;
+  padding-top: 1rem;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-family: var(--font-lp);
+  font-weight: 800;
+  font-size: 2.5rem;
+  color: var(--lp-black);
+  line-height: 1;
+}
+
+/* Cor específica para o "+" e "%" em vermelho */
+.statValue::first-letter {
+  color: var(--lp-red);
+}
+/* Truque para pintar o símbolo de % se estiver no fim, pode ajustar no JS se preferir, 
+   mas aqui assumo que o HTML está limpo */
+
+.statLabel {
+  font-family: var(--font-lp);
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+/* ================== COLUNA DIREITA ================== */
+
+.visualColumn {
+  position: relative;
+  height: 800px; /* Altura fixa para controlar o fundo vermelho */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Shape Vermelho do Fundo */
+.redShape {
+  position: absolute;
+  top: 0;
+  right: -50vw; /* Estende para fora da tela */
+  width: 100vw; /* Muito largo */
+  height: 100%;
+  background-color: var(--lp-red);
+  z-index: 0;
+  /* Clip path para fazer uma leve angulação ou apenas um retângulo se preferir */
+  /* border-bottom-left-radius: 40px; opcional */
+}
+
+/* Tablet Wrapper */
+.tabletWrapper {
+  position: relative;
+  z-index: 10;
+  width: 120%; /* Tablet é grande na imagem */
+  /* Perspectiva 3D */
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  margin-left: -50px; /* Puxa um pouco para a esquerda sobrepondo o texto se necessário */
+}
+
+.tabletImage {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3)); /* Sombra realista */
+}
+
+/* Glow Effect atrás do tablet */
+.glowEffect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+  filter: blur(40px);
+  z-index: -1;
+}
+
+/* ================== RESPONSIVO ================== */
+
+@media (max-width: 1024px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding-bottom: 4rem;
+  }
+
+  .textColumn {
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .preHeading {
+    justify-content: center;
+  }
+
+  .statsRow {
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .visualColumn {
+    height: 500px;
+    width: 100%;
+  }
+
+  .redShape {
+    right: -2rem; /* Menos agressivo no mobile */
+    width: 120vw;
+  }
+
+  .tabletWrapper {
+    width: 90%;
+    margin-left: 0;
+  }
+}

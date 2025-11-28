@@ -1,0 +1,127 @@
+.section {
+  width: 100%;
+  padding: 6rem 0;
+  background-color: var(--lp-white);
+  color: var(--lp-black);
+}
+
+.container {
+  max-width: 800px; /* Largura menor para facilitar leitura */
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-family: var(--font-lp);
+  font-weight: 800;
+  font-size: 2.5rem;
+  color: var(--lp-black);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-family: var(--font-lp);
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* LISTA */
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+/* BOTÃO DA PERGUNTA */
+.questionBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  group: hover;
+}
+
+.questionText {
+  font-family: var(--font-lp);
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--lp-black);
+  transition: color 0.3s;
+}
+
+.item:hover .questionText,
+.item.open .questionText {
+  color: var(--lp-red); /* Destaque vermelho ao passar o mouse ou abrir */
+}
+
+/* ÍCONE */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  transition: all 0.3s;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.icon {
+  color: var(--lp-black);
+}
+
+.item.open .iconWrapper {
+  background-color: var(--lp-red);
+  transform: rotate(180deg);
+}
+
+.item.open .icon {
+  color: white;
+}
+
+/* RESPOSTA */
+.answerWrapper {
+  overflow: hidden;
+}
+
+.answer {
+  font-family: var(--font-lp);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+  padding-bottom: 1.5rem;
+  padding-right: 2rem; /* Espaço para não bater no ícone visualmente */
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .questionText {
+    font-size: 1rem;
+  }
+}

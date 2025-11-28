@@ -1,0 +1,59 @@
+.section {
+  width: 100%;
+  padding: 0; /* Remove espaçamento vertical externo */
+  margin: 0;  /* Remove margens externas */
+  background-color: var(--lp-light-gray);
+  display: block;
+  overflow: hidden; /* Garante que nada vaze */
+  position: relative;
+  z-index: 5; /* Garante que fique acima/abaixo corretamente */
+  border-top: 1px solid black;
+
+}
+
+.container {
+  width: 100%;
+  padding: 0; /* Remove padding lateral */
+  margin: 0;
+  max-width: none; /* Remove restrição de largura */
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%; /* Ocupa toda a largura horizontal */
+  height: 60vh; /* Altura do banner */
+  min-height: 400px;
+  overflow: hidden;
+  
+  /* Começa sem bordas arredondadas pois encosta na tela toda */
+  clip-path: inset(0 0 0 0); 
+  
+  /* Sombra removida pois em full-width geralmente não se usa drop-shadow externo, 
+     mas podemos manter um z-index se quiser sobrepor algo */
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom, 
+    rgba(0,0,0,0) 50%, 
+    rgba(0,0,0,0.4) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .imageWrapper {
+    height: 40vh;
+  }
+}

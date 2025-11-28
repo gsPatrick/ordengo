@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -44,34 +46,48 @@
 }
 
 :root {
+  /* ========================================= */
+  /* SISTEMA GERAL (ADMIN / DASHBOARD)        */
+  /* ========================================= */
   --radius: 0.625rem;
+  
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+  
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
+  
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-
-  /* <<< INÍCIO DA CORREÇÃO >>> */
-  --primary: oklch(0.62 0.17 258); /* Cor primária alterada para azul */
-  --primary-foreground: oklch(0.985 0 0); /* Cor do texto do botão (branco) */
-  --ring: oklch(0.62 0.17 258); /* Cor do anel de foco alterada para azul */
-  /* <<< FIM DA CORREÇÃO >>> */
-
+  
+  /* Sistema usa AZUL como primary (conforme solicitado anteriormente) */
+  --primary: oklch(0.62 0.17 258);
+  --primary-foreground: oklch(0.985 0 0);
+  
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
+  
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
+  
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
+  
   --destructive: oklch(0.577 0.245 27.325);
+  
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
+  
+  --ring: oklch(0.62 0.17 258);
+  
+  /* Gráficos do Dashboard */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+  
+  /* Sidebar do Sistema */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -80,6 +96,23 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* ========================================= */
+  /* LANDING PAGE (CINEMATOGRÁFICA)           */
+  /* ========================================= */
+  --lp-red: #E01928;
+  --lp-black: #111111;
+  --lp-dark-gray: #1f1c1d;
+  --lp-light-gray: #f4f4f6;
+  --lp-white: #ffffff;
+  
+  /* Efeitos Especiais LP */
+  --lp-glow-red: 0 0 30px rgba(224, 25, 40, 0.5);
+  --lp-gradient-dark: linear-gradient(180deg, #111 0%, #1f1c1d 100%);
+  --lp-transition: cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Fontes LP */
+  --font-lp: 'Inter', sans-serif;
 }
 
 .dark {
@@ -123,4 +156,56 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Reset e posicionamento do Canvas Three.js */
+  #webgl-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0; /* Atrás do conteúdo */
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 1s ease;
+  }
+}
+
+/* =========================================================
+   CLASSES UTILITÁRIAS EXCLUSIVAS PARA LANDING PAGE (LP)
+   ========================================================= */
+
+/* Wrapper que envolve a LP para garantir estilos isolados do Dashboard */
+.lp-wrapper {
+  font-family: var(--font-lp);
+  background-color: var(--lp-light-gray);
+  color: var(--lp-black);
+  width: 100%;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Gradiente de Texto Vermelho/Preto */
+.lp-text-gradient {
+  background: linear-gradient(90deg, #111 0%, #E01928 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Sombras Cinematográficas */
+.lp-shadow-card {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
+}
+
+.lp-shadow-glow {
+  box-shadow: 0 0 20px rgba(224, 25, 40, 0.3);
+}
+
+/* Container padrão da LP */
+.lp-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }

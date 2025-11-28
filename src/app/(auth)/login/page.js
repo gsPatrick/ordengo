@@ -1,7 +1,7 @@
 // src/app/login/page.js
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { 
@@ -66,8 +66,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex w-full relative overflow-hidden">
+    <div className="min-h-screen flex w-full relative overflow-hidden bg-white">
 
+      {/* 
+        === ANIMAÇÃO DE ENTRADA (CORTINA) ===
+        Simula a continuidade da Landing Page.
+        Começa cobrindo a tela (Vermelho) e sobe (y: -100%) revelando o login.
+      */}
+      <motion.div
+        className="absolute inset-0 z-[60] bg-[#E01928]"
+        initial={{ y: "0%" }} 
+        animate={{ y: "-100%" }}
+        transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }}
+      />
+
+      {/* ANIMAÇÕES DE SUCESSO (ROLE ANIMATION) */}
       <AnimatePresence>
         {roleAnimation === 'manager' && (
           <motion.div
@@ -206,14 +219,24 @@ export default function LoginPage() {
         )}
       </AnimatePresence>
 
-      {/* LADO ESQUERDO */}
-      <div className="hidden lg:flex w-1/2 bg-[#1f1c1d] items-center justify-center relative overflow-hidden">
+      {/* LADO ESQUERDO (IMAGEM) */}
+      <motion.div 
+        className="hidden lg:flex w-1/2 bg-[#1f1c1d] items-center justify-center relative overflow-hidden"
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }} // Entra depois da cortina subir
+      >
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1470&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
 
         <div className="relative z-10 p-12 text-white">
           
-          {/* alinhado em linha: logo (esquerda) + título (direita) */}
-          <div className="flex items-center gap-3 mb-6">
+          {/* Logo e Título */}
+          <motion.div 
+            className="flex items-center gap-3 mb-6"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
             <div className="flex-shrink-0">
               <Image 
                 src="/logocerta1.png"
@@ -223,17 +246,27 @@ export default function LoginPage() {
                 className="object-contain"
               />
             </div>
-          </div>
+          </motion.div>
 
-          <p className="text-xl text-gray-300 max-w-lg">
+          <motion.p 
+            className="text-xl text-gray-300 max-w-lg"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.9 }}
+          >
             A plataforma completa para gestão inteligente de restaurantes, 
             cardápios digitais e pedidos em tempo real.
-          </p>
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
 
-      {/* LADO DIREITO */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
+      {/* LADO DIREITO (FORMULÁRIO) */}
+      <motion.div 
+        className="flex-1 flex items-center justify-center p-8 bg-gray-50"
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ delay: 0.7, duration: 0.8, ease: "easeOut" }} // Entra ligeiramente depois da esquerda
+      >
         <div className="w-full max-w-md space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
           
           <div className="text-center">
@@ -244,7 +277,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md animate-in fade-in slide-in-from-top-2">
               <p className="text-sm text-red-700 font-medium">{error}</p>
             </div>
           )}
@@ -253,7 +286,11 @@ export default function LoginPage() {
             <div className="space-y-5">
               
               {/* Email */}
-              <div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+              >
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email
                 </label>
@@ -270,10 +307,14 @@ export default function LoginPage() {
                     placeholder="admin@ordengo.com"
                   />
                 </div>
-              </div>
+              </motion.div>
 
               {/* Senha */}
-              <div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1 }}
+              >
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Senha
                 </label>
@@ -297,10 +338,15 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <motion.div 
+              className="flex items-center justify-between"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+            >
               <div className="flex items-center">
                 <input
                   id="remember-me"
@@ -318,13 +364,17 @@ export default function LoginPage() {
                   Esqueceu a senha?
                 </a>
               </div>
-            </div>
+            </motion.div>
 
-            <div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.3 }}
+            >
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[#df0024] hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#df0024] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[#df0024] hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#df0024] transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-red-200"
               >
                 {loading && !roleAnimation ? (
                   <Loader2 className="animate-spin h-5 w-5" />
@@ -332,17 +382,22 @@ export default function LoginPage() {
                   'Entrar no Painel'
                 )}
               </button>
-            </div>
+            </motion.div>
           </form>
 
-          <div className="mt-6 text-center">
+          <motion.div 
+            className="mt-6 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+          >
             <p className="text-xs text-gray-500">
               Acesso restrito a equipe autorizada. <br/>
               Garçons devem usar o login via PIN no tablet.
             </p>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

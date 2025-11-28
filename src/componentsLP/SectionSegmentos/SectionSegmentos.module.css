@@ -1,0 +1,116 @@
+.section {
+  width: 100%;
+  padding: 6rem 0;
+  background-color: var(--lp-white);
+  color: var(--lp-black);
+  text-align: center;
+}
+
+.container {
+  max-width: 1100px; /* Largura controlada para o grid ficar bonito */
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* --- HEADER --- */
+.header {
+  margin-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title {
+  font-family: var(--font-lp);
+  font-weight: 900; /* Extra bold como na imagem */
+  font-size: 3rem;
+  line-height: 1.1;
+  color: var(--lp-black);
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  font-family: var(--font-lp);
+  font-size: 1.125rem;
+  font-style: italic; /* Itálico conforme referência */
+  font-weight: 400;
+  color: #555;
+  max-width: 600px;
+}
+
+/* --- GRID --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 colunas fixas */
+  gap: 4rem 2rem; /* Espaço vertical maior, horizontal menor */
+  justify-content: center;
+}
+
+/* --- CARD --- */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Não usamos gap aqui para ter controle milimétrico com margin */
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.iconContainer {
+  height: 80px; /* Altura fixa para alinhar todos os ícones */
+  display: flex;
+  align-items: flex-end; /* Ícones alinhados pela base ou centro */
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+  color: var(--lp-red); /* Vermelho #E01928 */
+}
+
+.label {
+  font-family: var(--font-lp);
+  font-weight: 700; /* Negrito */
+  font-style: italic; /* Itálico */
+  font-size: 1.1rem;
+  color: var(--lp-black);
+  margin: 0;
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 1024px) {
+  .title {
+    font-size: 2.5rem;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas em tablets */
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr); /* Mantém 2 colunas mesmo no mobile para ficar organizado */
+    gap: 2rem 1rem;
+  }
+
+  .icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .iconContainer {
+    height: 60px;
+  }
+}
