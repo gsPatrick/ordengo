@@ -43,7 +43,7 @@ export default function AppsHub() {
         animate="visible"
       >
         
-        {/* HEADER: LOGO */}
+        {/* HEADER */}
         <motion.div className="flex flex-col items-center mb-16" variants={itemVariants}>
           <Link href="/">
             <Image 
@@ -62,7 +62,7 @@ export default function AppsHub() {
           </p>
         </motion.div>
 
-        {/* CARDS DE APPS */}
+        {/* CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           
           {/* --- CARD TABLET (CLIENTE) --- */}
@@ -72,6 +72,7 @@ export default function AppsHub() {
             onMouseEnter={() => setHoveredCard('tablet')}
             onMouseLeave={() => setHoveredCard(null)}
           >
+            {/* Ícone gigante decorativo */}
             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
               <Tablet size={120} className="text-[#E01928]" />
             </div>
@@ -81,16 +82,18 @@ export default function AppsHub() {
                 <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Tablet size={32} className="text-[#E01928]" />
                 </div>
+
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Modo Mesa</h2>
                 <p className="text-gray-500 text-sm mb-6 leading-relaxed">
                   Interface visual para o cliente. Cardápio digital, fotos em HD e autoatendimento.
                 </p>
-                
+
                 {/* Badges */}
                 <div className="flex gap-2 mb-8">
                   <span className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-full flex items-center gap-1">
                     <Wifi size={10} /> Online/Offline
                   </span>
+
                   <span className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-full flex items-center gap-1">
                     <Download size={10} /> PWA
                   </span>
@@ -98,7 +101,7 @@ export default function AppsHub() {
               </div>
 
               <Link 
-                href="/tablet" // ROTA DO PWA TABLET
+                href="/tablet"
                 className="w-full py-4 bg-[#111] text-white rounded-xl font-bold flex items-center justify-center gap-2 group-hover:bg-[#E01928] transition-colors shadow-lg group-hover:shadow-red-200"
               >
                 Acessar Tablet
@@ -123,6 +126,7 @@ export default function AppsHub() {
                 <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Smartphone size={32} className="text-black" />
                 </div>
+
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Modo Garçom</h2>
                 <p className="text-gray-500 text-sm mb-6 leading-relaxed">
                   Ferramenta ágil para staff. Lançamento de pedidos, gestão de mesas e notificações.
@@ -133,6 +137,7 @@ export default function AppsHub() {
                   <span className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-full flex items-center gap-1">
                     <Zap size={10} /> Alta Performance
                   </span>
+
                   <span className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-full flex items-center gap-1">
                     <Download size={10} /> PWA
                   </span>
@@ -140,7 +145,7 @@ export default function AppsHub() {
               </div>
 
               <Link 
-                href="/waiter/home" // ROTA DO PWA GARÇOM
+                href="/waiter/home"
                 className="w-full py-4 bg-white border-2 border-[#111] text-[#111] rounded-xl font-bold flex items-center justify-center gap-2 group-hover:bg-[#111] group-hover:text-white transition-all"
               >
                 Acessar Garçom
@@ -152,10 +157,7 @@ export default function AppsHub() {
         </div>
 
         {/* INSTRUÇÕES PWA */}
-        <motion.div 
-          className="mt-16 text-center"
-          variants={itemVariants}
-        >
+        <motion.div className="mt-16 text-center" variants={itemVariants}>
           <div className="inline-block bg-white px-6 py-3 rounded-full shadow-sm border border-gray-200">
             <p className="text-xs text-gray-500 flex items-center gap-2">
               <Download size={14} className="text-[#E01928]" />
@@ -166,11 +168,10 @@ export default function AppsHub() {
 
       </motion.div>
 
-      {/* Footer Simples */}
+      {/* FOOTER */}
       <div className="absolute bottom-6 text-center w-full text-[10px] text-gray-400 uppercase tracking-widest font-bold">
         OrdenGo System v2.0
       </div>
-
     </div>
   );
 }
