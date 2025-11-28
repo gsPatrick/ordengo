@@ -16,7 +16,8 @@ import {
   Menu, 
   X, 
   User,
-  ShieldCheck
+  ShieldCheck,
+  Plans
 } from 'lucide-react';
 
 export default function AdminLayout({ children }) {
@@ -79,6 +80,12 @@ export default function AdminLayout({ children }) {
       icon: FileBarChart, 
       path: '/admin/analytics' 
     },
+    {
+      name: 'Planos', 
+      icon: Landmark, 
+      path: '/admin/analytics' 
+    },
+    
     { 
       name: 'Configurações', 
       icon: Settings, 
