@@ -161,7 +161,7 @@ export default function AppsHub() {
           <div className="inline-block bg-white px-6 py-3 rounded-full shadow-sm border border-gray-200">
             <p className="text-xs text-gray-500 flex items-center gap-2">
               <Download size={14} className="text-[#E01928]" />
-              <strong>Dica:</strong> No seu dispositivo, selecione "Adicionar à Tela de Início" para instalar como App.
+            <strong>Dica:</strong> No seu dispositivo, selecione &quot;Adicionar à Tela de Início&quot; para instalar como App.
             </p>
           </div>
         </motion.div>

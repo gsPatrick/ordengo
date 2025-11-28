@@ -116,7 +116,7 @@ export default function SectionDepoimentos() {
                   ))}
                 </div>
 
-                <p className={styles.text}>"{item.text}"</p>
+<p className={styles.text}>&quot;{item.text}&quot;</p>
 
                 <div className={styles.author}>
                   <div className={styles.avatar}>
