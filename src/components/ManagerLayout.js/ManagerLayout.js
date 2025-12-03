@@ -4,22 +4,24 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { 
-  LayoutDashboard, 
-  UtensilsCrossed, 
-  Megaphone, 
-  Palette, 
-  Star, 
-  Settings, 
-  LogOut, 
-  Menu, 
-  X, 
+import {
+  LayoutDashboard,
+  UtensilsCrossed,
+  Megaphone,
+  Palette,
+  Star,
+  Settings,
+  LogOut,
+  Menu,
+  X,
   ChefHat,
   BarChart3, // Novo ícone
   FileText   // Novo ícone
 } from 'lucide-react';
 
-import OnboardingWizard from '../../components/Onboarding/OnboardingWizard'; 
+import OnboardingWizard from '../../components/Onboarding/OnboardingWizard';
+
+const BASE_IMG_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
 
 export default function ManagerLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -33,22 +35,22 @@ export default function ManagerLayout({ children }) {
   useEffect(() => {
     setIsClient(true);
     const userData = Cookies.get('ordengo_user');
-    
+
     if (!userData) {
       router.push('/auth/login');
       return;
     }
-    
+
     try {
       const parsedUser = JSON.parse(userData);
-      
+
       if (parsedUser.role !== 'manager') {
         // Se não for gerente, sai (a menos que seja admin impersonating)
         if (!Cookies.get('admin_impersonating')) {
-            Cookies.remove('ordengo_token');
-            Cookies.remove('ordengo_user');
-            router.push('/auth/login');
-            return;
+          Cookies.remove('ordengo_token');
+          Cookies.remove('ordengo_user');
+          router.push('/auth/login');
+          return;
         }
       }
 
@@ -67,12 +69,12 @@ export default function ManagerLayout({ children }) {
   const handleLogout = () => {
     // Se for admin impersonating, apenas volta para o painel admin
     if (Cookies.get('admin_impersonating')) {
-        Cookies.remove('admin_impersonating');
-        // O token original do admin foi removido ao fazer impersonate? 
-        // Se sim, ele vai ter que relogar. Se não, idealmente teríamos guardado o token admin em outro cookie.
-        // Para simplificar: manda pro login.
-        router.push('/auth/login');
-        return;
+      Cookies.remove('admin_impersonating');
+      // O token original do admin foi removido ao fazer impersonate?
+      // Se sim, ele vai ter que relogar. Se não, idealmente teríamos guardado o token admin em outro cookie.
+      // Para simplificar: manda pro login.
+      router.push('/auth/login');
+      return;
     }
 
     Cookies.remove('ordengo_token');
@@ -83,9 +85,9 @@ export default function ManagerLayout({ children }) {
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
     if (user) {
-      const updatedUser = { 
-        ...user, 
-        Restaurant: { ...user.Restaurant, isOnboardingCompleted: true } 
+      const updatedUser = {
+        ...user,
+        Restaurant: { ...user.Restaurant, isOnboardingCompleted: true }
       };
       Cookies.set('ordengo_user', JSON.stringify(updatedUser), { expires: 1 });
       setUser(updatedUser);
@@ -95,53 +97,53 @@ export default function ManagerLayout({ children }) {
 
   // --- MENU ATUALIZADO ---
   const menuItems = [
-    { 
-      name: 'Visão Geral', 
-      sub: 'Dashboard', 
-      icon: LayoutDashboard, 
-      path: '/dashboard' 
+    {
+      name: 'Visão Geral',
+      sub: 'Dashboard',
+      icon: LayoutDashboard,
+      path: '/dashboard'
     },
-    { 
-      name: 'Analytics', 
-      sub: 'Inteligência', 
-      icon: BarChart3, 
-      path: '/dashboard/analytics' 
+    {
+      name: 'Analytics',
+      sub: 'Inteligência',
+      icon: BarChart3,
+      path: '/dashboard/analytics'
     },
-    { 
-      name: 'Relatórios', 
-      sub: 'Exportação', 
-      icon: FileText, 
-      path: '/dashboard/reports' 
+    {
+      name: 'Relatórios',
+      sub: 'Exportação',
+      icon: FileText,
+      path: '/dashboard/reports'
     },
-    { 
-      name: 'Cardápio Digital', 
-      sub: 'Gestão de Produtos', 
-      icon: UtensilsCrossed, 
-      path: '/dashboard/menu' 
+    {
+      name: 'Cardápio Digital',
+      sub: 'Gestão de Produtos',
+      icon: UtensilsCrossed,
+      path: '/dashboard/menu'
     },
-    { 
-      name: 'Marketing', 
-      sub: 'Promoções e Ads', 
-      icon: Megaphone, 
-      path: '/dashboard/marketing' 
+    {
+      name: 'Marketing',
+      sub: 'Promoções e Ads',
+      icon: Megaphone,
+      path: '/dashboard/marketing'
     },
-    { 
-      name: 'Personalização', 
-      sub: 'Aparência', 
-      icon: Palette, 
-      path: '/dashboard/appearance' 
+    {
+      name: 'Personalização',
+      sub: 'Aparência',
+      icon: Palette,
+      path: '/dashboard/appearance'
     },
-    { 
-      name: 'Avaliações', 
-      sub: 'Feedback Clientes', 
-      icon: Star, 
-      path: '/dashboard/reviews' 
+    {
+      name: 'Avaliações',
+      sub: 'Feedback Clientes',
+      icon: Star,
+      path: '/dashboard/reviews'
     },
-    { 
-      name: 'Configurações', 
-      sub: 'Geral e Equipe', 
-      icon: Settings, 
-      path: '/dashboard/settings' 
+    {
+      name: 'Configurações',
+      sub: 'Geral e Equipe',
+      icon: Settings,
+      path: '/dashboard/settings'
     },
   ];
 
@@ -149,24 +151,32 @@ export default function ManagerLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans text-gray-900">
-      
+
       {/* SIDEBAR */}
-      <aside 
-        className={`fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:relative lg:translate-x-0 flex flex-col`}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:relative lg:translate-x-0 flex flex-col`}
       >
         {/* Header Sidebar */}
-        <div className="h-20 flex items-center px-6 border-b border-gray-100 shrink-0">
-          <div className="bg-red-50 p-2 rounded-lg mr-3">
-            <ChefHat className="text-[#df0024]" size={24} />
-          </div>
-          <div>
-            <span className="block font-bold text-gray-900 leading-tight">OrdenGo</span>
-            <span className="text-xs text-gray-500">Gestor</span>
-          </div>
-          <button 
-            className="lg:hidden ml-auto text-gray-500" 
+        <div className="h-20 flex items-center px-6 border-b border-gray-100 shrink-0 relative">
+          {user.Restaurant?.logo ? (
+            <div className="w-full flex items-center justify-center">
+              <img src={`${BASE_IMG_URL}${user.Restaurant.logo}`} alt="Logo" className="max-h-12 max-w-[200px] object-contain" />
+            </div>
+          ) : (
+            <>
+              <div className="bg-red-50 p-2 rounded-lg mr-3 overflow-hidden w-10 h-10 flex items-center justify-center">
+                <ChefHat className="text-[#df0024]" size={24} />
+              </div>
+              <div>
+                <span className="block font-bold text-gray-900 leading-tight">OrdenGo</span>
+                <span className="text-xs text-gray-500">Gestor</span>
+              </div>
+            </>
+          )}
+
+          <button
+            className="lg:hidden absolute right-4 text-gray-500 p-2 hover:bg-gray-100 rounded-lg"
             onClick={() => setIsSidebarOpen(false)}
           >
             <X size={20} />
@@ -181,11 +191,10 @@ export default function ManagerLayout({ children }) {
               <Link
                 key={item.path}
                 href={item.path}
-                className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                  isActive 
-                    ? 'bg-[#df0024] text-white shadow-md shadow-red-200' 
-                    : 'text-gray-600 hover:bg-red-50 hover:text-[#df0024]'
-                }`}
+                className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+                  ? 'bg-[#df0024] text-white shadow-md shadow-red-200'
+                  : 'text-gray-600 hover:bg-red-50 hover:text-[#df0024]'
+                  }`}
               >
                 <item.icon size={20} className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-[#df0024]'} />
                 <div className="flex flex-col">
@@ -218,12 +227,18 @@ export default function ManagerLayout({ children }) {
             <LogOut size={16} />
             Sair da Conta
           </button>
+
+          {/* SYSTEM LOGO (OrdenGo) */}
+          <div className="mt-6 flex items-center justify-center gap-2 opacity-50">
+            <ChefHat size={16} className="text-gray-400" />
+            <span className="text-xs font-bold text-gray-400">Powered by OrdenGo</span>
+          </div>
         </div>
       </aside>
 
       {/* MAIN CONTENT WRAPPER */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative h-screen">
-        
+
         {/* Mobile Header */}
         <header className="lg:hidden bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sticky top-0 z-30 shrink-0">
           <span className="font-bold text-gray-900">Painel</span>

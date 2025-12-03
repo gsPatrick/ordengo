@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import ManagerLayout from '../../../../components/ManagerLayout.js/ManagerLayout';
-import { 
-  Plus, 
-  Search, 
-  Layers, 
+import {
+  Plus,
+  Search,
+  Layers,
   Loader2,
   Edit,
   Image as ImageIcon,
@@ -15,7 +15,8 @@ import {
   Power,
   PlusCircle,
   Star,
-  Tag
+  Tag,
+  Trash2
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -29,15 +30,15 @@ import FirstProductModal from '../../../../components/Onboarding/FirstProductMod
 const BASE_IMG_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
 
 export default function MenuPage() {
-  const [fullMenu, setFullMenu] = useState([]); 
+  const [fullMenu, setFullMenu] = useState([]);
   const [modifierGroups, setModifierGroups] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const [modalType, setModalType] = useState(null);
-  const [editingItem, setEditingItem] = useState(null); 
+  const [editingItem, setEditingItem] = useState(null);
 
   const [showFirstSetupModal, setShowFirstSetupModal] = useState(false);
   // Estado novo para controle visual no modal de bloqueio
@@ -53,7 +54,7 @@ export default function MenuPage() {
   const fetchData = async () => {
     try {
       const [menuRes, modRes] = await Promise.all([
-        api.get('/menu'), 
+        api.get('/menu?includeUnavailable=true'),
         api.get('/menu/modifiers')
       ]);
       const menuData = menuRes.data.data.menu;
@@ -108,7 +109,7 @@ export default function MenuPage() {
         if (cat.subcategories) traverse(cat.subcategories);
       });
     };
-    
+
     let targetCategories = fullMenu;
     if (selectedCategoryId) {
       const findCategory = (cats) => {
@@ -137,9 +138,37 @@ export default function MenuPage() {
   const toggleProductAvailability = async (productId) => {
     try {
       await api.patch(`/menu/products/${productId}/availability`);
-      fetchData(); 
+      fetchData();
     } catch (error) {
       alert('Erro ao alterar disponibilidade');
+    }
+  };
+
+  const handleDeleteCategory = async (id, event) => {
+    if (event) event.stopPropagation();
+    if (!confirm('Tem certeza que deseja excluir esta categoria?')) return;
+    try {
+      setLoading(true);
+      await api.delete(`/menu/categories/${id}`);
+      fetchData();
+    } catch (error) {
+      alert('Erro ao excluir categoria');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteProduct = async (id, event) => {
+    if (event) event.stopPropagation();
+    if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+    try {
+      setLoading(true);
+      await api.delete(`/menu/products/${id}`);
+      fetchData();
+    } catch (error) {
+      alert('Erro ao excluir produto');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,9 +178,9 @@ export default function MenuPage() {
   };
 
   const handleAddSubcategory = (parentCategory, event) => {
-    if(event) event.stopPropagation(); 
+    if (event) event.stopPropagation();
     setModalType('category');
-    setEditingItem({ parentId: parentCategory.id, parentName: getText(parentCategory.name) }); 
+    setEditingItem({ parentId: parentCategory.id, parentName: getText(parentCategory.name) });
   };
 
   // Handler Especial para o Modal de Bloqueio (Cria Subcategoria na primeira categoria disponível)
@@ -172,27 +201,26 @@ export default function MenuPage() {
   return (
     <ManagerLayout>
       <div className="flex h-[calc(100vh-100px)] gap-6 relative">
-        
+
         {/* --- SIDEBAR: ÁRVORE DE CATEGORIAS --- */}
         <aside className="w-80 flex-shrink-0 bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden shadow-sm">
           <div className="p-4 border-b border-gray-100 bg-gray-50">
-            <button 
-              onClick={() => handleOpenModal('category')} 
+            <button
+              onClick={() => handleOpenModal('category')}
               className="w-full flex items-center justify-center gap-2 bg-[#df0024] text-white py-3 rounded-lg text-sm font-bold hover:bg-red-700 transition-colors shadow-sm"
             >
               <Plus size={18} />
               Criar Categoria Principal
             </button>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto p-2 space-y-2 custom-scrollbar">
             <button
               onClick={() => setSelectedCategoryId(null)}
-              className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all border ${
-                selectedCategoryId === null 
-                  ? 'bg-gray-800 text-white border-gray-800 shadow-md' 
-                  : 'text-gray-600 bg-white border-transparent hover:bg-gray-100'
-              }`}
+              className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all border ${selectedCategoryId === null
+                ? 'bg-gray-800 text-white border-gray-800 shadow-md'
+                : 'text-gray-600 bg-white border-transparent hover:bg-gray-100'
+                }`}
             >
               📦 Todos os Produtos
             </button>
@@ -200,7 +228,7 @@ export default function MenuPage() {
             <div className="pt-2 space-y-1">
               {fullMenu.map(cat => (
                 <div key={cat.id} className="rounded-xl border border-gray-100 bg-white overflow-hidden mb-2 shadow-sm">
-                  <div 
+                  <div
                     className={`group flex items-center justify-between px-3 py-3 cursor-pointer transition-colors ${selectedCategoryId === cat.id ? 'bg-red-50' : 'hover:bg-gray-50'}`}
                     onClick={() => setSelectedCategoryId(cat.id)}
                   >
@@ -213,24 +241,28 @@ export default function MenuPage() {
                     <div className="flex items-center gap-1">
                       <button onClick={(e) => handleAddSubcategory(cat, e)} className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"><PlusCircle size={16} /></button>
                       <button onClick={(e) => { e.stopPropagation(); handleOpenModal('category', cat); }} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"><Edit size={14} /></button>
+                      <button onClick={(e) => handleDeleteCategory(cat.id, e)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"><Trash2 size={14} /></button>
                     </div>
                   </div>
-                  
+
                   {cat.subcategories?.length > 0 && (
                     <div className="bg-gray-50/50 border-t border-gray-100 pb-2">
                       {cat.subcategories.map(sub => (
-                        <div 
-                          key={sub.id} 
+                        <div
+                          key={sub.id}
                           className={`group/sub flex items-center justify-between pl-8 pr-3 py-2 cursor-pointer transition-colors border-l-2 ${selectedCategoryId === sub.id ? 'border-[#df0024] bg-red-50/50' : 'border-transparent hover:bg-gray-100'}`}
                           onClick={() => setSelectedCategoryId(sub.id)}
                         >
                           <div className="flex items-center gap-2 text-xs">
                             <CornerDownRight size={12} className="opacity-30" />
-                            <span className={`font-medium truncate max-w-[130px] ${selectedCategoryId === sub.id ? 'text-[#df0024]' : 'text-gray-600'}`}>
+                            <span className={`font-medium truncate max-w-[100px] ${selectedCategoryId === sub.id ? 'text-[#df0024]' : 'text-gray-600'}`}>
                               {getText(sub.name)}
                             </span>
                           </div>
-                          <button onClick={(e) => { e.stopPropagation(); handleOpenModal('category', sub); }} className="opacity-0 group-hover/sub:opacity-100 p-1 text-gray-400 hover:text-blue-600 rounded"><Edit size={12} /></button>
+                          <div className="flex items-center opacity-0 group-hover/sub:opacity-100 transition-opacity">
+                            <button onClick={(e) => { e.stopPropagation(); handleOpenModal('category', sub); }} className="p-1 text-gray-400 hover:text-blue-600 rounded"><Edit size={12} /></button>
+                            <button onClick={(e) => handleDeleteCategory(sub.id, e)} className="p-1 text-gray-400 hover:text-red-600 rounded"><Trash2 size={12} /></button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -272,11 +304,11 @@ export default function MenuPage() {
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50"><ImageIcon size={32} /></div>
                       )}
-                      
+
                       {/* Flags de Status */}
                       <div className="absolute top-2 left-2 flex flex-col gap-1">
-                        {product.isOffer && <span className="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><Tag size={10}/> OFERTA</span>}
-                        {product.isHighlight && <span className="bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><Star size={10}/> DESTAQUE</span>}
+                        {product.isOffer && <span className="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><Tag size={10} /> OFERTA</span>}
+                        {product.isHighlight && <span className="bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><Star size={10} /> DESTAQUE</span>}
                       </div>
 
                       <button onClick={(e) => { e.stopPropagation(); toggleProductAvailability(product.id); }} className={`absolute top-2 right-2 p-1.5 rounded-lg backdrop-blur-md transition-colors ${product.isAvailable ? 'bg-white/90 text-green-600 hover:bg-red-50 hover:text-red-600' : 'bg-red-600 text-white'}`} title="Pausar/Ativar">
@@ -299,7 +331,10 @@ export default function MenuPage() {
                           {product.hasVariants && <span className="text-[10px] text-gray-400 font-medium">A partir de</span>}
                           <span className="text-xl font-extrabold text-[#df0024]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}</span>
                         </div>
-                        <button onClick={() => handleOpenModal('product', product)} className="p-2 bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"><Edit size={18} /></button>
+                        <div className="flex gap-1">
+                          <button onClick={() => handleOpenModal('product', product)} className="p-2 bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"><Edit size={18} /></button>
+                          <button onClick={(e) => handleDeleteProduct(product.id, e)} className="p-2 bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"><Trash2 size={18} /></button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -324,7 +359,7 @@ export default function MenuPage() {
       {/* --- NOVO MODAL DE BLOQUEIO (FirstProductModal) --- */}
       {/* Só aparece se showFirstSetupModal = true E nenhum outro modal estiver aberto */}
       {showFirstSetupModal && !modalType && !loading && (
-        <FirstProductModal 
+        <FirstProductModal
           hasCategories={fullMenu.length > 0}
           hasSubcategories={hasSubcategories}
           onOpenCategory={() => handleOpenModal('category')}

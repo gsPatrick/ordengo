@@ -19,7 +19,7 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
   const [activeTab, setActiveTab] = useState('general');
   const [activeLang, setActiveLang] = useState('pt'); // Idioma sendo editado agora
   const [loading, setLoading] = useState(false);
-  
+
   // Estado Unificado Multi-idioma
   const [formData, setFormData] = useState({
     name: { pt: '', en: '', es: '', de: '', it: '', fr: '' },
@@ -32,7 +32,7 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
     isOffer: false,
     isHighlight: false,
     hasVariants: false,
-    variants: [], 
+    variants: [],
     modifierGroupIds: []
   });
 
@@ -40,11 +40,11 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
     if (product) {
       const pName = product.name || {};
       const pDesc = product.description || {};
-      
+
       setFormData({
         id: product.id,
-        name: { pt: pName.pt||'', en: pName.en||'', es: pName.es||'', de: pName.de||'', it: pName.it||'', fr: pName.fr||'' },
-        description: { pt: pDesc.pt||'', en: pDesc.en||'', es: pDesc.es||'', de: pDesc.de||'', it: pDesc.it||'', fr: pDesc.fr||'' },
+        name: { pt: pName.pt || '', en: pName.en || '', es: pName.es || '', de: pName.de || '', it: pName.it || '', fr: pName.fr || '' },
+        description: { pt: pDesc.pt || '', en: pDesc.en || '', es: pDesc.es || '', de: pDesc.de || '', it: pDesc.it || '', fr: pDesc.fr || '' },
         price: product.price,
         categoryId: product.categoryId,
         interfaceType: product.details?.interfaceType || 'standard',
@@ -52,9 +52,9 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
         isOffer: product.isOffer || false,
         isHighlight: product.isHighlight || false,
         hasVariants: product.hasVariants || false,
-        variants: product.variants?.map(v => ({ 
-          ...v, 
-          name: { pt: v.name?.pt||'', en: v.name?.en||'', es: v.name?.es||'', de: v.name?.de||'', it: v.name?.it||'', fr: v.name?.fr||'' } 
+        variants: product.variants?.map(v => ({
+          ...v,
+          name: { pt: v.name?.pt || '', en: v.name?.en || '', es: v.name?.es || '', de: v.name?.de || '', it: v.name?.it || '', fr: v.name?.fr || '' }
         })) || [],
         modifierGroupIds: product.modifierGroups?.map(g => g.id) || []
       });
@@ -106,9 +106,9 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
 
   const toggleModifierGroup = (groupId) => {
     const current = formData.modifierGroupIds;
-    setFormData({ 
-      ...formData, 
-      modifierGroupIds: current.includes(groupId) ? current.filter(id => id !== groupId) : [...current, groupId] 
+    setFormData({
+      ...formData,
+      modifierGroupIds: current.includes(groupId) ? current.filter(id => id !== groupId) : [...current, groupId]
     });
   };
 
@@ -120,7 +120,7 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
       const payload = new FormData();
       payload.append('name', JSON.stringify(formData.name));
       payload.append('description', JSON.stringify(formData.description));
-      
+
       payload.append('price', formData.price);
       payload.append('categoryId', formData.categoryId);
       payload.append('details', JSON.stringify({ interfaceType: formData.interfaceType }));
@@ -135,9 +135,13 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
 
       payload.append('modifierGroupIds', JSON.stringify(formData.modifierGroupIds));
 
-      await api.post('/menu/products', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
+      if (formData.id) {
+        await api.patch(`/menu/products/${formData.id}`, payload, { headers: { 'Content-Type': 'multipart/form-data' } });
+      } else {
+        await api.post('/menu/products', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
+      }
 
-      onClose(true); 
+      onClose(true);
     } catch (error) {
       console.error(error);
       alert('Erro ao salvar produto');
@@ -149,7 +153,7 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
-        
+
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
           <h2 className="text-xl font-bold text-gray-900">{product ? 'Editar Produto' : 'Novo Produto'}</h2>
@@ -159,9 +163,9 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
         {/* Tabs de Navegação */}
         <div className="flex border-b border-gray-200 px-6 bg-gray-50">
           {['general', 'variants', 'modifiers'].map(tab => (
-            <button 
+            <button
               key={tab}
-              onClick={() => setActiveTab(tab)} 
+              onClick={() => setActiveTab(tab)}
               className={`py-3 px-4 text-sm font-medium border-b-2 capitalize ${activeTab === tab ? 'border-[#df0024] text-[#df0024]' : 'border-transparent text-gray-500'}`}
             >
               {tab === 'general' ? 'Geral & Tradução' : (tab === 'variants' ? 'Tamanhos/Variações' : 'Complementos')}
@@ -171,7 +175,7 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-6 bg-white">
-          
+
           {activeTab === 'general' && (
             <div className="space-y-6">
               <div className="flex gap-6">
@@ -182,17 +186,17 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
                       const file = e.target.files[0];
                       setFormData({ ...formData, imageFile: file, previewUrl: URL.createObjectURL(file) });
                     }} className="absolute inset-0 opacity-0 z-10 cursor-pointer" />
-                    {formData.previewUrl ? <img src={formData.previewUrl} className="w-full h-full object-cover" /> : <div className="text-center text-gray-400"><Upload size={32} className="mx-auto mb-2"/>Upload Foto</div>}
+                    {formData.previewUrl ? <img src={formData.previewUrl} className="w-full h-full object-cover" /> : <div className="text-center text-gray-400"><Upload size={32} className="mx-auto mb-2" />Upload Foto</div>}
                   </div>
-                  
+
                   <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-2">
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={formData.isOffer} onChange={e => setFormData({...formData, isOffer: e.target.checked})} className="text-[#df0024] rounded" />
-                      <span className="text-sm font-medium text-gray-700 flex items-center gap-1"><Tag size={14}/> Marcar como Oferta</span>
+                      <input type="checkbox" checked={formData.isOffer} onChange={e => setFormData({ ...formData, isOffer: e.target.checked })} className="text-[#df0024] rounded" />
+                      <span className="text-sm font-medium text-gray-700 flex items-center gap-1"><Tag size={14} /> Marcar como Oferta</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={formData.isHighlight} onChange={e => setFormData({...formData, isHighlight: e.target.checked})} className="text-[#df0024] rounded" />
-                      <span className="text-sm font-medium text-gray-700 flex items-center gap-1"><Star size={14}/> Marcar como Destaque</span>
+                      <input type="checkbox" checked={formData.isHighlight} onChange={e => setFormData({ ...formData, isHighlight: e.target.checked })} className="text-[#df0024] rounded" />
+                      <span className="text-sm font-medium text-gray-700 flex items-center gap-1"><Star size={14} /> Marcar como Destaque</span>
                     </label>
                   </div>
                 </div>
@@ -213,24 +217,24 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
                   </div>
 
                   <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 relative">
-                    <span className="absolute top-2 right-2 text-[10px] uppercase font-bold text-gray-400">{LANGUAGES.find(l=>l.code===activeLang).label}</span>
+                    <span className="absolute top-2 right-2 text-[10px] uppercase font-bold text-gray-400">{LANGUAGES.find(l => l.code === activeLang).label}</span>
                     <div className="space-y-3">
                       <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nome do Produto</label>
-                        <input 
-                          className="w-full px-3 py-2 border rounded-lg text-sm" 
+                        <input
+                          className="w-full px-3 py-2 border rounded-lg text-sm"
                           value={formData.name[activeLang] || ''}
                           onChange={e => handleTextChange('name', e.target.value)}
-                          placeholder={`Nome em ${LANGUAGES.find(l=>l.code===activeLang).label}`}
+                          placeholder={`Nome em ${LANGUAGES.find(l => l.code === activeLang).label}`}
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Descrição</label>
-                        <textarea 
-                          className="w-full px-3 py-2 border rounded-lg text-sm h-20 resize-none" 
+                        <textarea
+                          className="w-full px-3 py-2 border rounded-lg text-sm h-20 resize-none"
                           value={formData.description[activeLang] || ''}
                           onChange={e => handleTextChange('description', e.target.value)}
-                          placeholder={`Descrição em ${LANGUAGES.find(l=>l.code===activeLang).label}`}
+                          placeholder={`Descrição em ${LANGUAGES.find(l => l.code === activeLang).label}`}
                         />
                       </div>
                     </div>
@@ -239,11 +243,11 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Preço Base (R$)</label>
-                      <input type="number" step="0.01" className="w-full px-3 py-2 border rounded-lg" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
+                      <input type="number" step="0.01" className="w-full px-3 py-2 border rounded-lg" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
-                      <select className="w-full px-3 py-2 border rounded-lg" value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})}>
+                      <select className="w-full px-3 py-2 border rounded-lg" value={formData.categoryId} onChange={e => setFormData({ ...formData, categoryId: e.target.value })}>
                         <option value="">Selecione...</option>
                         {categories.map(cat => (
                           <>
@@ -262,15 +266,15 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
           {activeTab === 'variants' && (
             <div className="space-y-6">
               <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-                 <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={formData.hasVariants} onChange={e => setFormData({...formData, hasVariants: e.target.checked})} className="text-[#df0024] rounded" /> Habilitar Variações</label>
-                 
-                 <div className="flex gap-1">
-                    {LANGUAGES.map(lang => (
-                      <button key={lang.code} type="button" onClick={() => setActiveLang(lang.code)} className={`w-6 h-6 rounded-full text-[10px] flex items-center justify-center ${activeLang === lang.code ? 'bg-gray-900 text-white' : 'bg-white border'}`}>
-                        {lang.code.toUpperCase()}
-                      </button>
-                    ))}
-                 </div>
+                <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={formData.hasVariants} onChange={e => setFormData({ ...formData, hasVariants: e.target.checked })} className="text-[#df0024] rounded" /> Habilitar Variações</label>
+
+                <div className="flex gap-1">
+                  {LANGUAGES.map(lang => (
+                    <button key={lang.code} type="button" onClick={() => setActiveLang(lang.code)} className={`w-6 h-6 rounded-full text-[10px] flex items-center justify-center ${activeLang === lang.code ? 'bg-gray-900 text-white' : 'bg-white border'}`}>
+                      {lang.code.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {formData.hasVariants && (
