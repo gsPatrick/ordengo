@@ -21,6 +21,7 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import api from '@/lib/api';
+import Cookies from 'js-cookie';
 
 // URL base para exibir imagens vindas da API
 const BASE_IMG_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
@@ -198,22 +199,6 @@ export default function AppearancePage() {
       formData.append('ourHistory', JSON.stringify({ pt: config.ourHistory }));
 
       if (config.logoFile) formData.append('logo', config.logoFile);
-
-      files.institutionalBanners.forEach(file => formData.append('institutionalBanners', file));
-      files.highlightImagesLarge.forEach(file => formData.append('highlightImagesLarge', file));
-      files.highlightImagesSmall.forEach(file => formData.append('highlightImagesSmall', file));
-
-      await api.patch('/settings/appearance', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-
-      alert('Configurações salvas com sucesso!');
-      setFiles({ institutionalBanners: [], highlightImagesLarge: [], highlightImagesSmall: [] });
-      window.location.reload();
-
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao salvar configurações.');
     } finally {
       setSaving(false);
     }
@@ -528,7 +513,7 @@ export default function AppearancePage() {
 
                     {/* Lista de Banners (Estilo Card Rico) */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {banners.map(banner => (
+                      {banners.filter(b => !b.isAd).map(banner => (
                         <div key={banner.id} className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
 
                           {/* Imagem */}

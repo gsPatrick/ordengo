@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
   Image as ImageIcon,
   Pizza,
   Utensils,
@@ -14,7 +14,10 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 
+import { useRestaurant } from '../../context/RestaurantContext';
+
 export default function ProductsTab() {
+  const { currency } = useRestaurant();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +27,7 @@ export default function ProductsTab() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState(null);
-  
+
   // Form Data
   const initialFormState = {
     id: null,
@@ -48,7 +51,7 @@ export default function ProductsTab() {
         api.get('/menu'), // Retorna a árvore, vamos ter que "achatá-la" ou usar uma rota de lista simples se houver
         api.get('/menu')  // Usando a mesma rota por enquanto para pegar categorias
       ]);
-      
+
       // Processar Categorias (Flat list para o select)
       const flatCategories = [];
       // Assumindo que a API retorna estrutura de árvore (Categorias -> Subcategorias)
@@ -130,7 +133,7 @@ export default function ProductsTab() {
     payload.append('description', JSON.stringify({ pt: formData.descriptionPt, en: formData.descriptionEn }));
     payload.append('price', formData.price);
     payload.append('categoryId', formData.categoryId);
-    
+
     // Detalhes Técnicos
     const details = {
       interfaceType: formData.interfaceType,
@@ -154,7 +157,7 @@ export default function ProductsTab() {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       }
-      
+
       setIsModalOpen(false);
       fetchData(); // Recarrega lista
     } catch (error) {
@@ -165,13 +168,13 @@ export default function ProductsTab() {
     }
   };
 
-  const filteredProducts = products.filter(p => 
+  const filteredProducts = products.filter(p =>
     p.name.pt.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      
+
       {/* Toolbar */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="relative w-full md:w-96">
@@ -211,8 +214,8 @@ export default function ProductsTab() {
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
                       {product.imageUrl ? (
-                        <img 
-                          src={`https://geral-ordengoapi.r954jc.easypanel.host${product.imageUrl}`} 
+                        <img
+                          src={`https://geral-ordengoapi.r954jc.easypanel.host${product.imageUrl}`}
                           alt={product.name.pt}
                           className="w-full h-full object-cover"
                         />
@@ -237,11 +240,11 @@ export default function ProductsTab() {
                   {product.categoryName || 'Sem Categoria'}
                 </td>
                 <td className="px-4 py-3 font-medium text-gray-900">
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}
+                  {new Intl.NumberFormat(currency === 'BRL' ? 'pt-BR' : 'es-ES', { style: 'currency', currency: currency || 'EUR' }).format(product.price)}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
+                    <button
                       onClick={() => openModal(product)}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
                     >
@@ -263,7 +266,7 @@ export default function ProductsTab() {
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8">
             <form onSubmit={handleSubmit}>
-              
+
               {/* Header Modal */}
               <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white rounded-t-2xl z-10">
                 <h2 className="text-lg font-bold text-gray-900">
@@ -273,7 +276,7 @@ export default function ProductsTab() {
               </div>
 
               <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
+
                 {/* Coluna 1: Mídia e Básico */}
                 <div className="space-y-6">
                   {/* Upload Imagem */}
@@ -299,11 +302,10 @@ export default function ProductsTab() {
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, interfaceType: 'standard' })}
-                        className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
-                          formData.interfaceType === 'standard' 
-                            ? 'border-[#df0024] bg-white text-[#df0024]' 
-                            : 'border-transparent hover:bg-gray-200 text-gray-500'
-                        }`}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${formData.interfaceType === 'standard'
+                          ? 'border-[#df0024] bg-white text-[#df0024]'
+                          : 'border-transparent hover:bg-gray-200 text-gray-500'
+                          }`}
                       >
                         <Utensils size={24} className="mb-1" />
                         <span className="text-xs font-bold">Padrão</span>
@@ -311,19 +313,18 @@ export default function ProductsTab() {
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, interfaceType: 'pizza' })}
-                        className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
-                          formData.interfaceType === 'pizza' 
-                            ? 'border-[#df0024] bg-white text-[#df0024]' 
-                            : 'border-transparent hover:bg-gray-200 text-gray-500'
-                        }`}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${formData.interfaceType === 'pizza'
+                          ? 'border-[#df0024] bg-white text-[#df0024]'
+                          : 'border-transparent hover:bg-gray-200 text-gray-500'
+                          }`}
                       >
                         <Pizza size={24} className="mb-1" />
                         <span className="text-xs font-bold">Pizza</span>
                       </button>
                     </div>
                     <p className="text-[10px] text-gray-500 mt-2 text-center">
-                      {formData.interfaceType === 'pizza' 
-                        ? 'Habilita seleção de fatias e sabores.' 
+                      {formData.interfaceType === 'pizza'
+                        ? 'Habilita seleção de fatias e sabores.'
                         : 'Layout clássico para pratos e bebidas.'}
                     </p>
                   </div>
@@ -331,7 +332,7 @@ export default function ProductsTab() {
 
                 {/* Coluna 2 e 3: Dados */}
                 <div className="lg:col-span-2 space-y-5">
-                  
+
                   {/* Tabs de Tradução (Simples) */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
@@ -341,20 +342,20 @@ export default function ProductsTab() {
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-gray-500 mb-1">Nome</label>
-                        <input 
+                        <input
                           required
-                          className="w-full px-3 py-2 border rounded-lg text-sm" 
+                          className="w-full px-3 py-2 border rounded-lg text-sm"
                           value={formData.namePt}
-                          onChange={e => setFormData({...formData, namePt: e.target.value})}
+                          onChange={e => setFormData({ ...formData, namePt: e.target.value })}
                           placeholder="Ex: X-Bacon"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-gray-500 mb-1">Descrição</label>
-                        <textarea 
-                          className="w-full px-3 py-2 border rounded-lg text-sm h-20 resize-none" 
+                        <textarea
+                          className="w-full px-3 py-2 border rounded-lg text-sm h-20 resize-none"
                           value={formData.descriptionPt}
-                          onChange={e => setFormData({...formData, descriptionPt: e.target.value})}
+                          onChange={e => setFormData({ ...formData, descriptionPt: e.target.value })}
                           placeholder="Pão, carne, queijo..."
                         />
                       </div>
@@ -367,19 +368,19 @@ export default function ProductsTab() {
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-gray-500 mb-1">Name</label>
-                        <input 
-                          className="w-full px-3 py-2 border rounded-lg text-sm" 
+                        <input
+                          className="w-full px-3 py-2 border rounded-lg text-sm"
                           value={formData.nameEn}
-                          onChange={e => setFormData({...formData, nameEn: e.target.value})}
+                          onChange={e => setFormData({ ...formData, nameEn: e.target.value })}
                           placeholder="Ex: Bacon Burger"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-gray-500 mb-1">Description</label>
-                        <textarea 
-                          className="w-full px-3 py-2 border rounded-lg text-sm h-20 resize-none" 
+                        <textarea
+                          className="w-full px-3 py-2 border rounded-lg text-sm h-20 resize-none"
                           value={formData.descriptionEn}
-                          onChange={e => setFormData({...formData, descriptionEn: e.target.value})}
+                          onChange={e => setFormData({ ...formData, descriptionEn: e.target.value })}
                           placeholder="Bread, meat, cheese..."
                         />
                       </div>
@@ -393,7 +394,7 @@ export default function ProductsTab() {
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#df0024] focus:border-[#df0024]"
                         value={formData.categoryId}
-                        onChange={e => setFormData({...formData, categoryId: e.target.value})}
+                        onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
                       >
                         <option value="">Selecione...</option>
                         {categories.map(cat => (
@@ -405,13 +406,13 @@ export default function ProductsTab() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Preço Base (R$)</label>
-                      <input 
+                      <input
                         required
-                        type="number" 
+                        type="number"
                         step="0.01"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#df0024] focus:border-[#df0024]" 
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#df0024] focus:border-[#df0024]"
                         value={formData.price}
-                        onChange={e => setFormData({...formData, price: e.target.value})}
+                        onChange={e => setFormData({ ...formData, price: e.target.value })}
                       />
                     </div>
                   </div>
@@ -422,20 +423,20 @@ export default function ProductsTab() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs text-gray-500 mb-1">Calorias (kcal)</label>
-                        <input 
-                          className="w-full px-3 py-2 border rounded-lg text-sm" 
+                        <input
+                          className="w-full px-3 py-2 border rounded-lg text-sm"
                           placeholder="ex: 350"
                           value={formData.calories}
-                          onChange={e => setFormData({...formData, calories: e.target.value})}
+                          onChange={e => setFormData({ ...formData, calories: e.target.value })}
                         />
                       </div>
                       <div>
                         <label className="block text-xs text-gray-500 mb-1">Tempo de Preparo (min)</label>
-                        <input 
-                          className="w-full px-3 py-2 border rounded-lg text-sm" 
+                        <input
+                          className="w-full px-3 py-2 border rounded-lg text-sm"
                           placeholder="ex: 15-20"
                           value={formData.prepTime}
-                          onChange={e => setFormData({...formData, prepTime: e.target.value})}
+                          onChange={e => setFormData({ ...formData, prepTime: e.target.value })}
                         />
                       </div>
                     </div>

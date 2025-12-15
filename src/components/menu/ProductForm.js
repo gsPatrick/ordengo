@@ -29,6 +29,8 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
     interfaceType: 'standard',
     imageFile: null,
     previewUrl: null,
+    galleryFiles: [], // Arquivos novos (File objects)
+    galleryPreviews: [], // Previews mistos ({ url, type, isNew, fileIndex })
     isOffer: false,
     isHighlight: false,
     hasVariants: false,
@@ -58,6 +60,19 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
         })) || [],
         modifierGroupIds: product.modifierGroups?.map(g => g.id) || []
       });
+
+      // Setup Galeria Existente
+      if (product.gallery && Array.isArray(product.gallery)) {
+        setFormData(prev => ({
+          ...prev,
+          galleryPreviews: product.gallery.map(url => ({
+            url: `${BASE_IMG_URL}${url}`,
+            type: url.endsWith('.mp4') || url.endsWith('.webm') ? 'video' : (url.endsWith('.gif') ? 'gif' : 'image'),
+            isNew: false,
+            originalUrl: url // Para enviar de volta o que foi mantido
+          }))
+        }));
+      }
     }
   }, [product]);
 
@@ -104,6 +119,71 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
     setFormData({ ...formData, variants: newVariants });
   };
 
+  // --- HANDLERS GALERIA ---
+  const handleGalleryUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    // 1. Identificar o que já temos na galeria
+    const currentMedia = formData.galleryPreviews || [];
+    let videoCount = currentMedia.filter(m => m.type === 'video').length;
+    let gifCount = currentMedia.filter(m => m.type === 'gif').length;
+
+    const newPreviews = [];
+    const newFiles = [];
+
+    // 2. Processar novos arquivos
+    files.forEach(file => {
+      const type = file.type.startsWith('video/') ? 'video' : (file.type === 'image/gif' ? 'gif' : 'image');
+
+      // Regra: Não pode misturar Video e GIF
+      // Regra: Máx 1 video OU 1 gif
+
+      if (type === 'video') {
+        if (gifCount > 0) return alert('Não é permitido adicionar Vídeo se já existe GIF.');
+        if (videoCount >= 1) return alert('Apenas 1 vídeo é permitido.');
+        videoCount++;
+      }
+      if (type === 'gif') {
+        if (videoCount > 0) return alert('Não é permitido adicionar GIF se já existe Vídeo.');
+        if (gifCount >= 1) return alert('Apenas 1 GIF é permitido.');
+        gifCount++;
+      }
+
+      newFiles.push(file);
+      newPreviews.push({
+        url: URL.createObjectURL(file), // Preview local
+        type,
+        isNew: true,
+        fileObj: file
+      });
+    });
+
+    setFormData(prev => ({
+      ...prev,
+      galleryFiles: [...prev.galleryFiles, ...newFiles],
+      galleryPreviews: [...prev.galleryPreviews, ...newPreviews]
+    }));
+  };
+
+  const handleRemoveGalleryItem = (index) => {
+    setFormData(prev => {
+      const itemToRemove = prev.galleryPreviews[index];
+      const newPreviews = prev.galleryPreviews.filter((_, i) => i !== index);
+
+      let newFiles = prev.galleryFiles;
+      if (itemToRemove.isNew) {
+        newFiles = prev.galleryFiles.filter(f => f !== itemToRemove.fileObj);
+      }
+
+      return {
+        ...prev,
+        galleryPreviews: newPreviews,
+        galleryFiles: newFiles
+      };
+    });
+  };
+
   const toggleModifierGroup = (groupId) => {
     const current = formData.modifierGroupIds;
     setFormData({
@@ -128,6 +208,20 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
       payload.append('isHighlight', formData.isHighlight);
 
       if (formData.imageFile) payload.append('image', formData.imageFile);
+
+      // Galeria: Envia novos arquivos
+      if (formData.galleryFiles.length > 0) {
+        formData.galleryFiles.forEach(file => {
+          payload.append('gallery', file);
+        });
+      }
+
+      // Galeria: Envia lista dos que foram mantidos (existingGallery)
+      const existingUrls = formData.galleryPreviews
+        .filter(item => !item.isNew)
+        .map(item => item.originalUrl);
+
+      payload.append('existingGallery', JSON.stringify(existingUrls));
 
       if (formData.hasVariants && formData.variants.length > 0) {
         payload.append('variants', JSON.stringify(formData.variants));
@@ -181,12 +275,50 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
               <div className="flex gap-6">
                 {/* Coluna Esquerda: Upload + Flags */}
                 <div className="w-1/3 space-y-4">
-                  <div className="aspect-square rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center relative overflow-hidden cursor-pointer hover:border-[#df0024]">
-                    <input type="file" onChange={e => {
-                      const file = e.target.files[0];
-                      setFormData({ ...formData, imageFile: file, previewUrl: URL.createObjectURL(file) });
-                    }} className="absolute inset-0 opacity-0 z-10 cursor-pointer" />
-                    {formData.previewUrl ? <img src={formData.previewUrl} className="w-full h-full object-cover" /> : <div className="text-center text-gray-400"><Upload size={32} className="mx-auto mb-2" />Upload Foto</div>}
+                  {/* UPLOAD PRINCIPAL (Ícone/Capa) */}
+                  <div className="space-y-2">
+                    <span className="text-xs font-bold text-gray-500 uppercase">Imagem Principal</span>
+                    <div className="aspect-video rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center relative overflow-hidden cursor-pointer hover:border-[#df0024]">
+                      <input type="file" accept="image/*" onChange={e => {
+                        const file = e.target.files[0];
+                        if (file) setFormData({ ...formData, imageFile: file, previewUrl: URL.createObjectURL(file) });
+                      }} className="absolute inset-0 opacity-0 z-10 cursor-pointer" />
+                      {formData.previewUrl ? <img src={formData.previewUrl} className="w-full h-full object-cover" /> : <div className="text-center text-gray-400"><Upload size={32} className="mx-auto mb-2" />Capa</div>}
+                    </div>
+                  </div>
+
+                  {/* GALERIA (Múltiplos Arquivos) */}
+                  <div className="space-y-2">
+                    <span className="text-xs font-bold text-gray-500 uppercase">Galeria (Fotos/Vídeo/GIF)</span>
+                    <div className="grid grid-cols-3 gap-2">
+                      {/* Botão de Adicionar */}
+                      <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center relative hover:border-[#df0024] cursor-pointer">
+                        <input type="file" multiple accept="image/*,video/mp4,video/webm,image/gif" onChange={handleGalleryUpload} className="absolute inset-0 opacity-0 z-10 cursor-pointer" />
+                        <Plus size={24} className="text-gray-400" />
+                      </div>
+
+                      {/* Previews da Galeria (Existentes + Novos) */}
+                      {formData.galleryPreviews?.map((item, idx) => (
+                        <div key={idx} className="aspect-square rounded-lg bg-gray-100 relative overflow-hidden group border border-gray-200">
+                          {item.type === 'video' ? (
+                            <video src={item.url} className="w-full h-full object-cover" muted />
+                          ) : (
+                            <img src={item.url} className="w-full h-full object-cover" />
+                          )}
+
+                          <button
+                            onClick={() => handleRemoveGalleryItem(idx)}
+                            type="button"
+                            className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                          >
+                            <X size={12} />
+                          </button>
+                          {item.type === 'video' && <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[8px] px-1 rounded">VIDEO</span>}
+                          {item.type === 'gif' && <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[8px] px-1 rounded">GIF</span>}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-gray-400">Máx: 1 Vídeo OU 1 GIF. Múltiplas imagens permitidas.</p>
                   </div>
 
                   <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-2">

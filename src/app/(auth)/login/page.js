@@ -4,12 +4,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { 
-  Eye, 
-  EyeOff, 
-  Loader2, 
-  ChefHat, 
-  UtensilsCrossed, 
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  ChefHat,
+  UtensilsCrossed,
   Server
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,7 +18,7 @@ import api from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -75,7 +75,7 @@ export default function LoginPage() {
       */}
       <motion.div
         className="absolute inset-0 z-[60] bg-[#E01928]"
-        initial={{ y: "0%" }} 
+        initial={{ y: "0%" }}
         animate={{ y: "-100%" }}
         transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }}
       />
@@ -94,9 +94,9 @@ export default function LoginPage() {
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.3, type: "spring", stiffness: 120 }}
-              className="bg-white p-6 rounded-full text-[#df0024] mb-6 shadow-2xl"
+              className="bg-black p-6 rounded-full text-[#df0024] mb-6 shadow-2xl"
             >
-              <ChefHat size={64} strokeWidth={1.5} />
+              <Image src="/logocerta1.png" width={80} height={80} alt="OrdenGo" className="object-contain" />
             </motion.div>
 
             <motion.h2
@@ -123,23 +123,23 @@ export default function LoginPage() {
                   key={i}
                   initial={{ opacity: 0.2, y: 0 }}
                   animate={{ opacity: 1, y: -10 }}
-                  transition={{ 
-                    duration: 0.6, 
-                    repeat: Infinity, 
-                    repeatType: "reverse", 
-                    delay: i * 0.2 
+                  transition={{
+                    duration: 0.6,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    delay: i * 0.2
                   }}
                   className="w-3 h-3 bg-white rounded-full"
                 />
               ))}
             </div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.1 }}
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
-               <UtensilsCrossed size={400} />
+              <UtensilsCrossed size={400} />
             </motion.div>
           </motion.div>
         )}
@@ -168,18 +168,18 @@ export default function LoginPage() {
                 />
 
                 <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-2xl relative overflow-hidden">
-                   <motion.div
-                     initial={{ y: 50, opacity: 0 }}
-                     animate={{ y: 0, opacity: 1 }}
-                     transition={{ delay: 0.2 }}
-                   >
-                     <Server size={48} className="text-white relative z-10" />
-                   </motion.div>
-                   <motion.div 
-                     animate={{ top: ['-100%', '200%'] }}
-                     transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                     className="absolute left-0 right-0 h-10 bg-gradient-to-b from-transparent via-[#df0024]/20 to-transparent w-full z-0"
-                   />
+                  <motion.div
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <Image src="/logocerta1.png" width={64} height={64} alt="OrdenGo" className="relative z-10 object-contain" />
+                  </motion.div>
+                  <motion.div
+                    animate={{ top: ['-100%', '200%'] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="absolute left-0 right-0 h-10 bg-gradient-to-b from-transparent via-[#df0024]/20 to-transparent w-full z-0"
+                  />
                 </div>
               </div>
 
@@ -192,13 +192,13 @@ export default function LoginPage() {
                 Acesso <span className="text-[#df0024]">Admin</span> Permitido
               </motion.h2>
 
-              <motion.div 
+              <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: 200 }}
                 transition={{ delay: 0.8, duration: 1.5 }}
                 className="h-1 bg-gray-800 rounded-full mt-6 overflow-hidden"
               >
-                <motion.div 
+                <motion.div
                   className="h-full bg-[#df0024]"
                   initial={{ width: 0 }}
                   animate={{ width: "100%" }}
@@ -220,7 +220,7 @@ export default function LoginPage() {
       </AnimatePresence>
 
       {/* LADO ESQUERDO (IMAGEM) */}
-      <motion.div 
+      <motion.div
         className="hidden lg:flex w-1/2 bg-[#1f1c1d] items-center justify-center relative overflow-hidden"
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
@@ -229,16 +229,16 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1470&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
 
         <div className="relative z-10 p-12 text-white">
-          
+
           {/* Logo e Título */}
-          <motion.div 
+          <motion.div
             className="flex items-center gap-3 mb-6"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
             <div className="flex-shrink-0">
-              <Image 
+              <Image
                 src="/logocerta1.png"
                 width={110}
                 height={110}
@@ -248,27 +248,27 @@ export default function LoginPage() {
             </div>
           </motion.div>
 
-          <motion.p 
+          <motion.p
             className="text-xl text-gray-300 max-w-lg"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-            A plataforma completa para gestão inteligente de restaurantes, 
+            A plataforma completa para gestão inteligente de restaurantes,
             cardápios digitais e pedidos em tempo real.
           </motion.p>
         </div>
       </motion.div>
 
       {/* LADO DIREITO (FORMULÁRIO) */}
-      <motion.div 
+      <motion.div
         className="flex-1 flex items-center justify-center p-8 bg-gray-50"
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.8, ease: "easeOut" }} // Entra ligeiramente depois da esquerda
       >
         <div className="w-full max-w-md space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
-          
+
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900">Bem-vindo de volta</h2>
             <p className="mt-2 text-sm text-gray-600">
@@ -284,7 +284,7 @@ export default function LoginPage() {
 
           <form className="mt-8 space-y-6" onSubmit={handleLogin}>
             <div className="space-y-5">
-              
+
               {/* Email */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -341,7 +341,7 @@ export default function LoginPage() {
               </motion.div>
             </div>
 
-            <motion.div 
+            <motion.div
               className="flex items-center justify-between"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -385,14 +385,14 @@ export default function LoginPage() {
             </motion.div>
           </form>
 
-          <motion.div 
+          <motion.div
             className="mt-6 text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
           >
             <p className="text-xs text-gray-500">
-              Acesso restrito a equipe autorizada. <br/>
+              Acesso restrito a equipe autorizada. <br />
               Garçons devem usar o login via PIN no tablet.
             </p>
           </motion.div>

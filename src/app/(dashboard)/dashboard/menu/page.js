@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ManagerLayout from '../../../../components/ManagerLayout.js/ManagerLayout';
+import { useRestaurant } from '../../../../context/RestaurantContext';
 import {
   Plus,
   Search,
@@ -19,6 +20,9 @@ import {
   Trash2
 } from 'lucide-react';
 import api from '@/lib/api';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
+import { SortableItem } from '../../../../components/menu/SortableItem';
 
 // Componentes Internos
 import ProductForm from '../../../../components/menu/ProductForm';
@@ -30,6 +34,7 @@ import FirstProductModal from '../../../../components/Onboarding/FirstProductMod
 const BASE_IMG_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
 
 export default function MenuPage() {
+  const { currency } = useRestaurant();
   const [fullMenu, setFullMenu] = useState([]);
   const [modifierGroups, setModifierGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -198,6 +203,61 @@ export default function MenuPage() {
     if (shouldRefresh) fetchData();
   };
 
+  // --- DRAG AND DROP ---
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEndCategory = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      setFullMenu((items) => {
+        const oldIndex = items.findIndex((i) => i.id === active.id);
+        const newIndex = items.findIndex((i) => i.id === over.id);
+        const newOrder = arrayMove(items, oldIndex, newIndex);
+
+        // API Call
+        const orderedIds = newOrder.map(i => i.id);
+        api.patch('/menu/categories/reorder', { orderedIds }).catch(err => console.error(err));
+
+        return newOrder;
+      });
+    }
+  };
+
+  const handleDragEndProduct = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id && selectedCategoryId) {
+      const newMenu = JSON.parse(JSON.stringify(fullMenu)); // Deep copy
+
+      const findAndReorder = (cats) => {
+        for (let cat of cats) {
+          if (cat.id === selectedCategoryId) {
+            if (!cat.Products) return false;
+            const oldIndex = cat.Products.findIndex(p => p.id === active.id);
+            const newIndex = cat.Products.findIndex(p => p.id === over.id);
+            if (oldIndex !== -1 && newIndex !== -1) {
+              cat.Products = arrayMove(cat.Products, oldIndex, newIndex);
+              // API Call
+              const orderedIds = cat.Products.map(p => p.id);
+              api.patch('/menu/products/reorder', { orderedIds }).catch(err => console.error(err));
+              return true;
+            }
+          }
+          if (cat.subcategories && findAndReorder(cat.subcategories)) return true;
+        }
+        return false;
+      };
+
+      if (findAndReorder(newMenu)) {
+        setFullMenu(newMenu);
+      }
+    }
+  };
+
   return (
     <ManagerLayout>
       <div className="flex h-[calc(100vh-100px)] gap-6 relative">
@@ -225,51 +285,57 @@ export default function MenuPage() {
               📦 Todos os Produtos
             </button>
 
-            <div className="pt-2 space-y-1">
-              {fullMenu.map(cat => (
-                <div key={cat.id} className="rounded-xl border border-gray-100 bg-white overflow-hidden mb-2 shadow-sm">
-                  <div
-                    className={`group flex items-center justify-between px-3 py-3 cursor-pointer transition-colors ${selectedCategoryId === cat.id ? 'bg-red-50' : 'hover:bg-gray-50'}`}
-                    onClick={() => setSelectedCategoryId(cat.id)}
-                  >
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      {selectedCategoryId === cat.id ? <FolderOpen size={18} className="text-[#df0024]" /> : <Folder size={18} className="text-gray-400" />}
-                      <span className={`font-bold text-sm truncate ${selectedCategoryId === cat.id ? 'text-[#df0024]' : 'text-gray-700'}`}>
-                        {getText(cat.name)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button onClick={(e) => handleAddSubcategory(cat, e)} className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"><PlusCircle size={16} /></button>
-                      <button onClick={(e) => { e.stopPropagation(); handleOpenModal('category', cat); }} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"><Edit size={14} /></button>
-                      <button onClick={(e) => handleDeleteCategory(cat.id, e)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"><Trash2 size={14} /></button>
-                    </div>
-                  </div>
-
-                  {cat.subcategories?.length > 0 && (
-                    <div className="bg-gray-50/50 border-t border-gray-100 pb-2">
-                      {cat.subcategories.map(sub => (
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndCategory}>
+              <SortableContext items={fullMenu.map(c => c.id)} strategy={verticalListSortingStrategy}>
+                <div className="pt-2 space-y-1">
+                  {fullMenu.map(cat => (
+                    <SortableItem key={cat.id} id={cat.id}>
+                      <div className="rounded-xl border border-gray-100 bg-white overflow-hidden mb-2 shadow-sm">
                         <div
-                          key={sub.id}
-                          className={`group/sub flex items-center justify-between pl-8 pr-3 py-2 cursor-pointer transition-colors border-l-2 ${selectedCategoryId === sub.id ? 'border-[#df0024] bg-red-50/50' : 'border-transparent hover:bg-gray-100'}`}
-                          onClick={() => setSelectedCategoryId(sub.id)}
+                          className={`group flex items-center justify-between px-3 py-3 cursor-pointer transition-colors ${selectedCategoryId === cat.id ? 'bg-red-50' : 'hover:bg-gray-50'}`}
+                          onClick={() => setSelectedCategoryId(cat.id)}
                         >
-                          <div className="flex items-center gap-2 text-xs">
-                            <CornerDownRight size={12} className="opacity-30" />
-                            <span className={`font-medium truncate max-w-[100px] ${selectedCategoryId === sub.id ? 'text-[#df0024]' : 'text-gray-600'}`}>
-                              {getText(sub.name)}
+                          <div className="flex items-center gap-3 overflow-hidden">
+                            {selectedCategoryId === cat.id ? <FolderOpen size={18} className="text-[#df0024]" /> : <Folder size={18} className="text-gray-400" />}
+                            <span className={`font-bold text-sm truncate ${selectedCategoryId === cat.id ? 'text-[#df0024]' : 'text-gray-700'}`}>
+                              {getText(cat.name)}
                             </span>
                           </div>
-                          <div className="flex items-center opacity-0 group-hover/sub:opacity-100 transition-opacity">
-                            <button onClick={(e) => { e.stopPropagation(); handleOpenModal('category', sub); }} className="p-1 text-gray-400 hover:text-blue-600 rounded"><Edit size={12} /></button>
-                            <button onClick={(e) => handleDeleteCategory(sub.id, e)} className="p-1 text-gray-400 hover:text-red-600 rounded"><Trash2 size={12} /></button>
+                          <div className="flex items-center gap-1">
+                            <button onClick={(e) => handleAddSubcategory(cat, e)} className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"><PlusCircle size={16} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); handleOpenModal('category', cat); }} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"><Edit size={14} /></button>
+                            <button onClick={(e) => handleDeleteCategory(cat.id, e)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"><Trash2 size={14} /></button>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+
+                        {cat.subcategories?.length > 0 && (
+                          <div className="bg-gray-50/50 border-t border-gray-100 pb-2">
+                            {cat.subcategories.map(sub => (
+                              <div
+                                key={sub.id}
+                                className={`group/sub flex items-center justify-between pl-8 pr-3 py-2 cursor-pointer transition-colors border-l-2 ${selectedCategoryId === sub.id ? 'border-[#df0024] bg-red-50/50' : 'border-transparent hover:bg-gray-100'}`}
+                                onClick={() => setSelectedCategoryId(sub.id)}
+                              >
+                                <div className="flex items-center gap-2 text-xs">
+                                  <CornerDownRight size={12} className="opacity-30" />
+                                  <span className={`font-medium truncate max-w-[100px] ${selectedCategoryId === sub.id ? 'text-[#df0024]' : 'text-gray-600'}`}>
+                                    {getText(sub.name)}
+                                  </span>
+                                </div>
+                                <div className="flex items-center opacity-0 group-hover/sub:opacity-100 transition-opacity">
+                                  <button onClick={(e) => { e.stopPropagation(); handleOpenModal('category', sub); }} className="p-1 text-gray-400 hover:text-blue-600 rounded"><Edit size={12} /></button>
+                                  <button onClick={(e) => handleDeleteCategory(sub.id, e)} className="p-1 text-gray-400 hover:text-red-600 rounded"><Trash2 size={12} /></button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </SortableItem>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </SortableContext>
+            </DndContext>
           </div>
 
           <div className="p-3 border-t border-gray-100 bg-gray-50">
@@ -295,51 +361,57 @@ export default function MenuPage() {
             <div className="flex-1 flex items-center justify-center"><Loader2 className="animate-spin text-[#df0024]" size={40} /></div>
           ) : (
             <div className="flex-1 overflow-y-auto pr-2 pb-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                {getAllProducts().map(product => (
-                  <div key={product.id} className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg hover:border-red-100 transition-all duration-300 flex flex-col overflow-hidden">
-                    <div className="relative h-48 bg-gray-100 overflow-hidden">
-                      {product.imageUrl ? (
-                        <img src={`${BASE_IMG_URL}${product.imageUrl}`} alt={getText(product.name)} className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${!product.isAvailable ? 'grayscale' : ''}`} />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50"><ImageIcon size={32} /></div>
-                      )}
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndProduct}>
+                <SortableContext items={getAllProducts().map(p => p.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                    {getAllProducts().map(product => (
+                      <SortableItem key={product.id} id={product.id} className="h-full">
+                        <div className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg hover:border-red-100 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                          <div className="relative h-48 bg-gray-100 overflow-hidden">
+                            {product.imageUrl ? (
+                              <img src={`${BASE_IMG_URL}${product.imageUrl}`} alt={getText(product.name)} className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${!product.isAvailable ? 'grayscale' : ''}`} />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50"><ImageIcon size={32} /></div>
+                            )}
 
-                      {/* Flags de Status */}
-                      <div className="absolute top-2 left-2 flex flex-col gap-1">
-                        {product.isOffer && <span className="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><Tag size={10} /> OFERTA</span>}
-                        {product.isHighlight && <span className="bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><Star size={10} /> DESTAQUE</span>}
-                      </div>
+                            {/* Flags de Status */}
+                            <div className="absolute top-2 left-2 flex flex-col gap-1">
+                              {product.isOffer && <span className="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><Tag size={10} /> OFERTA</span>}
+                              {product.isHighlight && <span className="bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><Star size={10} /> DESTAQUE</span>}
+                            </div>
 
-                      <button onClick={(e) => { e.stopPropagation(); toggleProductAvailability(product.id); }} className={`absolute top-2 right-2 p-1.5 rounded-lg backdrop-blur-md transition-colors ${product.isAvailable ? 'bg-white/90 text-green-600 hover:bg-red-50 hover:text-red-600' : 'bg-red-600 text-white'}`} title="Pausar/Ativar">
-                        <Power size={16} />
-                      </button>
+                            <button onClick={(e) => { e.stopPropagation(); toggleProductAvailability(product.id); }} className={`absolute top-2 right-2 p-1.5 rounded-lg backdrop-blur-md transition-colors z-10 ${product.isAvailable ? 'bg-white/90 text-green-600 hover:bg-red-50 hover:text-red-600' : 'bg-red-600 text-white'}`} title="Pausar/Ativar">
+                              <Power size={16} />
+                            </button>
 
-                      {!product.isAvailable && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-[1px]"><span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">ESGOTADO</span></div>
-                      )}
-                    </div>
+                            {!product.isAvailable && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-[1px]"><span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">ESGOTADO</span></div>
+                            )}
+                          </div>
 
-                    <div className="p-4 flex-1 flex flex-col">
-                      <div className="mb-2">
-                        <h4 className="font-bold text-gray-900 text-lg line-clamp-1 leading-tight">{getText(product.name)}</h4>
-                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-1">{product.categoryName}</p>
-                      </div>
-                      <p className="text-xs text-gray-500 line-clamp-2 mb-4 h-8 leading-relaxed">{getText(product.description) || 'Sem descrição'}</p>
-                      <div className="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between">
-                        <div className="flex flex-col">
-                          {product.hasVariants && <span className="text-[10px] text-gray-400 font-medium">A partir de</span>}
-                          <span className="text-xl font-extrabold text-[#df0024]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}</span>
+                          <div className="p-4 flex-1 flex flex-col">
+                            <div className="mb-2">
+                              <h4 className="font-bold text-gray-900 text-lg line-clamp-1 leading-tight">{getText(product.name)}</h4>
+                              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-1">{product.categoryName}</p>
+                            </div>
+                            <p className="text-xs text-gray-500 line-clamp-2 mb-4 h-8 leading-relaxed">{getText(product.description) || 'Sem descrição'}</p>
+                            <div className="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between">
+                              <div className="flex flex-col">
+                                {product.hasVariants && <span className="text-[10px] text-gray-400 font-medium">A partir de</span>}
+                                <span className="text-xl font-extrabold text-[#df0024]">{new Intl.NumberFormat(currency === 'BRL' ? 'pt-BR' : 'es-ES', { style: 'currency', currency: currency || 'EUR' }).format(product.price)}</span>
+                              </div>
+                              <div className="flex gap-1">
+                                <button onClick={() => handleOpenModal('product', product)} className="p-2 bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"><Edit size={18} /></button>
+                                <button onClick={(e) => handleDeleteProduct(product.id, e)} className="p-2 bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"><Trash2 size={18} /></button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex gap-1">
-                          <button onClick={() => handleOpenModal('product', product)} className="p-2 bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"><Edit size={18} /></button>
-                          <button onClick={(e) => handleDeleteProduct(product.id, e)} className="p-2 bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"><Trash2 size={18} /></button>
-                        </div>
-                      </div>
-                    </div>
+                      </SortableItem>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
             </div>
           )}
         </div>
