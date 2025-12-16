@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRestaurant } from '@/context/RestaurantContext';
 import { Plus, Trash2, MonitorPlay } from 'lucide-react';
 import Image from 'next/image';
-import api from '@/services/api';
+import api from '@/lib/api';
 
 export default function MarketingPage() {
   const { restaurant } = useRestaurant();
