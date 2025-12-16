@@ -15,7 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import {
     Loader2, FileText, StickyNote, ArrowLeft, Upload, Trash2, Plus, Download,
-    Building2, MapPin, CreditCard, User, Calendar, Edit2, CheckCircle, DollarSign
+    Building2, MapPin, CreditCard, User, Calendar, Edit2, CheckCircle, DollarSign,
+    MonitorPlay
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -158,8 +159,8 @@ export default function TenantDetailsPage() {
     if (!tenant) return (
         <AdminLayout>
             <div className="p-8 text-center">
-                <h2 className="text-xl font-bold">Restaurante não encontrado</h2>
-                <Button onClick={() => router.push('/admin/tenants')} className="mt-4">Voltar</Button>
+                <h2 className="text-xl font-bold">Restaurante no encontrado</h2>
+                <Button onClick={() => router.push('/admin/tenants')} className="mt-4">Volver</Button>
             </div>
         </AdminLayout>
     );
@@ -190,20 +191,20 @@ export default function TenantDetailsPage() {
 
                 <Tabs defaultValue="overview" className="w-full">
                     <TabsList className="grid w-full grid-cols-4 lg:w-[400px]">
-                        <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+                        <TabsTrigger value="overview">Visión General</TabsTrigger>
                         <TabsTrigger value="documents">Documentos</TabsTrigger>
-                        <TabsTrigger value="notes">Anotações</TabsTrigger>
-                        <TabsTrigger value="settings">Configurações</TabsTrigger>
+                        <TabsTrigger value="notes">Notas</TabsTrigger>
+                        <TabsTrigger value="settings">Configuración</TabsTrigger>
                     </TabsList>
 
                     {/* OVERVIEW */}
                     <TabsContent value="overview" className="space-y-4 mt-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Card>
-                                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Building2 size={18} /> Dados da Empresa</CardTitle></CardHeader>
+                                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Building2 size={18} /> Datos de la Empresa</CardTitle></CardHeader>
                                 <CardContent className="space-y-2 text-sm">
                                     <div className="flex justify-between border-b pb-2">
-                                        <span className="text-gray-500">Razão Social</span>
+                                        <span className="text-gray-500">Razón Social</span>
                                         <span className="font-medium">{tenant.name}</span>
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
@@ -211,21 +212,21 @@ export default function TenantDetailsPage() {
                                         <span className="font-medium">{tenant.taxId || '-'}</span>
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
-                                        <span className="text-gray-500">Endereço</span>
+                                        <span className="text-gray-500">Dirección</span>
                                         <span className="font-medium text-right max-w-[200px]">{tenant.billingAddress || '-'}</span>
                                     </div>
                                     <div className="flex justify-between pt-2">
-                                        <span className="text-gray-500">Data de Início</span>
+                                        <span className="text-gray-500">Fecha de Inicio</span>
                                         <span className="font-medium">{tenant.contractStartDate ? format(new Date(tenant.contractStartDate), 'dd/MM/yyyy') : '-'}</span>
                                     </div>
                                 </CardContent>
                             </Card>
 
                             <Card>
-                                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><User size={18} /> Contato Principal</CardTitle></CardHeader>
+                                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><User size={18} /> Contacto Principal</CardTitle></CardHeader>
                                 <CardContent className="space-y-2 text-sm">
                                     <div className="flex justify-between border-b pb-2">
-                                        <span className="text-gray-500">Nome</span>
+                                        <span className="text-gray-500">Nombre</span>
                                         <span className="font-medium">{tenant.contactPerson || '-'}</span>
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
@@ -242,22 +243,22 @@ export default function TenantDetailsPage() {
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between">
                                 <div>
-                                    <CardTitle>Documentos & Arquivos</CardTitle>
-                                    <CardDescription>Contratos, faturas e outros arquivos.</CardDescription>
+                                    <CardTitle>Documentos y Archivos</CardTitle>
+                                    <CardDescription>Contratos, facturas y otros archivos.</CardDescription>
                                 </div>
                                 <div className="relative">
                                     <input type="file" id="doc-upload" className="hidden" onChange={handleUpload} disabled={uploading} />
                                     <Button asChild disabled={uploading}>
                                         <label htmlFor="doc-upload" className="cursor-pointer flex items-center gap-2">
                                             {uploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
-                                            Upload
+                                            Subir
                                         </label>
                                     </Button>
                                 </div>
                             </CardHeader>
                             <CardContent>
                                 {documents.length === 0 ? (
-                                    <div className="text-center py-10 text-gray-400">Nenhum documento encontrado.</div>
+                                    <div className="text-center py-10 text-gray-400">Ningún documento encontrado.</div>
                                 ) : (
                                     <div className="space-y-4">
                                         {documents.map(doc => (
@@ -369,33 +370,65 @@ export default function TenantDetailsPage() {
                         </div>
                     </TabsContent>
 
-                    {/* SETTINGS (Placeholder) */}
+                    {/* SETTINGS */}
                     <TabsContent value="settings" className="mt-4">
                         <Card>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2"><MonitorPlay size={20} /> Configuração de Screensaver</CardTitle>
-                                    <CardDescription>Defina a proporção de publicidade global vs local.</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <Label>Admin Batch Size</Label>
-                                            <Input type="number" placeholder="Ex: 3" defaultValue={3} />
-                                            <p className="text-xs text-gray-500">Quantos banners globais aparecem consecutivamente.</p>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Client Batch Size</Label>
-                                            <Input type="number" placeholder="Ex: 1" defaultValue={1} />
-                                            <p className="text-xs text-gray-500">Quantos banners do cliente aparecem após os globais.</p>
-                                        </div>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><MonitorPlay size={20} /> Configuración de Screensaver</CardTitle>
+                                <CardDescription>Defina la proporción de publicidad global vs local y tiempo de inactividad.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="space-y-2">
+                                        <Label>Admin Batch Size</Label>
+                                        <Input
+                                            type="number"
+                                            value={tenant.config?.screensaverAdminBatchSize || 3}
+                                            onChange={e => setTenant({ ...tenant, config: { ...tenant.config, screensaverAdminBatchSize: parseInt(e.target.value) } })}
+                                        />
+                                        <p className="text-xs text-gray-500">Cuántos banners globales aparecen consecutivamente.</p>
                                     </div>
-                                    <Button className="bg-[#df0024] hover:bg-red-700">Salvar Configurações</Button>
-                                </CardContent>
-                            </Card>
+                                    <div className="space-y-2">
+                                        <Label>Client Batch Size</Label>
+                                        <Input
+                                            type="number"
+                                            value={tenant.config?.screensaverClientBatchSize || 1}
+                                            onChange={e => setTenant({ ...tenant, config: { ...tenant.config, screensaverClientBatchSize: parseInt(e.target.value) } })}
+                                        />
+                                        <p className="text-xs text-gray-500">Cuántos banners del cliente aparecen después de los globales.</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Tiempo Inactividad (Segundos)</Label>
+                                        <Input
+                                            type="number"
+                                            value={tenant.config?.screensaverIdleTime || 120}
+                                            onChange={e => setTenant({ ...tenant, config: { ...tenant.config, screensaverIdleTime: parseInt(e.target.value) } })}
+                                        />
+                                        <p className="text-xs text-gray-500">Tiempo sin interacción para iniciar el screensaver.</p>
+                                    </div>
+                                </div>
+                                <Button
+                                    className="bg-[#df0024] hover:bg-red-700"
+                                    onClick={async () => {
+                                        try {
+                                            await api.put(`/admin/tenants/${id}`, {
+                                                config: {
+                                                    screensaverAdminBatchSize: tenant.config?.screensaverAdminBatchSize,
+                                                    screensaverClientBatchSize: tenant.config?.screensaverClientBatchSize,
+                                                    screensaverIdleTime: tenant.config?.screensaverIdleTime
+                                                }
+                                            });
+                                            alert('¡Configuraciones guardadas con éxito!');
+                                        } catch (error) {
+                                            alert('Error al guardar configuraciones.');
+                                        }
+                                    }}
+                                >
+                                    Guardar Configuraciones
+                                </Button>
+                            </CardContent>
                         </Card>
                     </TabsContent>
-
                 </Tabs>
 
                 {/* EDIT DOCUMENT MODAL */}

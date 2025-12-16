@@ -41,7 +41,8 @@ export default function TenantsPage() {
     restaurantName: '', slug: '', taxId: '',
     contactPerson: '', timezone: 'Europe/Madrid', country: 'ES', currency: 'EUR',
     planId: '', regionId: '',
-    managerName: '', managerEmail: '', managerPassword: ''
+    managerName: '', managerEmail: '', managerPassword: '',
+    screensaverAdminBatchSize: 3, screensaverClientBatchSize: 1, screensaverIdleTime: 120
   };
   const [formData, setFormData] = useState(initialForm);
 
@@ -97,7 +98,10 @@ export default function TenantsPage() {
       regionId: tenant.regionId || '',
       managerName: tenant.Users?.[0]?.name || '',
       managerEmail: tenant.Users?.[0]?.email || '',
-      managerPassword: ''
+      managerPassword: '',
+      screensaverAdminBatchSize: tenant.config?.screensaverAdminBatchSize || 3,
+      screensaverClientBatchSize: tenant.config?.screensaverClientBatchSize || 1,
+      screensaverIdleTime: tenant.config?.screensaverIdleTime || 120
     });
     setIsEditOpen(true);
   };
@@ -199,11 +203,11 @@ export default function TenantsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Restaurantes (Tenants)</h1>
-            <p className="text-gray-500">Gestão completa de clientes, contratos e acesso.</p>
+            <h1 className="text-3xl font-bold text-gray-900">Restaurantes</h1>
+            <p className="text-gray-500">Gestión completa de clientes, contratos y acceso.</p>
           </div>
           <Button onClick={() => setIsCreateOpen(true)} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-md shadow-red-100">
-            <Plus size={18} /> Novo Cliente
+            <Plus size={18} /> Nuevo Cliente
           </Button>
         </div>
 
@@ -211,7 +215,7 @@ export default function TenantsPage() {
         <div className="flex items-center bg-white p-2 rounded-xl border shadow-sm max-w-md">
           <Search className="text-gray-400 ml-2" size={20} />
           <Input
-            placeholder="Buscar por nome, slug ou email..."
+            placeholder="Buscar por nombre, slug o email..."
             className="border-none shadow-none focus-visible:ring-0"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
@@ -227,10 +231,10 @@ export default function TenantsPage() {
               <TableHeader>
                 <TableRow className="bg-gray-50">
                   <TableHead>Restaurante</TableHead>
-                  <TableHead>Plano & Região</TableHead>
-                  <TableHead>Contato (Gerente)</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                  <TableHead>Plan y Región</TableHead>
+                  <TableHead>Contacto (Gerente)</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -255,7 +259,7 @@ export default function TenantsPage() {
                     <TableCell>
                       <div className="space-y-1">
                         <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 flex w-fit items-center gap-1">
-                          <CreditCard size={10} /> {tenant.Plan?.name || 'Sem Plano'}
+                          <CreditCard size={10} /> {tenant.Plan?.name || 'Sin Plan'}
                         </Badge>
                         <div className="flex items-center gap-1 text-xs text-gray-500">
                           <MapPin size={10} /> {tenant.Region?.name || 'Global'}
@@ -274,7 +278,7 @@ export default function TenantsPage() {
 
                     <TableCell>
                       {tenant.isActive ? (
-                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200">Ativo</Badge>
+                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200">Activo</Badge>
                       ) : (
                         <Badge variant="destructive">Bloqueado</Badge>
                       )}
@@ -297,9 +301,9 @@ export default function TenantsPage() {
                           variant="outline"
                           className="h-8 gap-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-[#df0024] hover:border-[#df0024]"
                           onClick={() => handleImpersonate(tenant.id, tenant.name)}
-                          title="Logar como Gerente"
+                          title="Acceder como Gerente"
                         >
-                          <LogIn size={14} /> <span className="hidden md:inline">Acessar</span>
+                          <LogIn size={14} /> <span className="hidden md:inline">Acceder</span>
                         </Button>
 
                         <DropdownMenu>
@@ -308,16 +312,16 @@ export default function TenantsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => router.push(`/admin/tenants/${tenant.id}`)}>
-                              <ExternalLink size={14} className="mr-2" /> Detalhes & Docs
+                              <ExternalLink size={14} className="mr-2" /> Detalles y Docs
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleEditOpen(tenant)}>
-                              <Edit size={14} className="mr-2" /> Editar Dados
+                              <Edit size={14} className="mr-2" /> Editar Datos
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleToggleStatus(tenant.id, tenant.isActive)}>
-                              {tenant.isActive ? <><XCircle size={14} className="mr-2 text-red-500" /> Bloquear</> : <><CheckCircle size={14} className="mr-2 text-green-500" /> Reativar</>}
+                              {tenant.isActive ? <><XCircle size={14} className="mr-2 text-red-500" /> Bloquear</> : <><CheckCircle size={14} className="mr-2 text-green-500" /> Reactivar</>}
                             </DropdownMenuItem>
                             <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(tenant.id)}>
-                              <Trash2 size={14} className="mr-2" /> Excluir
+                              <Trash2 size={14} className="mr-2" /> Eliminar
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -334,16 +338,16 @@ export default function TenantsPage() {
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Cadastrar Novo Restaurante</DialogTitle>
-              <DialogDescription>Preencha os dados contratuais e crie o acesso do gerente.</DialogDescription>
+              <DialogTitle>Registrar Nuevo Restaurante</DialogTitle>
+              <DialogDescription>Complete los datos contractuales y cree el acceso del gerente.</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-6 mt-2">
               {/* Form Fields (Simplified for brevity, but keeping structure) */}
               <div className="space-y-4 border p-4 rounded-lg bg-gray-50/50">
-                <h4 className="text-xs font-bold uppercase text-gray-500 flex items-center gap-2"><Store size={14} /> Dados do Estabelecimento</h4>
+                <h4 className="text-xs font-bold uppercase text-gray-500 flex items-center gap-2"><Store size={14} /> Datos del Establecimiento</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-medium">Nome Fantasia</label>
+                    <label className="text-xs font-medium">Nombre Comercial</label>
                     <Input placeholder="Pizzaria do Luigi" value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
                   </div>
                   <div className="space-y-1">
@@ -375,28 +379,28 @@ export default function TenantsPage() {
               </div>
 
               <div className="space-y-4 border p-4 rounded-lg bg-blue-50/30">
-                <h4 className="text-xs font-bold uppercase text-blue-600 flex items-center gap-2"><CreditCard size={14} /> Plano & Contrato</h4>
+                <h4 className="text-xs font-bold uppercase text-blue-600 flex items-center gap-2"><CreditCard size={14} /> Plan y Contrato</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-medium">Plano (Tier)</label>
+                    <label className="text-xs font-medium">Plan (Nivel)</label>
                     <Select value={formData.planId} onValueChange={v => setFormData({ ...formData, planId: v })} required>
-                      <SelectTrigger className="bg-white"><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                      <SelectTrigger className="bg-white"><SelectValue placeholder="Seleccione..." /></SelectTrigger>
                       <SelectContent>
                         {plans.map(p => <SelectItem key={p.id} value={p.id}>{p.name} (€ {p.priceMonthly})</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-medium">Região (Fiscal)</label>
+                    <label className="text-xs font-medium">Región (Fiscal)</label>
                     <Select value={formData.regionId} onValueChange={v => setFormData({ ...formData, regionId: v })} required>
-                      <SelectTrigger className="bg-white"><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                      <SelectTrigger className="bg-white"><SelectValue placeholder="Seleccione..." /></SelectTrigger>
                       <SelectContent>
                         {regions.map(r => <SelectItem key={r.id} value={r.id}>{r.name} ({r.country})</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-medium">Moeda</label>
+                    <label className="text-xs font-medium">Moneda</label>
                     <Select value={formData.currency} onValueChange={v => setFormData({ ...formData, currency: v })}>
                       <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -409,19 +413,37 @@ export default function TenantsPage() {
               </div>
 
               <div className="space-y-4 border p-4 rounded-lg bg-yellow-50/30">
-                <h4 className="text-xs font-bold uppercase text-yellow-700 flex items-center gap-2"><ShieldCheck size={14} /> Acesso do Gerente</h4>
+                <h4 className="text-xs font-bold uppercase text-yellow-700 flex items-center gap-2"><ShieldCheck size={14} /> Acceso del Gerente</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1 md:col-span-2">
-                    <label className="text-xs font-medium">Nome Completo</label>
-                    <Input className="bg-white" placeholder="Gerente Responsável" value={formData.managerName} onChange={e => setFormData({ ...formData, managerName: e.target.value })} required />
+                    <label className="text-xs font-medium">Nombre Completo</label>
+                    <Input className="bg-white" placeholder="Gerente Responsable" value={formData.managerName} onChange={e => setFormData({ ...formData, managerName: e.target.value })} required />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-medium">Email de Login</label>
                     <Input className="bg-white" type="email" placeholder="gerente@restaurante.com" value={formData.managerEmail} onChange={e => setFormData({ ...formData, managerEmail: e.target.value })} required />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-medium">Senha Inicial</label>
+                    <label className="text-xs font-medium">Contraseña Inicial</label>
                     <Input className="bg-white" type="password" placeholder="••••••" value={formData.managerPassword} onChange={e => setFormData({ ...formData, managerPassword: e.target.value })} required />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4 border p-4 rounded-lg bg-purple-50/30">
+                <h4 className="text-xs font-bold uppercase text-purple-700 flex items-center gap-2"><CreditCard size={14} /> Configuración de Screensaver</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">Admin Batch</label>
+                    <Input type="number" placeholder="3" value={formData.screensaverAdminBatchSize || 3} onChange={e => setFormData({ ...formData, screensaverAdminBatchSize: e.target.value })} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">Client Batch</label>
+                    <Input type="number" placeholder="1" value={formData.screensaverClientBatchSize || 1} onChange={e => setFormData({ ...formData, screensaverClientBatchSize: e.target.value })} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">Tiempo Inactividad (s)</label>
+                    <Input type="number" placeholder="120" value={formData.screensaverIdleTime || 120} onChange={e => setFormData({ ...formData, screensaverIdleTime: e.target.value })} />
                   </div>
                 </div>
               </div>
@@ -429,7 +451,7 @@ export default function TenantsPage() {
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>Cancelar</Button>
                 <Button type="submit" className="bg-[#df0024] hover:bg-red-700" disabled={submitting}>
-                  {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />} Criar Restaurante
+                  {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />} Crear Restaurante
                 </Button>
               </DialogFooter>
             </form>
@@ -471,6 +493,24 @@ export default function TenantsPage() {
                         <SelectItem value="Europe/Paris">Paris (FR)</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4 border p-4 rounded-lg bg-purple-50/30">
+                <h4 className="text-xs font-bold uppercase text-purple-700 flex items-center gap-2"><CreditCard size={14} /> Configuração de Screensaver</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">Admin Batch</label>
+                    <Input type="number" placeholder="3" value={formData.screensaverAdminBatchSize || 3} onChange={e => setFormData({ ...formData, screensaverAdminBatchSize: e.target.value })} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">Client Batch</label>
+                    <Input type="number" placeholder="1" value={formData.screensaverClientBatchSize || 1} onChange={e => setFormData({ ...formData, screensaverClientBatchSize: e.target.value })} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">Idle Time (s)</label>
+                    <Input type="number" placeholder="120" value={formData.screensaverIdleTime || 120} onChange={e => setFormData({ ...formData, screensaverIdleTime: e.target.value })} />
                   </div>
                 </div>
               </div>
