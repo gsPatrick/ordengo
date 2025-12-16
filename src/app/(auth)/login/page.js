@@ -59,7 +59,7 @@ export default function LoginPage() {
 
     } catch (err) {
       console.error(err);
-      const msg = err.response?.data?.message || 'Falha ao conectar com o servidor.';
+      const msg = err.response?.data?.message || 'Error al conectar con el servidor.';
       setError(msg);
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export default function LoginPage() {
               transition={{ delay: 0.5 }}
               className="text-3xl font-bold mb-2 tracking-tight"
             >
-              Bem-vindo ao OrdenGo
+              Bienvenido a OrdenGo
             </motion.h2>
 
             <motion.p
@@ -114,7 +114,7 @@ export default function LoginPage() {
               transition={{ delay: 0.7 }}
               className="text-red-100 text-lg"
             >
-              Preparando seu restaurante...
+              Preparando su restaurante...
             </motion.p>
 
             <div className="flex gap-2 mt-8">
@@ -189,7 +189,7 @@ export default function LoginPage() {
                 transition={{ delay: 0.6 }}
                 className="text-2xl font-mono font-bold mt-12 text-gray-200 tracking-widest uppercase"
               >
-                Acesso <span className="text-[#df0024]">Admin</span> Permitido
+                Acceso <span className="text-[#df0024]">Admin</span> Permitido
               </motion.h2>
 
               <motion.div
@@ -254,8 +254,8 @@ export default function LoginPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-            A plataforma completa para gestão inteligente de restaurantes,
-            cardápios digitais e pedidos em tempo real.
+            La plataforma completa para la gestión inteligente de restaurantes,
+            menús digitales y pedidos en tiempo real.
           </motion.p>
         </div>
       </motion.div>
@@ -270,9 +270,9 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
 
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900">Bem-vindo de volta</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Bienvenido de nuevo</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Entre com suas credenciais de administrador
+              Ingrese con sus credenciales de administrador
             </p>
           </div>
 
@@ -316,7 +316,7 @@ export default function LoginPage() {
                 transition={{ delay: 1.1 }}
               >
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Senha
+                  Contraseña
                 </label>
                 <div className="mt-1 relative">
                   <input
@@ -355,14 +355,14 @@ export default function LoginPage() {
                   className="h-4 w-4 text-[#df0024] focus:ring-[#df0024] border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                  Lembrar-me
+                  Recordarme
                 </label>
               </div>
 
               <div className="text-sm">
                 <a href="#" className="font-medium text-[#df0024] hover:text-red-700">
-                  Esqueceu a senha?
-                </a>
+                  ¿Olvidó la contraseña?
+                </a >
               </div>
             </motion.div>
 
@@ -379,7 +379,7 @@ export default function LoginPage() {
                 {loading && !roleAnimation ? (
                   <Loader2 className="animate-spin h-5 w-5" />
                 ) : (
-                  'Entrar no Painel'
+                  'Ingresar al Panel'
                 )}
               </button>
             </motion.div>
@@ -392,8 +392,8 @@ export default function LoginPage() {
             transition={{ delay: 1.5 }}
           >
             <p className="text-xs text-gray-500">
-              Acesso restrito a equipe autorizada. <br />
-              Garçons devem usar o login via PIN no tablet.
+              Acceso restringido al equipo autorizado. <br />
+              Los camareros deben usar el inicio de sesión mediante PIN en la tablet.
             </p>
           </motion.div>
         </div>
