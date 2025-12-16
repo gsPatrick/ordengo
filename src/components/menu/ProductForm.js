@@ -374,7 +374,7 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Preço Base (R$)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Preço Base</label>
                       <input type="number" step="0.01" className="w-full px-3 py-2 border rounded-lg" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} />
                     </div>
                     <div>
@@ -419,7 +419,7 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
                         <input className="w-full px-2 py-1 border rounded text-sm" placeholder="Ex: Grande" value={v.name[activeLang] || ''} onChange={e => handleVariantNameChange(i, e.target.value)} />
                       </div>
                       <div className="w-32">
-                        <label className="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Preço (R$)</label>
+                        <label className="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Preço</label>
                         <input type="number" className="w-full px-2 py-1 border rounded text-sm" value={v.price} onChange={e => handleVariantPriceChange(i, e.target.value)} />
                       </div>
                       <button onClick={() => handleRemoveVariant(i)} className="p-2 text-red-400 hover:text-red-600 mt-4"><Trash2 size={16} /></button>

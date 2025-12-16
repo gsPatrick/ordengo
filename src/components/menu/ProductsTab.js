@@ -405,7 +405,7 @@ export default function ProductsTab() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Preço Base (R$)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Preço Base</label>
                       <input
                         required
                         type="number"

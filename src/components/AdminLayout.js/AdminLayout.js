@@ -35,7 +35,7 @@ export default function AdminLayout({ children }) {
         setUser(JSON.parse(userData));
       } catch (e) {
         // Se o cookie estiver inválido
-        router.push('/auth/login');
+        router.push('/login');
       }
     } else {
       // Se não tiver cookie (comentar essa linha se quiser testar sem login)
@@ -46,7 +46,7 @@ export default function AdminLayout({ children }) {
   const handleLogout = () => {
     Cookies.remove('ordengo_token');
     Cookies.remove('ordengo_user');
-    router.push('/auth/login');
+    router.push('/login');
   };
 
   // Menu Completo conforme PDF + Features Implementadas
