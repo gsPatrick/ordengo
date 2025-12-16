@@ -21,9 +21,11 @@ import {
 } from 'recharts';
 import api from '@/lib/api';
 import ManagerLayout from '../../../components/ManagerLayout.js/ManagerLayout';
-import DateRangeFilter from '../../../components/DateRangeFilter'; // Componente criado anteriormente
+import DateRangeFilter from '../../../components/DateRangeFilter';
+import { useRestaurant } from '@/context/RestaurantContext';
 
 export default function DashboardPage() {
+  const { currency } = useRestaurant();
   const [stats, setStats] = useState(null);
   const [tables, setTables] = useState([]);
   const [loading, setLoading] = useState(true);
