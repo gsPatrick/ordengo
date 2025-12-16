@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  MapPin, Plus, Trash2, Globe, Search, 
-  Landmark, Info, Loader2, CheckCircle2 
+import {
+  MapPin, Plus, Trash2, Globe, Search,
+  Landmark, Info, Loader2, CheckCircle2
 } from 'lucide-react';
 import api from '@/lib/api';
 import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
@@ -34,8 +34,8 @@ export default function RegionsPage() {
   // Estados do Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [newRegion, setNewRegion] = useState({ 
-    name: '', country: 'ES', taxName: 'IVA', taxRule: '21', description: '' 
+  const [newRegion, setNewRegion] = useState({
+    id: null, name: '', country: 'ES', taxName: 'IVA', taxRule: '21', description: ''
   });
 
   // Estados de Cidades (API Externa)
@@ -97,25 +97,44 @@ export default function RegionsPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      // CORREÇÃO: Prefixo /admin adicionado
-      await api.post('/admin/regions', newRegion);
+      if (newRegion.id) {
+        // UPDATE
+        // CORREÇÃO: Prefixo /admin adicionado
+        await api.patch(`/admin/regions/${newRegion.id}`, newRegion);
+      } else {
+        // CREATE
+        // CORREÇÃO: Prefixo /admin adicionado
+        await api.post('/admin/regions', newRegion);
+      }
       setIsModalOpen(false);
-      setNewRegion({ name: '', country: 'ES', taxName: 'IVA', taxRule: '21', description: '' });
+      setNewRegion({ id: null, name: '', country: 'ES', taxName: 'IVA', taxRule: '21', description: '' });
       fetchRegions();
     } catch (error) {
-      alert('Erro ao criar região. Verifique os dados.');
+      alert('Erro ao salvar região. Verifique os dados.');
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleEdit = (reg) => {
+    setNewRegion({
+      id: reg.id,
+      name: reg.name,
+      country: reg.country,
+      taxName: reg.taxName,
+      taxRule: reg.taxRule,
+      description: reg.description || ''
+    });
+    setIsModalOpen(true);
+  };
+
   const handleDelete = async (id) => {
-    if(!confirm("Tem certeza? Restaurantes nesta região perderão a configuração fiscal.")) return;
+    if (!confirm("Tem certeza? Restaurantes nesta região perderão a configuração fiscal.")) return;
     try {
       // CORREÇÃO: Prefixo /admin adicionado
       await api.delete(`/admin/regions/${id}`);
       setRegions(prev => prev.filter(r => r.id !== id));
-    } catch(e) { alert("Erro ao deletar."); }
+    } catch (e) { alert("Erro ao deletar."); }
   };
 
   // --- HELPER COMPONENTS ---
@@ -140,14 +159,14 @@ export default function RegionsPage() {
   return (
     <AdminLayout>
       <div className="space-y-8 animate-in fade-in duration-500">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Regiões & Fiscal</h1>
             <p className="text-gray-500">Gerencie zonas de atuação, impostos locais e fusos horários.</p>
           </div>
-          <Button onClick={() => setIsModalOpen(true)} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-md shadow-red-100">
+          <Button onClick={() => { setNewRegion({ id: null, name: '', country: 'ES', taxName: 'IVA', taxRule: '21', description: '' }); setIsModalOpen(true); }} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-md shadow-red-100">
             <Plus size={18} /> Nova Zona Fiscal
           </Button>
         </div>
@@ -156,9 +175,9 @@ export default function RegionsPage() {
         {regions.length > 0 && (
           <div className="flex items-center gap-2 bg-white p-2 rounded-lg border shadow-sm max-w-md">
             <Search className="text-gray-400 ml-2" size={18} />
-            <Input 
-              placeholder="Buscar região ou país..." 
-              className="border-none shadow-none focus-visible:ring-0" 
+            <Input
+              placeholder="Buscar região ou país..."
+              className="border-none shadow-none focus-visible:ring-0"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
@@ -167,7 +186,7 @@ export default function RegionsPage() {
 
         {/* Grid de Regiões */}
         {loading ? (
-          <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]" size={32}/></div>
+          <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]" size={32} /></div>
         ) : regions.length === 0 ? (
           <EmptyState />
         ) : (
@@ -179,7 +198,7 @@ export default function RegionsPage() {
                 return (
                   <Card key={reg.id} className="hover:shadow-lg transition-all duration-300 group border-l-4 border-l-transparent hover:border-l-[#df0024]">
                     <CardContent className="p-6">
-                      
+
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex items-center gap-3">
                           <div className="text-3xl bg-gray-50 w-12 h-12 flex items-center justify-center rounded-full border border-gray-100">
@@ -212,13 +231,21 @@ export default function RegionsPage() {
 
                       <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                         <span className="text-xs text-gray-400">ID: ...{reg.id.slice(-6)}</span>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="text-gray-400 hover:text-red-600 hover:bg-red-50"
                           onClick={() => handleDelete(reg.id)}
                         >
-                          <Trash2 size={16} className="mr-1"/> Remover
+                          <Trash2 size={16} className="mr-1" /> Remover
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+                          onClick={() => handleEdit(reg)}
+                        >
+                          <Edit size={16} className="mr-1" /> Editar
                         </Button>
                       </div>
 
@@ -234,7 +261,7 @@ export default function RegionsPage() {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <MapPin className="text-[#df0024]" /> Nova Zona Fiscal
+                <MapPin className="text-[#df0024]" /> {newRegion.id ? 'Editar Zona Fiscal' : 'Nova Zona Fiscal'}
               </DialogTitle>
               <DialogDescription>
                 Defina uma região geográfica para aplicar impostos e segmentar publicidade.
@@ -242,7 +269,7 @@ export default function RegionsPage() {
             </DialogHeader>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
-              
+
               {/* Coluna Esquerda: Formulário */}
               <form id="region-form" onSubmit={handleCreate} className="space-y-4">
                 <div className="space-y-2">
@@ -263,35 +290,35 @@ export default function RegionsPage() {
 
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase text-gray-500">Nome da Região</label>
-                  <Input 
-                    placeholder="Ex: Ilhas Canárias, Bavária..." 
-                    value={newRegion.name} 
-                    onChange={e => setNewRegion({...newRegion, name: e.target.value})}
+                  <Input
+                    placeholder="Ex: Ilhas Canárias, Bavária..."
+                    value={newRegion.name}
+                    onChange={e => setNewRegion({ ...newRegion, name: e.target.value })}
                     required
                   />
-                  
+
                   {/* Sugestão de Cidades (API) */}
                   <div className="bg-gray-50 border rounded-md p-2">
                     <p className="text-[10px] font-bold text-gray-400 mb-2 flex items-center gap-1">
-                      <Globe size={10}/> SUGESTÕES DE {newRegion.country} ({cities.length})
+                      <Globe size={10} /> SUGESTÕES DE {newRegion.country} ({cities.length})
                     </p>
-                    <Input 
-                      placeholder="Filtrar cidade..." 
+                    <Input
+                      placeholder="Filtrar cidade..."
                       className="h-7 text-xs mb-2 bg-white"
                       value={citySearch}
                       onChange={e => setCitySearch(e.target.value)}
                     />
                     <ScrollArea className="h-24 w-full rounded-md border bg-white p-1">
                       {loadingCities ? (
-                        <div className="flex justify-center py-4"><Loader2 className="animate-spin h-4 w-4 text-gray-400"/></div>
+                        <div className="flex justify-center py-4"><Loader2 className="animate-spin h-4 w-4 text-gray-400" /></div>
                       ) : (
                         <div className="flex flex-wrap gap-1">
                           {filteredCities.map((city, idx) => (
-                            <Badge 
-                              key={idx} 
-                              variant="secondary" 
+                            <Badge
+                              key={idx}
+                              variant="secondary"
                               className="cursor-pointer hover:bg-gray-200 font-normal text-[10px]"
-                              onClick={() => setNewRegion({...newRegion, name: city})}
+                              onClick={() => setNewRegion({ ...newRegion, name: city })}
                             >
                               {city}
                             </Badge>
@@ -306,16 +333,16 @@ export default function RegionsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase text-gray-500">Nome Imposto</label>
-                    <Input value={newRegion.taxName} onChange={e => setNewRegion({...newRegion, taxName: e.target.value})} />
+                    <Input value={newRegion.taxName} onChange={e => setNewRegion({ ...newRegion, taxName: e.target.value })} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase text-gray-500">Taxa (%)</label>
                     <div className="relative">
-                      <Input 
-                        type="number" 
-                        step="0.01" 
-                        value={newRegion.taxRule} 
-                        onChange={e => setNewRegion({...newRegion, taxRule: e.target.value})} 
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={newRegion.taxRule}
+                        onChange={e => setNewRegion({ ...newRegion, taxRule: e.target.value })}
                       />
                       <span className="absolute right-3 top-2 text-sm text-gray-400">%</span>
                     </div>
@@ -326,9 +353,9 @@ export default function RegionsPage() {
               {/* Coluna Direita: Simulador */}
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 flex flex-col justify-center">
                 <h4 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Info size={16} className="text-blue-500"/> Simulador de Fatura
+                  <Info size={16} className="text-blue-500" /> Simulador de Fatura
                 </h4>
-                
+
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between text-gray-500">
                     <span>Assinatura SaaS</span>
@@ -355,7 +382,7 @@ export default function RegionsPage() {
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
               <Button type="submit" form="region-form" className="bg-[#df0024] hover:bg-red-700" disabled={submitting}>
-                {submitting ? <Loader2 className="animate-spin mr-2"/> : <CheckCircle2 className="mr-2" size={18}/>}
+                {submitting ? <Loader2 className="animate-spin mr-2" /> : <CheckCircle2 className="mr-2" size={18} />}
                 Confirmar Região
               </Button>
             </DialogFooter>

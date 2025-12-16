@@ -10,8 +10,10 @@ import {
   KeyRound
 } from 'lucide-react';
 import api from '@/lib/api';
+import { useRestaurant } from '@/context/RestaurantContext';
 
 export default function TeamTab() {
+  const { restaurantId, restaurantSlug } = useRestaurant();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -68,6 +70,32 @@ export default function TeamTab() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in duration-500">
 
+      {/* Restaurant Connection Info */}
+      <div className="bg-gray-50 p-4 rounded-md mb-4">
+        <h3 className="text-lg font-semibold mb-2">Dados de Conexão</h3>
+        <div className="flex items-center space-x-2 mb-2">
+          <span className="font-mono text-sm">ID: {restaurantId || '—'}</span>
+          <button
+            className="text-xs text-blue-600 hover:underline"
+            onClick={() => {
+              if (restaurantId) navigator.clipboard.writeText(restaurantId);
+            }}
+          >
+            Copiar
+          </button>
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className="font-mono text-sm">Slug: {restaurantSlug || '—'}</span>
+          <button
+            className="text-xs text-blue-600 hover:underline"
+            onClick={() => {
+              if (restaurantSlug) navigator.clipboard.writeText(restaurantSlug);
+            }}
+          >
+            Copiar
+          </button>
+        </div>
+      </div>
       {/* Form de Criação */}
       <div className="lg:col-span-1">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-6">

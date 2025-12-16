@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MonitorPlay, Plus, Trash2, Loader2, Image as ImageIcon, MapPin } from 'lucide-react';
+import { MonitorPlay, Plus, Trash2, Loader2, Image as ImageIcon, MapPin, Edit } from 'lucide-react';
 import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +20,7 @@ export default function SystemAdsPage() {
     const [imagePreview, setImagePreview] = useState(null);
 
     const [formData, setFormData] = useState({
+        id: null,
         title: '',
         targetState: '',
         file: null
@@ -66,12 +67,20 @@ export default function SystemAdsPage() {
             payload.append('title', formData.title || 'Banner Global');
             if (formData.targetState) payload.append('targetState', formData.targetState);
 
-            await api.post('/admin/ads', payload, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            if (formData.id) {
+                // UPDATE
+                await api.patch(`/admin/ads/${formData.id}`, payload, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+            } else {
+                // CREATE
+                await api.post('/admin/ads', payload, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+            }
 
             setIsModalOpen(false);
-            setFormData({ title: '', targetState: '', file: null });
+            setFormData({ id: null, title: '', targetState: '', file: null });
             setImagePreview(null);
             fetchAds();
         } catch (error) {
@@ -106,7 +115,7 @@ export default function SystemAdsPage() {
                             Anúncios institucionais exibidos nos tablets de todos os restaurantes.
                         </p>
                     </div>
-                    <Button className="bg-[#df0024] hover:bg-red-700 text-white" onClick={() => setIsModalOpen(true)}>
+                    <Button className="bg-[#df0024] hover:bg-red-700 text-white" onClick={() => { setFormData({ id: null, title: '', targetState: '', file: null }); setImagePreview(null); setIsModalOpen(true); }}>
                         <Plus className="mr-2 h-4 w-4" /> Novo Banner
                     </Button>
                 </div>
@@ -141,6 +150,23 @@ export default function SystemAdsPage() {
                                         >
                                             <Trash2 size={16} className="mr-1" /> Remover
                                         </Button>
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={() => {
+                                                setFormData({
+                                                    id: ad.id,
+                                                    title: ad.title,
+                                                    targetState: ad.targetState || '',
+                                                    file: null
+                                                });
+                                                setImagePreview(ad.imageUrl?.startsWith('http') ? ad.imageUrl : `${IMAGE_BASE_URL}${ad.imageUrl}`);
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="bg-white text-blue-600 hover:bg-blue-50 ml-2"
+                                        >
+                                            <Edit size={16} className="mr-1" /> Editar
+                                        </Button>
                                     </div>
                                     {ad.isActive && (
                                         <span className="absolute top-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded">
@@ -167,7 +193,7 @@ export default function SystemAdsPage() {
                 <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                     <DialogContent className="max-w-lg">
                         <DialogHeader>
-                            <DialogTitle>Novo Banner Global</DialogTitle>
+                            <DialogTitle>{formData.id ? 'Editar Banner Global' : 'Novo Banner Global'}</DialogTitle>
                             <DialogDescription>
                                 Este banner aparecerá no screensaver de todos os restaurantes (ou de uma região específica).
                             </DialogDescription>

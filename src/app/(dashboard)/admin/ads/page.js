@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { 
+import {
   Megaphone, Users, Plus, Trash2, Edit,
-  Calendar, MapPin, Eye, MousePointer, Loader2, 
+  Calendar, MapPin, Eye, MousePointer, Loader2,
   TrendingUp, Search, LayoutTemplate, CheckCircle2, XCircle, PlayCircle
 } from 'lucide-react';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer
 } from 'recharts';
 import api from '@/lib/api';
 import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
@@ -26,7 +26,7 @@ const IMAGE_BASE_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
 export default function AdNetworkPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
-  
+
   // Dados da API
   const [advertisers, setAdvertisers] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
@@ -41,11 +41,11 @@ export default function AdNetworkPage() {
 
   // Models de Formulário
   const [newAdv, setNewAdv] = useState({
-    companyName: '', taxId: '', contactName: '', email: '', phone: ''
+    id: null, companyName: '', taxId: '', contactName: '', email: '', phone: ''
   });
-  
+
   const [newCamp, setNewCamp] = useState({
-    advertiserId: '', title: '', startDate: '', endDate: '', 
+    advertiserId: '', title: '', startDate: '', endDate: '',
     priority: 'medium', frequency: '10', targetRegionIds: [],
     file: null
   });
@@ -78,11 +78,11 @@ export default function AdNetworkPage() {
     // Soma views e clicks de todos os criativos de todas as campanhas
     const views = campaigns.reduce((acc, c) => acc + (c.creatives?.reduce((sum, cr) => sum + (cr.viewsCount || 0), 0) || 0), 0);
     const clicks = campaigns.reduce((acc, c) => acc + (c.creatives?.reduce((sum, cr) => sum + (cr.clicksCount || 0), 0) || 0), 0);
-    
+
     // Dados para o gráfico (Top 5 Campanhas por Views)
     const chartData = campaigns
       .map(c => ({
-        name: c.title.length > 15 ? c.title.substring(0,15)+'...' : c.title,
+        name: c.title.length > 15 ? c.title.substring(0, 15) + '...' : c.title,
         views: c.creatives?.reduce((sum, cr) => sum + (cr.viewsCount || 0), 0) || 0
       }))
       .sort((a, b) => b.views - a.views)
@@ -97,21 +97,47 @@ export default function AdNetworkPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await api.post('/admin/advertisers', newAdv);
+      if (newAdv.id) {
+        // UPDATE
+        await api.patch(`/admin/advertisers/${newAdv.id}`, newAdv);
+      } else {
+        // CREATE
+        await api.post('/admin/advertisers', newAdv);
+      }
       setIsAdvModalOpen(false);
-      setNewAdv({ companyName: '', taxId: '', contactName: '', email: '', phone: '' });
+      setNewAdv({ id: null, companyName: '', taxId: '', contactName: '', email: '', phone: '' });
       fetchData();
     } catch (error) {
-      alert(error.response?.data?.message || 'Erro ao criar anunciante.');
+      alert(error.response?.data?.message || 'Erro ao salvar anunciante.');
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleDeleteAdvertiser = async (id) => {
+    if (!confirm("Tem certeza? Isso removerá o anunciante e todas as suas campanhas.")) return;
+    try {
+      await api.delete(`/admin/advertisers/${id}`);
+      setAdvertisers(prev => prev.filter(a => a.id !== id));
+    } catch (e) { alert("Erro ao deletar anunciante."); }
+  };
+
+  const handleEditAdvertiser = (adv) => {
+    setNewAdv({
+      id: adv.id,
+      companyName: adv.companyName,
+      taxId: adv.taxId || '',
+      contactName: adv.contactName || '',
+      email: adv.email || '',
+      phone: adv.phone || ''
+    });
+    setIsAdvModalOpen(true);
+  };
+
   const handleCreateCampaign = async (e) => {
     e.preventDefault();
-    if(!newCamp.advertiserId || !newCamp.file) return alert("Preencha todos os campos e anexe o banner.");
-    
+    if (!newCamp.advertiserId || !newCamp.file) return alert("Preencha todos os campos e anexe o banner.");
+
     setSubmitting(true);
     try {
       // 1. Criar Campanha
@@ -124,14 +150,14 @@ export default function AdNetworkPage() {
         frequency: newCamp.frequency,
         targetRegionIds: newCamp.targetRegionIds
       });
-      
+
       const campaignId = campRes.data.data.campaign.id;
 
       // 2. Upload Criativo
       const formData = new FormData();
       formData.append('file', newCamp.file);
       // Se houver linkUrl, adicionar aqui: formData.append('linkUrl', 'http...')
-      
+
       await api.post(`/admin/campaigns/${campaignId}/creatives`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
@@ -142,7 +168,7 @@ export default function AdNetworkPage() {
       setIsCampModalOpen(false);
       // Reset form
       setNewCamp({
-        advertiserId: '', title: '', startDate: '', endDate: '', 
+        advertiserId: '', title: '', startDate: '', endDate: '',
         priority: 'medium', frequency: '10', targetRegionIds: [], file: null
       });
       setBannerPreview(null);
@@ -156,19 +182,19 @@ export default function AdNetworkPage() {
   };
 
   const handleDeleteCampaign = async (id) => {
-    if(!confirm("Tem certeza? Isso removerá os banners dos tablets imediatamente.")) return;
+    if (!confirm("Tem certeza? Isso removerá os banners dos tablets imediatamente.")) return;
     try {
       await api.delete(`/admin/campaigns/${id}`);
       setCampaigns(prev => prev.filter(c => c.id !== id));
-    } catch(e) { alert("Erro ao deletar."); }
+    } catch (e) { alert("Erro ao deletar."); }
   };
 
   const handleToggleRegion = (regionId) => {
     const current = newCamp.targetRegionIds;
-    if(current.includes(regionId)) {
-      setNewCamp({...newCamp, targetRegionIds: current.filter(id => id !== regionId)});
+    if (current.includes(regionId)) {
+      setNewCamp({ ...newCamp, targetRegionIds: current.filter(id => id !== regionId) });
     } else {
-      setNewCamp({...newCamp, targetRegionIds: [...current, regionId]});
+      setNewCamp({ ...newCamp, targetRegionIds: [...current, regionId] });
     }
   };
 
@@ -192,7 +218,7 @@ export default function AdNetworkPage() {
   return (
     <AdminLayout>
       <div className="space-y-8 animate-in fade-in duration-500">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -200,7 +226,7 @@ export default function AdNetworkPage() {
             <p className="text-gray-500">Gerencie parceiros, campanhas e o inventário de telas.</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setIsAdvModalOpen(true)}>
+            <Button variant="outline" onClick={() => { setNewAdv({ id: null, companyName: '', taxId: '', contactName: '', email: '', phone: '' }); setIsAdvModalOpen(true); }}>
               <Users className="mr-2 h-4 w-4" /> Novo Parceiro
             </Button>
             <Button className="bg-[#df0024] hover:bg-red-700 text-white" onClick={() => setIsCampModalOpen(true)}>
@@ -211,9 +237,9 @@ export default function AdNetworkPage() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="bg-gray-100 p-1">
-            <TabsTrigger value="overview" className="gap-2"><TrendingUp size={16}/> Visão Geral</TabsTrigger>
-            <TabsTrigger value="campaigns" className="gap-2"><Megaphone size={16}/> Campanhas</TabsTrigger>
-            <TabsTrigger value="advertisers" className="gap-2"><Users size={16}/> Anunciantes</TabsTrigger>
+            <TabsTrigger value="overview" className="gap-2"><TrendingUp size={16} /> Visão Geral</TabsTrigger>
+            <TabsTrigger value="campaigns" className="gap-2"><Megaphone size={16} /> Campanhas</TabsTrigger>
+            <TabsTrigger value="advertisers" className="gap-2"><Users size={16} /> Anunciantes</TabsTrigger>
           </TabsList>
 
           {/* --- ABA 1: VISÃO GERAL --- */}
@@ -260,7 +286,7 @@ export default function AdNetworkPage() {
               </CardHeader>
               <CardContent className="h-[300px]">
                 {loading ? (
-                  <div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-[#df0024]"/></div>
+                  <div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-[#df0024]" /></div>
                 ) : kpis.chartData.length === 0 ? (
                   <div className="h-full flex items-center justify-center text-gray-400 text-sm bg-gray-50 rounded-lg">
                     Nenhum dado de impressão registrado ainda.
@@ -271,7 +297,7 @@ export default function AdNetworkPage() {
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
                       <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={12} />
                       <YAxis axisLine={false} tickLine={false} fontSize={12} />
-                      <RechartsTooltip cursor={{fill: '#f3f4f6'}} contentStyle={{borderRadius: '8px'}} />
+                      <RechartsTooltip cursor={{ fill: '#f3f4f6' }} contentStyle={{ borderRadius: '8px' }} />
                       <Bar dataKey="views" fill="#df0024" radius={[4, 4, 0, 0]} barSize={40} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -283,12 +309,12 @@ export default function AdNetworkPage() {
           {/* --- ABA 2: CAMPANHAS --- */}
           <TabsContent value="campaigns" className="mt-6">
             {loading ? (
-              <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]"/></div>
+              <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]" /></div>
             ) : campaigns.length === 0 ? (
-              <EmptyState 
-                icon={Megaphone} 
-                title="Nenhuma Campanha" 
-                description="Comece criando uma campanha para exibir anúncios nos tablets dos restaurantes." 
+              <EmptyState
+                icon={Megaphone}
+                title="Nenhuma Campanha"
+                description="Comece criando uma campanha para exibir anúncios nos tablets dos restaurantes."
                 actionLabel="Criar Primeira Campanha"
                 onAction={() => setIsCampModalOpen(true)}
               />
@@ -297,9 +323,9 @@ export default function AdNetworkPage() {
                 {/* Barra de Filtro */}
                 <div className="flex items-center gap-2 bg-white p-2 rounded-lg border shadow-sm max-w-md">
                   <Search className="text-gray-400 ml-2" size={18} />
-                  <Input 
-                    placeholder="Filtrar campanhas..." 
-                    className="border-none shadow-none focus-visible:ring-0 h-8" 
+                  <Input
+                    placeholder="Filtrar campanhas..."
+                    className="border-none shadow-none focus-visible:ring-0 h-8"
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                   />
@@ -310,10 +336,10 @@ export default function AdNetworkPage() {
                   {campaigns.filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase())).map(camp => {
                     // Pega o primeiro criativo se existir
                     const creative = camp.creatives && camp.creatives.length > 0 ? camp.creatives[0] : null;
-                    
+
                     return (
                       <div key={camp.id} className="group bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-6 items-center shadow-sm hover:shadow-md transition-all">
-                        
+
                         {/* Preview da Imagem */}
                         <div className="w-full md:w-48 h-28 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative border flex items-center justify-center">
                           {creative ? (
@@ -323,15 +349,15 @@ export default function AdNetworkPage() {
                                 <span className="text-[10px] mt-1">VÍDEO</span>
                               </div>
                             ) : (
-                              <img 
-                                src={`${IMAGE_BASE_URL}${creative.mediaUrl}`} 
-                                className="w-full h-full object-cover hover:scale-105 transition-transform" 
+                              <img
+                                src={`${IMAGE_BASE_URL}${creative.mediaUrl}`}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform"
                                 alt="Banner"
                               />
                             )
                           ) : (
                             <div className="flex items-center justify-center h-full text-gray-400 text-xs flex-col">
-                              <LayoutTemplate size={20} className="mb-1"/> Sem Mídia
+                              <LayoutTemplate size={20} className="mb-1" /> Sem Mídia
                             </div>
                           )}
                           <div className="absolute top-2 right-2">
@@ -352,13 +378,13 @@ export default function AdNetworkPage() {
                           <p className="text-sm text-gray-500 flex items-center gap-1">
                             <Users size={12} /> {camp.Advertiser?.companyName || 'Anunciante Removido'}
                           </p>
-                          
+
                           <div className="flex flex-wrap gap-4 text-xs text-gray-500 mt-3">
                             <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded border">
-                              <Calendar size={12}/> {new Date(camp.startDate).toLocaleDateString()} - {new Date(camp.endDate).toLocaleDateString()}
+                              <Calendar size={12} /> {new Date(camp.startDate).toLocaleDateString()} - {new Date(camp.endDate).toLocaleDateString()}
                             </span>
                             <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded border">
-                              <MapPin size={12}/> {camp.Regions?.length > 0 ? `${camp.Regions.length} Regiões Alvo` : 'Global'}
+                              <MapPin size={12} /> {camp.Regions?.length > 0 ? `${camp.Regions.length} Regiões Alvo` : 'Global'}
                             </span>
                           </div>
                         </div>
@@ -388,13 +414,13 @@ export default function AdNetworkPage() {
 
           {/* --- ABA 3: ANUNCIANTES --- */}
           <TabsContent value="advertisers" className="mt-6">
-            {loading ? <Loader2 className="animate-spin mx-auto"/> : advertisers.length === 0 ? (
-              <EmptyState 
-                icon={Users} 
-                title="Cadastre seus Parceiros" 
-                description="Adicione as empresas que contrataram publicidade na sua rede." 
+            {loading ? <Loader2 className="animate-spin mx-auto" /> : advertisers.length === 0 ? (
+              <EmptyState
+                icon={Users}
+                title="Cadastre seus Parceiros"
+                description="Adicione as empresas que contrataram publicidade na sua rede."
                 actionLabel="Novo Anunciante"
-                onAction={() => setIsAdvModalOpen(true)}
+                onAction={() => { setNewAdv({ id: null, companyName: '', taxId: '', contactName: '', email: '', phone: '' }); setIsAdvModalOpen(true); }}
               />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -404,24 +430,29 @@ export default function AdNetworkPage() {
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10 bg-gray-100 border">
-                            <AvatarFallback className="text-gray-500 font-bold">{adv.companyName.substring(0,2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="text-gray-500 font-bold">{adv.companyName.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div>
                             <h3 className="font-bold text-base text-gray-900">{adv.companyName}</h3>
                             <p className="text-xs text-gray-500">{adv.taxId || 'Sem Tax ID'}</p>
                           </div>
                         </div>
-                        {adv.isActive ? <CheckCircle2 size={16} className="text-green-500"/> : <XCircle size={16} className="text-gray-300"/>}
+                        {adv.isActive ? <CheckCircle2 size={16} className="text-green-500" /> : <XCircle size={16} className="text-gray-300" />}
                       </div>
-                      
+
                       <div className="space-y-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-                        <p className="flex items-center gap-2"><Users size={14} className="text-gray-400"/> {adv.contactName || 'Sem contato'}</p>
+                        <p className="flex items-center gap-2"><Users size={14} className="text-gray-400" /> {adv.contactName || 'Sem contato'}</p>
                         <p className="flex items-center gap-2 truncate" title={adv.email}><span className="text-gray-400">@</span> {adv.email || '-'}</p>
                       </div>
 
                       <div className="mt-4 pt-4 border-t flex justify-between items-center">
                         <span className="text-xs font-medium text-gray-400">Contrato Ativo</span>
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-[#df0024]">Detalhes</Button>
+                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-[#df0024]" onClick={() => handleEditAdvertiser(adv)}>
+                          <Edit size={14} className="mr-1" /> Editar
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-red-700" onClick={() => handleDeleteAdvertiser(adv.id)}>
+                          <Trash2 size={14} />
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -435,23 +466,23 @@ export default function AdNetworkPage() {
         <Dialog open={isAdvModalOpen} onOpenChange={setIsAdvModalOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Novo Anunciante</DialogTitle>
+              <DialogTitle>{newAdv.id ? 'Editar Anunciante' : 'Novo Anunciante'}</DialogTitle>
               <DialogDescription>Cadastre os dados fiscais e de contato do parceiro.</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreateAdvertiser} className="space-y-4 mt-2">
-              <Input placeholder="Nome da Empresa / Marca" value={newAdv.companyName} onChange={e=>setNewAdv({...newAdv, companyName:e.target.value})} required />
+              <Input placeholder="Nome da Empresa / Marca" value={newAdv.companyName} onChange={e => setNewAdv({ ...newAdv, companyName: e.target.value })} required />
               <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="NIF / CNPJ" value={newAdv.taxId} onChange={e=>setNewAdv({...newAdv, taxId:e.target.value})} />
-                <Input placeholder="Nome do Contato" value={newAdv.contactName} onChange={e=>setNewAdv({...newAdv, contactName:e.target.value})} />
+                <Input placeholder="NIF / CNPJ" value={newAdv.taxId} onChange={e => setNewAdv({ ...newAdv, taxId: e.target.value })} />
+                <Input placeholder="Nome do Contato" value={newAdv.contactName} onChange={e => setNewAdv({ ...newAdv, contactName: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Input type="email" placeholder="Email Comercial" value={newAdv.email} onChange={e=>setNewAdv({...newAdv, email:e.target.value})} />
-                <Input placeholder="Telefone" value={newAdv.phone} onChange={e=>setNewAdv({...newAdv, phone:e.target.value})} />
+                <Input type="email" placeholder="Email Comercial" value={newAdv.email} onChange={e => setNewAdv({ ...newAdv, email: e.target.value })} />
+                <Input placeholder="Telefone" value={newAdv.phone} onChange={e => setNewAdv({ ...newAdv, phone: e.target.value })} />
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" type="button" onClick={() => setIsAdvModalOpen(false)}>Cancelar</Button>
                 <Button type="submit" className="bg-[#df0024] hover:bg-red-700" disabled={submitting}>
-                  {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4"/>} Salvar Parceiro
+                  {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />} Salvar Parceiro
                 </Button>
               </div>
             </form>
@@ -466,11 +497,11 @@ export default function AdNetworkPage() {
               <DialogDescription>Configure a exibição e faça upload do banner.</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreateCampaign} className="space-y-5 mt-2">
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase text-gray-500">Anunciante</label>
-                  <Select value={newCamp.advertiserId} onValueChange={val => setNewCamp({...newCamp, advertiserId: val})}>
+                  <Select value={newCamp.advertiserId} onValueChange={val => setNewCamp({ ...newCamp, advertiserId: val })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
@@ -481,15 +512,15 @@ export default function AdNetworkPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase text-gray-500">Título Interno</label>
-                  <Input placeholder="Ex: Promoção Verão 2025" value={newCamp.title} onChange={e=>setNewCamp({...newCamp, title:e.target.value})} required />
+                  <Input placeholder="Ex: Promoção Verão 2025" value={newCamp.title} onChange={e => setNewCamp({ ...newCamp, title: e.target.value })} required />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2"><label className="text-xs font-bold uppercase text-gray-500">Início</label><Input type="date" value={newCamp.startDate} onChange={e=>setNewCamp({...newCamp, startDate:e.target.value})} required /></div>
-                <div className="space-y-2"><label className="text-xs font-bold uppercase text-gray-500">Fim</label><Input type="date" value={newCamp.endDate} onChange={e=>setNewCamp({...newCamp, endDate:e.target.value})} required /></div>
+                <div className="space-y-2"><label className="text-xs font-bold uppercase text-gray-500">Início</label><Input type="date" value={newCamp.startDate} onChange={e => setNewCamp({ ...newCamp, startDate: e.target.value })} required /></div>
+                <div className="space-y-2"><label className="text-xs font-bold uppercase text-gray-500">Fim</label><Input type="date" value={newCamp.endDate} onChange={e => setNewCamp({ ...newCamp, endDate: e.target.value })} required /></div>
                 <div className="space-y-2"><label className="text-xs font-bold uppercase text-gray-500">Prioridade</label>
-                  <Select value={newCamp.priority} onValueChange={val => setNewCamp({...newCamp, priority: val})}>
+                  <Select value={newCamp.priority} onValueChange={val => setNewCamp({ ...newCamp, priority: val })}>
                     <SelectTrigger><SelectValue placeholder="Média" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="low">Baixa</SelectItem>
@@ -505,7 +536,7 @@ export default function AdNetworkPage() {
                 <div className="flex flex-wrap gap-2 border p-3 rounded-lg bg-gray-50 max-h-32 overflow-y-auto">
                   {regions.length === 0 && <span className="text-xs text-gray-400">Nenhuma região cadastrada em Regiões & Fiscal.</span>}
                   {regions.map(reg => (
-                    <Badge 
+                    <Badge
                       key={reg.id}
                       variant={newCamp.targetRegionIds.includes(reg.id) ? "default" : "outline"}
                       className={`cursor-pointer select-none ${newCamp.targetRegionIds.includes(reg.id) ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-white hover:bg-gray-100 text-gray-700'}`}
@@ -521,24 +552,24 @@ export default function AdNetworkPage() {
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase text-gray-500">Banner Criativo (1920x1080)</label>
                 <div className="border-2 border-dashed border-gray-300 rounded-xl h-40 flex items-center justify-center relative bg-gray-50 hover:bg-white transition-colors group cursor-pointer overflow-hidden">
-                  <input 
-                    type="file" 
-                    accept="image/*,video/*" 
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
                     className="absolute inset-0 opacity-0 z-10 cursor-pointer"
                     onChange={(e) => {
                       const file = e.target.files[0];
-                      if(file) {
-                        setNewCamp({...newCamp, file});
+                      if (file) {
+                        setNewCamp({ ...newCamp, file });
                         setBannerPreview(URL.createObjectURL(file));
                       }
                     }}
-                    required 
+                    required
                   />
                   {bannerPreview ? (
                     <img src={bannerPreview} className="h-full w-full object-contain p-1" />
                   ) : (
                     <div className="text-center text-gray-400 group-hover:text-[#df0024]">
-                      <Megaphone size={24} className="mx-auto mb-2"/>
+                      <Megaphone size={24} className="mx-auto mb-2" />
                       <span className="text-sm font-medium">Clique para carregar imagem/vídeo</span>
                     </div>
                   )}
@@ -548,7 +579,7 @@ export default function AdNetworkPage() {
               <div className="flex justify-end gap-2 pt-4 border-t">
                 <Button variant="outline" type="button" onClick={() => setIsCampModalOpen(false)}>Cancelar</Button>
                 <Button type="submit" className="bg-[#df0024] hover:bg-red-700 text-white" disabled={submitting}>
-                  {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4"/>} Publicar Campanha
+                  {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />} Publicar Campanha
                 </Button>
               </div>
             </form>
