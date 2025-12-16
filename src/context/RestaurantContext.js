@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-const RestaurantContext = createContext();
+const RestaurantContext = createContext({});
 
 export function RestaurantProvider({ children }) {
     const [currency, setCurrency] = useState('EUR');
@@ -30,4 +30,4 @@ export function RestaurantProvider({ children }) {
     );
 }
 
-export const useRestaurant = () => useContext(RestaurantContext);
+export const useRestaurant = () => useContext(RestaurantContext) || {};
