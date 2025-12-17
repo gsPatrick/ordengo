@@ -221,6 +221,16 @@ export default function AppearancePage() {
 
       if (config.logoFile) formData.append('logo', config.logoFile);
 
+      // --- APPEND IMAGES ---
+      // Itera sobre o estado 'files' e adiciona cada arquivo ao FormData com a chave correta
+      Object.keys(files).forEach(key => {
+        if (files[key] && files[key].length > 0) {
+          files[key].forEach(file => {
+            formData.append(key, file);
+          });
+        }
+      });
+
       // --- CORREÇÃO DO BUG: CHAMADA À API ---
       await api.patch('/settings/appearance', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
