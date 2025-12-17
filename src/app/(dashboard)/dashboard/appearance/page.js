@@ -78,6 +78,19 @@ export default function AppearancePage() {
 
   const [logoPreview, setLogoPreview] = useState(null);
 
+  // --- CONFIGURAÇÃO DE IDIOMAS ---
+  // Usamos códigos ISO (pt, en) para compatibilidade com o backend e i18n do tablet
+  const LANGUAGES = [
+    { code: 'pt', label: 'Português', flag: '🇧🇷' },
+    { code: 'en', label: 'English', flag: '🇺🇸' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+    { code: 'it', label: 'Italiano', flag: '🇮🇹' },
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+  ];
+
+  const [editLang, setEditLang] = useState('pt'); // Default: Português
+
   // 1. Carregar Configurações, Banners e Produtos
   useEffect(() => {
     const fetchData = async () => {
@@ -85,23 +98,28 @@ export default function AppearancePage() {
         const [settingsRes, bannersRes, menuRes] = await Promise.all([
           api.get('/settings'),
           api.get('/marketing/screensavers'),
-          api.get('/menu') // Necessário para listar produtos no select
+          api.get('/menu')
         ]);
 
         // A. Processa Configurações Gerais
         const data = settingsRes.data.data.config;
         if (data) {
-          const getText = (field) => (typeof field === 'object' ? field?.pt : field) || '';
+          // Helper para garantir objeto vazio se null
+          const ensureObj = (val) => (val && typeof val === 'object' && !Array.isArray(val)) ? val : { pt: val || '' };
 
           setConfig(prev => ({
             ...prev,
             logoUrl: data.logoUrl,
             primaryColor: data.primaryColor || '#df0024',
             backgroundColor: data.backgroundColor || '#1f1c1d',
-            aboutTitle: getText(data.aboutTitle),
-            aboutText: getText(data.aboutText),
-            publicTitle: getText(data.publicTitle),
-            ourHistory: getText(data.ourHistory),
+
+            // Agora mantemos o objeto completo para edição multilíngue
+            aboutText: ensureObj(data.aboutText),
+            ourHistory: ensureObj(data.ourHistory),
+
+            // Campos removidos (mas mantidos no state para compatibilidade se existirem)
+            // aboutTitle e publicTitle foram removidos da UI
+
             wifiSsid: data.wifiSsid || '',
             wifiPassword: data.wifiPassword || '',
             institutionalBanners: data.institutionalBanners || [],
@@ -193,16 +211,43 @@ export default function AppearancePage() {
       formData.append('backgroundColor', config.backgroundColor);
       formData.append('wifiSsid', config.wifiSsid);
       formData.append('wifiPassword', config.wifiPassword);
-      formData.append('aboutTitle', JSON.stringify({ pt: config.aboutTitle }));
-      formData.append('aboutText', JSON.stringify({ pt: config.aboutText }));
-      formData.append('publicTitle', JSON.stringify({ pt: config.publicTitle }));
-      formData.append('ourHistory', JSON.stringify({ pt: config.ourHistory }));
+
+      // Envia os objetos completos (JSON) ao invés de strings
+      formData.append('aboutText', JSON.stringify(config.aboutText));
+      formData.append('ourHistory', JSON.stringify(config.ourHistory));
+
+      // Títulos removidos, mas se precisasse:
+      // formData.append('publicTitle', JSON.stringify(config.publicTitle)); 
 
       if (config.logoFile) formData.append('logo', config.logoFile);
+
+      // --- CORREÇÃO DO BUG: CHAMADA À API ---
+      await api.patch('/settings/appearance', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      alert('Configurações salvas com sucesso!');
+      setShowConfirmModal(false); // Fecha modal se chamado via confirmação
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao salvar configurações.');
     } finally {
       setSaving(false);
     }
   };
+
+  // Helper para atualizar texto multilíngue
+  const updateTransText = (field, value) => {
+    setConfig(prev => ({
+      ...prev,
+      [field]: {
+        ...prev[field],
+        [editLang]: value
+      }
+    }));
+  };
+
+  const currentLangLabel = LANGUAGES.find(l => l.code === editLang)?.label;
 
   // --- HANDLERS DE BANNERS RICOS (NOVO) ---
 
@@ -468,15 +513,54 @@ export default function AppearancePage() {
                 {activeTab === 'content' && (
                   <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {/* Textos */}
+                    {/* Textos Multilíngues */}
                     <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Type size={20} className="text-[#df0024]" /> Textos</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div><label className="block text-sm font-medium mb-1">Nome Comercial</label><input className="w-full px-4 py-2 border rounded-lg" value={config.publicTitle} onChange={e => setConfig({ ...config, publicTitle: e.target.value })} /></div>
-                        <div><label className="block text-sm font-medium mb-1">Título &quot;Sobre&quot;</label><input className="w-full px-4 py-2 border rounded-lg" value={config.aboutTitle} onChange={e => setConfig({ ...config, aboutTitle: e.target.value })} /></div>
+                      <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Type size={20} className="text-[#df0024]" /> Conteúdo de Texto</h3>
+
+                        {/* Seletor de Idioma (Abas) */}
+                        <div className="flex bg-gray-100 p-1 rounded-lg">
+                          {LANGUAGES.map(lang => (
+                            <button
+                              key={lang.code}
+                              onClick={() => setEditLang(lang.code)}
+                              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${editLang === lang.code
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                              <span>{lang.flag}</span>
+                              <span className="hidden md:inline">{lang.code.toUpperCase()}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                      <div className="space-y-4">
-                        <div><label className="block text-sm font-medium mb-1">Resumo</label><textarea className="w-full px-4 py-2 border rounded-lg h-20" value={config.aboutText} onChange={e => setConfig({ ...config, aboutText: e.target.value })} /></div>
-                        <div><label className="block text-sm font-medium mb-1">Nossa História</label><textarea className="w-full px-4 py-2 border rounded-lg h-28" value={config.ourHistory} onChange={e => setConfig({ ...config, ourHistory: e.target.value })} /></div>
+
+                      <div className="space-y-6">
+                        <div className="bg-blue-50 p-3 rounded-lg flex items-start gap-3 text-sm text-blue-700 border border-blue-100">
+                          <Info size={16} className="mt-0.5 shrink-0" />
+                          <p>Editando versão em <strong>{currentLangLabel}</strong>. O conteúdo será exibido no tablet quando este idioma for selecionado.</p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Resumo (Quem somos)</label>
+                          <textarea
+                            className="w-full px-4 py-2 border rounded-lg h-24 focus:ring-2 focus:ring-[#df0024] outline-none"
+                            value={config.aboutText[editLang] || ''}
+                            onChange={e => updateTransText('aboutText', e.target.value)}
+                            placeholder={`Digite o resumo em ${currentLangLabel}...`}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Nossa História (Completa)</label>
+                          <textarea
+                            className="w-full px-4 py-2 border rounded-lg h-40 focus:ring-2 focus:ring-[#df0024] outline-none"
+                            value={config.ourHistory[editLang] || ''}
+                            onChange={e => updateTransText('ourHistory', e.target.value)}
+                            placeholder={`Conte a história do restaurante em ${currentLangLabel}...`}
+                          />
+                        </div>
                       </div>
                     </div>
                     {/* Uploads Institucionais */}
