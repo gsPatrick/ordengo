@@ -12,7 +12,12 @@ import {
   ShieldAlert, 
   LogIn,
   CheckCircle2,
-  Tablet
+  Tablet,
+  Edit,
+  Trash2,
+  FileText,
+  Clock,
+  History
 } from "lucide-react"
 
 // UI Components

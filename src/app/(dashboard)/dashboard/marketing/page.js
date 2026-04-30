@@ -13,7 +13,8 @@ import {
   Power,
   UploadCloud,
   Percent,
-  DollarSign
+  DollarSign,
+  Edit
 } from 'lucide-react';
 import api from '@/lib/api';
 import PromotionForm from '../../../../components/marketing/PromotionForm';
@@ -34,8 +35,8 @@ export default function MarketingPage() {
     try {
       setLoading(true);
       const [promoRes, screenRes] = await Promise.all([
-        api.get('/marketing/promotions'),
-        api.get('/marketing/screensavers') // Rota interna do gerente
+        api.get('/marketing/promotions?all=true'),
+        api.get('/marketing/screensavers?all=true') // Rota interna do gerente
       ]);
       setPromotions(promoRes.data.data.promotions);
       setScreensavers(screenRes.data.data.banners);
@@ -103,6 +104,7 @@ export default function MarketingPage() {
 
   // Helper para dias da semana
   const formatDays = (daysArray) => {
+    if (!daysArray || !Array.isArray(daysArray)) return 'Nenhum dia selecionado';
     if (daysArray.length === 7) return 'Todos os dias';
     const map = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     return daysArray.map(d => map[d]).join(', ');

@@ -15,7 +15,12 @@ import {
   Clock,
   BarChart,
   Image as ImageIcon,
-  AlertCircle
+  AlertCircle,
+  Edit,
+  Trash2,
+  DollarSign,
+  TrendingUp,
+  Filter
 } from "lucide-react"
 
 // UI Components
