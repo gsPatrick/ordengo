@@ -49,12 +49,10 @@ export default function Dashboard() {
     }).format(value);
   };
 
-  // Dados formatados para o gráfico (transforma objeto plans em array)
-  const planData = stats ? [
-    { name: 'Básico', value: stats.plans.basic || 0 },
-    { name: 'Premium', value: stats.plans.premium || 0 },
-    { name: 'Enterprise', value: stats.plans.enterprise || 0 },
-  ] : [];
+  // Dados formatados para o gráfico (transforma objeto plans em array dinâmico)
+  const planData = stats ? Object.entries(stats.plans).map(([name, value]) => ({
+    name, value
+  })) : [];
 
   if (loading) {
     return (
