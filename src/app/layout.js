@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import 'react-international-phone/style.css'; // <<< Adicione esta linha
+import 'react-international-phone/style.css';
+import { ToastProvider } from '@/components/ui/use-toast'; // Added ToastProvider import
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

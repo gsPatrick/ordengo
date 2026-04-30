@@ -49,16 +49,16 @@ export default function SectionRelatorios() {
   return (
     <section className={styles.section} ref={sectionRef}>
       <div className={styles.container}>
-        
+
         {/* COLUNA TEXTO */}
         <div className={styles.contentColumn} ref={textRef}>
           <h2 className={styles.title}>
-            Relatórios, Informes de <br />
+            Reportes, Informes de <br />
             Consumo
           </h2>
-          
+
           <p className={styles.description}>
-            Obtenga Acceso a informes completos diarios, o semanales o mensuales, 
+            Obtenga Acceso a informes completos diarios, o semanales o mensuales,
             así podiendo reconocer patrones y hacer ofertas que vende.
           </p>
 
@@ -79,8 +79,8 @@ export default function SectionRelatorios() {
                Recomendo uma imagem PNG transparente de um MacBook Pro de frente.
                Caminho sugerido: /assets/images/macbook-analytics.png
             */}
-            <Image 
-              src="/notebook.png" 
+            <Image
+              src="/notebook.png"
               alt="Dashboard de Relatórios no MacBook"
               width={1000}
               height={600}

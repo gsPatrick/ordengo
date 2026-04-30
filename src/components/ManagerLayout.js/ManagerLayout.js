@@ -15,15 +15,27 @@ import {
   Menu,
   X,
   ChefHat,
-  BarChart3, // Novo ícone
-  FileText   // Novo ícone
+  BarChart3,
+  FileText,
+  CreditCard,
+  ShieldCheck
 } from 'lucide-react';
 
 import OnboardingWizard from '../../components/Onboarding/OnboardingWizard';
 
 const BASE_IMG_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
 
+import { RestaurantProvider } from '../../context/RestaurantContext';
+
 export default function ManagerLayout({ children }) {
+  return (
+    <RestaurantProvider>
+      <ManagerLayoutContent>{children}</ManagerLayoutContent>
+    </RestaurantProvider>
+  );
+}
+
+function ManagerLayoutContent({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [user, setUser] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -37,7 +49,7 @@ export default function ManagerLayout({ children }) {
     const userData = Cookies.get('ordengo_user');
 
     if (!userData) {
-      router.push('/auth/login');
+      router.push('/login');
       return;
     }
 
@@ -45,11 +57,10 @@ export default function ManagerLayout({ children }) {
       const parsedUser = JSON.parse(userData);
 
       if (parsedUser.role !== 'manager') {
-        // Se não for gerente, sai (a menos que seja admin impersonating)
         if (!Cookies.get('admin_impersonating')) {
           Cookies.remove('ordengo_token');
           Cookies.remove('ordengo_user');
-          router.push('/auth/login');
+          router.push('/login');
           return;
         }
       }
@@ -62,24 +73,36 @@ export default function ManagerLayout({ children }) {
 
     } catch (error) {
       console.error("Erro ao processar usuário:", error);
-      router.push('/auth/login');
+      router.push('/login');
     }
   }, [router]);
 
   const handleLogout = () => {
-    // Se for admin impersonating, apenas volta para o painel admin
     if (Cookies.get('admin_impersonating')) {
+      // Fallback if clicked logout while impersonating
+      const adminToken = Cookies.get('ordengo_admin_token');
+      const adminUser = Cookies.get('ordengo_admin_user');
+
       Cookies.remove('admin_impersonating');
-      // O token original do admin foi removido ao fazer impersonate?
-      // Se sim, ele vai ter que relogar. Se não, idealmente teríamos guardado o token admin em outro cookie.
-      // Para simplificar: manda pro login.
-      router.push('/auth/login');
+      Cookies.remove('ordengo_token');
+      Cookies.remove('ordengo_user');
+      Cookies.remove('ordengo_admin_token');
+      Cookies.remove('ordengo_admin_user');
+
+      if (adminToken && adminUser) {
+        Cookies.set('ordengo_token', adminToken, { expires: 1 });
+        Cookies.set('ordengo_user', adminUser, { expires: 1 });
+        window.location.href = '/admin/tenants';
+        return;
+      }
+
+      router.push('/login');
       return;
     }
 
     Cookies.remove('ordengo_token');
     Cookies.remove('ordengo_user');
-    router.push('/auth/login');
+    router.push('/login');
   };
 
   const handleOnboardingComplete = () => {
@@ -95,53 +118,41 @@ export default function ManagerLayout({ children }) {
     window.location.reload();
   };
 
-  // --- MENU ATUALIZADO ---
+  // Menu items - Spanish labels
   const menuItems = [
     {
-      name: 'Visão Geral',
+      name: 'Visión General',
       sub: 'Dashboard',
       icon: LayoutDashboard,
       path: '/dashboard'
     },
     {
       name: 'Analytics',
-      sub: 'Inteligência',
+      sub: 'Inteligencia',
       icon: BarChart3,
       path: '/dashboard/analytics'
     },
     {
-      name: 'Relatórios',
-      sub: 'Exportação',
-      icon: FileText,
-      path: '/dashboard/reports'
-    },
-    {
-      name: 'Cardápio Digital',
-      sub: 'Gestão de Produtos',
-      icon: UtensilsCrossed,
-      path: '/dashboard/menu'
-    },
-    {
       name: 'Marketing',
-      sub: 'Promoções e Ads',
+      sub: 'Promociones y Ads',
       icon: Megaphone,
       path: '/dashboard/marketing'
     },
     {
-      name: 'Personalização',
-      sub: 'Aparência',
+      name: 'Personalización',
+      sub: 'Apariencia',
       icon: Palette,
       path: '/dashboard/appearance'
     },
     {
-      name: 'Avaliações',
+      name: 'Valoraciones',
       sub: 'Feedback Clientes',
       icon: Star,
       path: '/dashboard/reviews'
     },
     {
-      name: 'Configurações',
-      sub: 'Geral e Equipe',
+      name: 'Configuración',
+      sub: 'General y Equipo',
       icon: Settings,
       path: '/dashboard/settings'
     },
@@ -214,24 +225,52 @@ export default function ManagerLayout({ children }) {
             <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
             <p className="text-xs text-gray-500 truncate">{user.email}</p>
             <div className="mt-2 flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${user.Restaurant?.isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+              {/* Status always shows as Open (green) per user requirement */}
+              <span className="w-2 h-2 rounded-full bg-green-500"></span>
               <span className="text-[10px] uppercase font-bold text-gray-400">
-                {user.Restaurant?.isActive ? 'Loja Online' : 'Loja Fechada'}
+                Tienda Abierta
               </span>
             </div>
           </div>
+
+          {Cookies.get('admin_impersonating') && (
+            <button
+              onClick={() => {
+                const adminToken = Cookies.get('ordengo_admin_token');
+                const adminUser = Cookies.get('ordengo_admin_user');
+
+                Cookies.remove('admin_impersonating');
+                Cookies.remove('ordengo_token');
+                Cookies.remove('ordengo_user');
+                Cookies.remove('ordengo_admin_token');
+                Cookies.remove('ordengo_admin_user');
+
+                if (adminToken && adminUser) {
+                  Cookies.set('ordengo_token', adminToken, { expires: 1 });
+                  Cookies.set('ordengo_user', adminUser, { expires: 1 });
+                  window.location.href = '/admin/tenants';
+                } else {
+                  router.push('/login');
+                }
+              }}
+              className="w-full mb-3 flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-white bg-gray-900 hover:bg-black transition-colors rounded-lg shadow-md"
+            >
+              <ShieldCheck size={16} />
+              Voltar para Admin
+            </button>
+          )}
+
           <button
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-red-600 transition-colors hover:bg-white rounded-lg border border-transparent hover:border-gray-200"
           >
             <LogOut size={16} />
-            Sair da Conta
+            Cerrar Sesión
           </button>
 
           {/* SYSTEM LOGO (OrdenGo) */}
-          <div className="mt-6 flex items-center justify-center gap-2 opacity-50">
-            <ChefHat size={16} className="text-gray-400" />
-            <span className="text-xs font-bold text-gray-400">Powered by OrdenGo</span>
+          <div className="mt-6 flex items-center justify-center gap-2 opacity-80">
+            <img src="/logocerta.png" alt="OrdenGo" className="h-8 object-contain" />
           </div>
         </div>
       </aside>
@@ -241,7 +280,7 @@ export default function ManagerLayout({ children }) {
 
         {/* Mobile Header */}
         <header className="lg:hidden bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sticky top-0 z-30 shrink-0">
-          <span className="font-bold text-gray-900">Painel</span>
+          <span className="font-bold text-gray-900">Panel</span>
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-gray-600 p-2 rounded-lg hover:bg-gray-100">
             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>

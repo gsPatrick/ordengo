@@ -1,17 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  UserPlus, 
-  Trash2, 
-  Shield, 
-  User, 
-  Loader2, 
+import {
+  UserPlus,
+  Trash2,
+  Shield,
+  User,
+  Loader2,
   KeyRound
 } from 'lucide-react';
 import api from '@/lib/api';
+import { useRestaurant } from '@/context/RestaurantContext';
 
 export default function TeamTab() {
+  const { restaurantId, restaurantSlug } = useRestaurant();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -67,7 +69,33 @@ export default function TeamTab() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in duration-500">
-      
+
+      {/* Restaurant Connection Info */}
+      <div className="bg-gray-50 p-4 rounded-md mb-4">
+        <h3 className="text-lg font-semibold mb-2">Dados de Conexão</h3>
+        <div className="flex items-center space-x-2 mb-2">
+          <span className="font-mono text-sm">ID: {restaurantId || '—'}</span>
+          <button
+            className="text-xs text-blue-600 hover:underline"
+            onClick={() => {
+              if (restaurantId) navigator.clipboard.writeText(restaurantId);
+            }}
+          >
+            Copiar
+          </button>
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className="font-mono text-sm">Slug: {restaurantSlug || '—'}</span>
+          <button
+            className="text-xs text-blue-600 hover:underline"
+            onClick={() => {
+              if (restaurantSlug) navigator.clipboard.writeText(restaurantSlug);
+            }}
+          >
+            Copiar
+          </button>
+        </div>
+      </div>
       {/* Form de Criação */}
       <div className="lg:col-span-1">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-6">
@@ -75,17 +103,17 @@ export default function TeamTab() {
             <UserPlus size={20} className="text-[#df0024]" />
             Novo Membro
           </h3>
-          
+
           <form onSubmit={handleCreateUser} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-              <input required className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024]" value={newUser.name} onChange={e => setNewUser({...newUser, name: e.target.value})} placeholder="João Silva" />
+              <input required className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024]" value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} placeholder="João Silva" />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Função</label>
-              <select className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024]" value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})}>
-                <option value="waiter">Garçom (Acesso via PIN)</option>
+              <select className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024]" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
+                <option value="waiter">Caixa (Acesso via PIN)</option>
                 <option value="kitchen">Cozinha (Acesso via PIN)</option>
                 <option value="manager">Gerente (Email/Senha)</option>
               </select>
@@ -96,17 +124,17 @@ export default function TeamTab() {
               <>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input required type="email" className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024]" value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} />
+                  <input required type="email" className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024]" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-                  <input required type="password" className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024]" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} />
+                  <input required type="password" className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024]" value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} />
                 </div>
               </>
             ) : (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">PIN de Acesso (4 dígitos)</label>
-                <input required maxLength="4" className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024] font-mono tracking-widest text-center text-lg" value={newUser.pin} onChange={e => setNewUser({...newUser, pin: e.target.value.replace(/\D/g,'')})} placeholder="0000" />
+                <input required maxLength="4" className="w-full px-3 py-2 border rounded-lg focus:ring-[#df0024] font-mono tracking-widest text-center text-lg" value={newUser.pin} onChange={e => setNewUser({ ...newUser, pin: e.target.value.replace(/\D/g, '') })} placeholder="0000" />
               </div>
             )}
 
@@ -129,8 +157,8 @@ export default function TeamTab() {
                 <div>
                   <h4 className="font-bold text-gray-900">{user.name}</h4>
                   <p className="text-xs text-gray-500 uppercase font-medium flex items-center gap-1">
-                    {user.role === 'waiter' ? 'Garçom' : user.role === 'kitchen' ? 'Cozinha' : 'Gerente'}
-                    {user.pin && <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 flex items-center gap-1 ml-2 normal-case"><KeyRound size={10}/> PIN: {user.pin}</span>}
+                    {user.role === 'waiter' ? 'Caixa' : user.role === 'kitchen' ? 'Cozinha' : 'Gerente'}
+                    {user.pin && <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 flex items-center gap-1 ml-2 normal-case"><KeyRound size={10} /> PIN: {user.pin}</span>}
                   </p>
                 </div>
               </div>

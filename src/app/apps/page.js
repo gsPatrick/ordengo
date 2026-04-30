@@ -20,37 +20,37 @@ export default function AppsHub() {
 
   const itemVariants = {
     hidden: { y: 30, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1, 
-      transition: { type: "spring", stiffness: 50 } 
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 50 }
     }
   };
 
   return (
     <div className="min-h-screen bg-[#f8f9fb] flex flex-col items-center justify-center relative overflow-hidden font-sans selection:bg-[#E01928] selection:text-white">
-      
+
       {/* Background Decorativo */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-red-500/5 rounded-full blur-[100px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-black/5 rounded-full blur-[100px]" />
       </div>
 
-      <motion.div 
+      <motion.div
         className="z-10 w-full max-w-6xl px-6 py-12"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        
+
         {/* HEADER */}
         <motion.div className="flex flex-col items-center mb-16" variants={itemVariants}>
           <Link href="/">
-            <Image 
-              src="/logocerta1.png" 
-              alt="OrdenGO" 
-              width={180} 
-              height={60} 
+            <Image
+              src="/logocerta1.png"
+              alt="OrdenGO"
+              width={180}
+              height={60}
               className="object-contain mb-6 hover:scale-105 transition-transform"
             />
           </Link>
@@ -64,9 +64,9 @@ export default function AppsHub() {
 
         {/* CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          
+
           {/* --- CARD TABLET (CLIENTE) --- */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="group relative bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover:border-red-100 transition-all duration-300 overflow-hidden"
             onMouseEnter={() => setHoveredCard('tablet')}
@@ -100,7 +100,7 @@ export default function AppsHub() {
                 </div>
               </div>
 
-              <Link 
+              <Link
                 href="/tablet"
                 className="w-full py-4 bg-[#111] text-white rounded-xl font-bold flex items-center justify-center gap-2 group-hover:bg-[#E01928] transition-colors shadow-lg group-hover:shadow-red-200"
               >
@@ -111,7 +111,7 @@ export default function AppsHub() {
           </motion.div>
 
           {/* --- CARD GARÇOM (STAFF) --- */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="group relative bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover:border-gray-300 transition-all duration-300 overflow-hidden"
             onMouseEnter={() => setHoveredCard('waiter')}
@@ -127,7 +127,7 @@ export default function AppsHub() {
                   <Smartphone size={32} className="text-black" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Modo Garçom</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Modo Caixa</h2>
                 <p className="text-gray-500 text-sm mb-6 leading-relaxed">
                   Ferramenta ágil para staff. Lançamento de pedidos, gestão de mesas e notificações.
                 </p>
@@ -144,11 +144,11 @@ export default function AppsHub() {
                 </div>
               </div>
 
-              <Link 
+              <Link
                 href="/waiter/home"
                 className="w-full py-4 bg-white border-2 border-[#111] text-[#111] rounded-xl font-bold flex items-center justify-center gap-2 group-hover:bg-[#111] group-hover:text-white transition-all"
               >
-                Acessar Garçom
+                Acessar Caixa
                 <ArrowRight size={18} />
               </Link>
             </div>
@@ -161,7 +161,7 @@ export default function AppsHub() {
           <div className="inline-block bg-white px-6 py-3 rounded-full shadow-sm border border-gray-200">
             <p className="text-xs text-gray-500 flex items-center gap-2">
               <Download size={14} className="text-[#E01928]" />
-            <strong>Dica:</strong> No seu dispositivo, selecione &quot;Adicionar à Tela de Início&quot; para instalar como App.
+              <strong>Dica:</strong> No seu dispositivo, selecione &quot;Adicionar à Tela de Início&quot; para instalar como App.
             </p>
           </div>
         </motion.div>

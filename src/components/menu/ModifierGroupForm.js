@@ -204,7 +204,7 @@ export default function ModifierGroupForm({ onClose }) {
                   {formData.options.map((opt, i) => (
                     <div key={i} className="flex gap-2 items-center">
                       <input required placeholder={`Nome (${activeLang})`} className="flex-1 px-3 py-2 border rounded-lg text-sm" value={opt.name[activeLang]} onChange={e => handleOptionNameChange(i, e.target.value)} />
-                      <input type="number" placeholder="R$" className="w-20 px-3 py-2 border rounded-lg text-sm" value={opt.price} onChange={e => handleOptionPriceChange(i, e.target.value)} />
+                      <input type="number" placeholder="0.00" className="w-20 px-3 py-2 border rounded-lg text-sm" value={opt.price} onChange={e => handleOptionPriceChange(i, e.target.value)} />
                       <button type="button" onClick={() => handleRemoveOption(i)} className="text-red-400 hover:text-red-600"><Trash2 size={16} /></button>
                     </div>
                   ))}
