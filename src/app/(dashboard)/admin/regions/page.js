@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
   MapPin, Plus, Trash2, Globe, Search,
-  Landmark, Info, Loader2, CheckCircle2
+  Landmark, Info, Loader2, CheckCircle2, Edit
 } from 'lucide-react';
 import api from '@/lib/api';
 import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
