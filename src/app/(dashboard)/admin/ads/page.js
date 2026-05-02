@@ -50,7 +50,7 @@ export default function AdsOverviewPage() {
             <p className="text-muted-foreground mt-1 text-sm italic">Monitore e controle a rede de anúncios global.</p>
           </div>
           <div className="flex gap-3">
-             <Button onClick={() => router.push('/admin/ads/campanas')} variant="outline" className="glass rounded-xl border-none font-bold gap-2">
+             <Button onClick={() => router.push('/admin/ads/campanas')} variant="outline" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl font-bold gap-2">
                 <LayoutGrid size={18} /> Ver Campañas
              </Button>
              <Button onClick={() => router.push('/admin/ads/campanas')} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 font-bold">
@@ -60,11 +60,11 @@ export default function AdsOverviewPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-           <StatCard title="Campañas Activas" value={stats.totalCampaigns} icon={<Tv className="text-[#df0024]" />} trend="+12%" />
-           <StatCard title="Anunciantes" value={stats.totalAdvertisers} icon={<Users className="text-blue-500" />} trend="+2" />
-           <StatCard title="Impresiones (24h)" value={stats.totalImpressions.toLocaleString()} icon={<Eye className="text-purple-500" />} trend="+5.4k" />
-           <StatCard title="Clicks (CTR)" value={`${stats.totalClicks} (2.4%)`} icon={<MousePointer2 className="text-green-500" />} trend="+0.2%" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+           <StatCard title="Campañas Activas" value={stats.totalCampaigns} icon={<Tv className="text-[#df0024]" />} />
+           <StatCard title="Anunciantes" value={stats.totalAdvertisers} icon={<Users className="text-blue-500" />} />
+           <StatCard title="Impresiones (24h)" value={stats.totalImpressions.toLocaleString()} icon={<Eye className="text-purple-500" />} />
+           <StatCard title="Clicks (CTR)" value={stats.totalClicks} icon={<MousePointer2 className="text-green-500" />} />
         </div>
 
         {/* Quick Links */}
@@ -94,15 +94,14 @@ export default function AdsOverviewPage() {
   );
 }
 
-function StatCard({ title, value, icon, trend }) {
+function StatCard({ title, value, icon }) {
   return (
-    <Card className="glass border-none shadow-xl rounded-3xl overflow-hidden group">
+    <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden group">
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
-          <div className="size-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+          <div className="size-12 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
             {icon}
           </div>
-          <Badge className="bg-green-500/10 text-green-500 border-none font-bold text-[10px]">{trend}</Badge>
         </div>
         <div>
           <p className="text-xs font-black uppercase tracking-tighter opacity-40 mb-1">{title}</p>
@@ -116,9 +115,9 @@ function StatCard({ title, value, icon, trend }) {
 function QuickLinkCard({ title, desc, href, color }) {
   const router = useRouter();
   return (
-    <div 
+     <div 
       onClick={() => router.push(href)}
-      className="glass border-none shadow-xl rounded-[2.5rem] p-8 cursor-pointer group hover:bg-white/10 transition-all relative overflow-hidden"
+      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] p-8 cursor-pointer group hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all relative overflow-hidden"
     >
       <div className={cn("absolute top-0 right-0 w-32 h-32 bg-gradient-to-br opacity-10 blur-3xl rounded-full -mr-16 -mt-16 group-hover:opacity-20 transition-opacity", color)}></div>
       <div className="relative z-10 space-y-4">

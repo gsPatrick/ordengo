@@ -144,13 +144,13 @@ export default function PlansPage() {
             <p className="text-muted-foreground font-medium animate-pulse">Carregando catálogo de planos...</p>
           </div>
         ) : plans.length === 0 ? (
-          <div className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[3rem] p-24 flex flex-col items-center text-center gap-6">
-             <div className="size-24 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+          <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-2xl rounded-[3rem] p-24 flex flex-col items-center text-center gap-6">
+             <div className="size-24 bg-gray-50 dark:bg-white/5 rounded-full flex items-center justify-center border border-gray-100 dark:border-white/10">
                 <PackageOpen size={48} className="opacity-20" />
              </div>
              <div>
                 <h3 className="text-2xl font-black">Sin Planes Configuradores</h3>
-                <p className="text-muted-foreground max-w-md mt-2">Empiece a monetizar su SaaS creando su primer plan de suscripción.</p>
+                <p className="text-muted-foreground max-w-md mt-2">Empiece a monetizar su SaaS criando su primer plan de suscripción.</p>
              </div>
              <Button onClick={() => handleEdit()} className="bg-[#df0024] px-10 h-14 rounded-2xl font-black">CREAR PRIMER PLAN</Button>
           </div>
@@ -158,7 +158,7 @@ export default function PlansPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {plans.map(plan => (
               <div key={plan.id} className={cn(
-                "glass border-none shadow-xl rounded-[2.5rem] p-8 flex flex-col group transition-all duration-500",
+                "bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] p-8 flex flex-col group transition-all duration-500",
                 !plan.isActive && "opacity-40 grayscale"
               )}>
                 <div className="flex justify-between items-start mb-6">
@@ -190,7 +190,7 @@ export default function PlansPage() {
                    ))}
                 </div>
 
-                <div className="pt-6 border-t border-white/10 flex gap-2">
+                <div className="pt-6 border-t border-gray-100 dark:border-white/10 flex gap-2">
                    <Button variant="ghost" size="icon" className="rounded-xl hover:bg-[#df0024]/10 hover:text-[#df0024]" onClick={() => handleEdit(plan)}>
                       <Edit2 size={16} />
                    </Button>
@@ -218,19 +218,18 @@ export default function PlansPage() {
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre del Plan</label>
-                  <Input placeholder="Ex: Pro Business" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} required className="glass h-12 rounded-2xl font-bold" />
+                  <Input placeholder="Ex: Pro Business" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} required className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Límite de Tablets (0 = Ilimitado)</label>
-                  <Input type="number" placeholder="Ej: 10" value={formData.maxTablets} onChange={e => setFormData({ ...formData, maxTablets: e.target.value })} required className="glass h-12 rounded-2xl font-bold" />
+                  <Input type="number" placeholder="Ej: 10" value={formData.maxTablets} onChange={e => setFormData({ ...formData, maxTablets: e.target.value })} required className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" />
                 </div>
               </div>
-
-              <div className="grid grid-cols-3 gap-6 bg-white/5 p-6 rounded-3xl border border-white/5">
+              <div className="grid grid-cols-3 gap-6 bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-gray-100 dark:border-white/10">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Moneda</label>
                   <Select value={formData.currency} onValueChange={v => setFormData({ ...formData, currency: v })}>
-                    <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
                     <SelectContent className="bg-white dark:bg-zinc-900">
                       <SelectItem value="EUR">EUR (€)</SelectItem>
                       <SelectItem value="USD">USD ($)</SelectItem>
@@ -239,11 +238,11 @@ export default function PlansPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Precio Mensual</label>
-                  <Input type="number" step="0.01" value={formData.priceMonthly} onChange={e => setFormData({ ...formData, priceMonthly: e.target.value })} required className="glass h-12 rounded-2xl font-bold" />
+                  <Input type="number" step="0.01" value={formData.priceMonthly} onChange={e => setFormData({ ...formData, priceMonthly: e.target.value })} required className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Precio Anual</label>
-                  <Input type="number" step="0.01" value={formData.priceYearly} onChange={e => setFormData({ ...formData, priceYearly: e.target.value })} required className="glass h-12 rounded-2xl font-bold" />
+                  <Input type="number" step="0.01" value={formData.priceYearly} onChange={e => setFormData({ ...formData, priceYearly: e.target.value })} required className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold" />
                 </div>
               </div>
 
@@ -257,7 +256,7 @@ export default function PlansPage() {
                 </div>
               </div>
 
-              <DialogFooter className="pt-6 border-t border-white/10">
+              <DialogFooter className="pt-6 border-t border-gray-100 dark:border-white/10">
                 <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
                 <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-14 px-12 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "GUARDAR PLAN"}
@@ -276,7 +275,7 @@ function FeatureToggle({ label, checked, onChange }) {
   return (
     <div className={cn(
       "flex items-center justify-between p-4 rounded-2xl border transition-all",
-      checked ? "bg-white/10 border-[#df0024]/50" : "bg-white/5 border-white/5"
+      checked ? "bg-[#df0024]/5 border-[#df0024]/30" : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10"
     )}>
       <span className="text-sm font-bold">{label}</span>
       <Switch checked={checked} onCheckedChange={onChange} />

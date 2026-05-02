@@ -91,17 +91,19 @@ export default function AdsConfigPage() {
           </Button>
         </div>
 
-        <Alert className="glass border-none shadow-lg rounded-2xl bg-blue-500/10 text-blue-500">
+        <Alert className="bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 shadow-lg rounded-2xl text-blue-600 dark:text-blue-400">
           <Info className="h-4 w-4" />
-          <AlertDescription className="font-medium text-xs">
+        <Alert className="bg-white dark:bg-zinc-900 border-l-4 border-l-blue-500 shadow-lg rounded-xl">
+          <Info className="h-4 w-4 text-blue-500" />
+          <AlertDescription className="font-medium text-xs text-blue-600 dark:text-blue-400">
             Essas configurações afetam o comportamento de todos os tablets da rede, a menos que o cliente tenha uma configuração personalizada.
           </AlertDescription>
         </Alert>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          <Card className="glass border-none shadow-xl rounded-[2rem] overflow-hidden">
-            <CardHeader className="bg-white/10 px-8 pt-8">
+          <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2rem] overflow-hidden">
+            <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
               <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
                 <LayoutGrid size={24} />
               </div>
@@ -113,7 +115,7 @@ export default function AdsConfigPage() {
                 <label className="text-xs font-bold uppercase ml-1 opacity-60">Admin Batch Size</label>
                 <Input 
                   type="number" 
-                  className="glass h-12 rounded-2xl font-bold" 
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" 
                   value={settings.ADS_BATCH_SIZE_ADMIN}
                   onChange={e => setSettings({ ...settings, ADS_BATCH_SIZE_ADMIN: e.target.value })}
                 />
@@ -123,7 +125,7 @@ export default function AdsConfigPage() {
                 <label className="text-xs font-bold uppercase ml-1 opacity-60">Client Batch Size</label>
                 <Input 
                   type="number" 
-                  className="glass h-12 rounded-2xl font-bold" 
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" 
                   value={settings.ADS_BATCH_SIZE_CLIENT}
                   onChange={e => setSettings({ ...settings, ADS_BATCH_SIZE_CLIENT: e.target.value })}
                 />
@@ -132,8 +134,8 @@ export default function AdsConfigPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass border-none shadow-xl rounded-[2rem] overflow-hidden">
-            <CardHeader className="bg-white/10 px-8 pt-8">
+          <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2rem] overflow-hidden">
+            <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                <div className="size-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 mb-4">
                 <Clock size={24} />
               </div>
@@ -145,7 +147,7 @@ export default function AdsConfigPage() {
                 <label className="text-xs font-bold uppercase ml-1 opacity-60">Tempo de Inatividade Padrão (segundos)</label>
                 <Input 
                   type="number" 
-                  className="glass h-12 rounded-2xl font-bold" 
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" 
                   value={settings.ADS_IDLE_TIME_DEFAULT}
                   onChange={e => setSettings({ ...settings, ADS_IDLE_TIME_DEFAULT: e.target.value })}
                 />
@@ -154,7 +156,7 @@ export default function AdsConfigPage() {
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase ml-1 opacity-60">Proporção de Imagem (Ratio)</label>
                 <Input 
-                  className="glass h-12 rounded-2xl font-bold" 
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" 
                   value={settings.ADS_RATIO}
                   readOnly
                 />

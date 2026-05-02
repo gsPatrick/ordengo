@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Badge } from "@/components/ui/badge";
 import api from '@/lib/api';
 import { cn } from '@/lib/utils';
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function EmailMarketingPage() {
   const [templates, setTemplates] = useState([]);
@@ -103,6 +104,14 @@ export default function EmailMarketingPage() {
             <Loader2 className="animate-spin text-[#df0024]" size={48} />
             <p className="text-muted-foreground font-medium">Carregando templates...</p>
           </div>
+        ) : templates.length === 0 ? (
+          <EmptyState
+            icon={Mail}
+            title="Sin templates de email"
+            subtitle="Cree plantillas personalizadas para comunicaciones automáticas, recibos y avisos del sistema."
+            ctaLabel="Crear Primer Template"
+            onCtaClick={() => handleEdit()}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {templates.map(tpl => (
@@ -117,16 +126,16 @@ export default function EmailMarketingPage() {
                     <p className="text-sm font-medium opacity-70 italic line-clamp-2">Assunto: {tpl.subject}</p>
                     <div className="flex flex-wrap gap-1 mt-2">
                        {tpl.variables?.map(v => (
-                         <Badge key={v} variant="outline" className="text-[10px] bg-white/5 border-white/10 uppercase">{v}</Badge>
+                         <Badge key={v} variant="outline" className="text-[10px] bg-gray-100 dark:bg-white/5 border-none uppercase">{v}</Badge>
                        ))}
                     </div>
                  </div>
 
-                 <div className="pt-6 border-t border-white/10 flex gap-2">
+                 <div className="pt-6 border-t border-gray-100 dark:border-white/10 flex gap-2">
                     <Button variant="ghost" className="flex-1 rounded-xl font-bold bg-[#df0024]/10 text-[#df0024] hover:bg-[#df0024]/20" onClick={() => handleEdit(tpl)}>
                        EDITAR
                     </Button>
-                    <Button variant="ghost" size="icon" className="rounded-xl hover:bg-white/10" onClick={() => { setSelectedTemplate(tpl); setPreviewMode(true); }}>
+                    <Button variant="ghost" size="icon" className="rounded-xl hover:bg-gray-100 dark:hover:bg-white/10" onClick={() => { setSelectedTemplate(tpl); setPreviewMode(true); }}>
                        <Eye size={18} />
                     </Button>
                  </div>

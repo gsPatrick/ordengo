@@ -87,21 +87,21 @@ export default function SystemSettingsPage() {
         </div>
 
         <Tabs defaultValue="general" className="space-y-8">
-          <TabsList className="glass p-1 rounded-2xl h-14 w-full max-w-lg border-none">
-            <TabsTrigger value="general" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-primary data-[state=active]:text-white">
+          <TabsList className="bg-gray-100 dark:bg-white/5 p-1 rounded-2xl h-14 w-full max-w-lg border border-gray-200 dark:border-white/10 shadow-sm">
+            <TabsTrigger value="general" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-primary data-[state=active]:shadow-lg">
               <Sliders size={18} className="mr-2" /> General
             </TabsTrigger>
-            <TabsTrigger value="limits" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="limits" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-primary data-[state=active]:shadow-lg">
               <Server size={18} className="mr-2" /> Límites
             </TabsTrigger>
-            <TabsTrigger value="automation" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="automation" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-primary data-[state=active]:shadow-lg">
               <Database size={18} className="mr-2" /> Automatización
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="general" className="animate-in fade-in slide-in-from-bottom-4">
-            <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-              <CardHeader className="bg-white/10 px-8 pt-8">
+            <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+              <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                 <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4">
                   <Sliders size={24} />
                 </div>
@@ -119,23 +119,23 @@ export default function SystemSettingsPage() {
                 </SettingRow>
 
                 <SettingRow label="Moneda Predeterminada" description="Moneda utilizada en facturación y reportes.">
-                  <Input className="glass h-10 rounded-xl w-28 font-bold text-center" value={configs.default_currency} onChange={e => setConfigs({...configs, default_currency: e.target.value})} />
+                  <Input className="bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 h-10 rounded-xl w-28 font-bold text-center" value={configs.default_currency} onChange={e => setConfigs({...configs, default_currency: e.target.value})} />
                 </SettingRow>
-
+ 
                 <SettingRow label="Zona Horaria" description="Zona horaria del servidor para reportes y logs.">
-                  <Input className="glass h-10 rounded-xl w-48 font-mono text-sm" value={configs.default_timezone} onChange={e => setConfigs({...configs, default_timezone: e.target.value})} />
+                  <Input className="bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 h-10 rounded-xl w-48 font-mono text-sm" value={configs.default_timezone} onChange={e => setConfigs({...configs, default_timezone: e.target.value})} />
                 </SettingRow>
-
+ 
                 <SettingRow label="Timeout de Sesión (min)" description="Tiempo de inactividad antes de cerrar la sesión.">
-                  <Input type="number" className="glass h-10 rounded-xl w-24 font-bold text-center" value={configs.session_timeout} onChange={e => setConfigs({...configs, session_timeout: e.target.value})} />
+                  <Input type="number" className="bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 h-10 rounded-xl w-24 font-bold text-center" value={configs.session_timeout} onChange={e => setConfigs({...configs, session_timeout: e.target.value})} />
                 </SettingRow>
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="limits" className="animate-in fade-in slide-in-from-bottom-4">
-            <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-              <CardHeader className="bg-white/10 px-8 pt-8">
+            <Card className="bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 shadow-sm rounded-[2.5rem] overflow-hidden">
+              <CardHeader className="bg-gray-50 dark:bg-zinc-900 px-8 pt-8">
                 <div className="size-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 mb-4">
                   <Server size={24} />
                 </div>
@@ -144,19 +144,19 @@ export default function SystemSettingsPage() {
               </CardHeader>
               <CardContent className="px-8 pb-8">
                 <SettingRow label="Mesas por Restaurante" description="Número máximo de mesas que un restaurante puede registrar.">
-                  <Input type="number" className="glass h-10 rounded-xl w-24 font-bold text-center" value={configs.max_tables_per_restaurant} onChange={e => setConfigs({...configs, max_tables_per_restaurant: e.target.value})} />
+                  <Input type="number" className="bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 h-10 rounded-xl w-24 font-bold text-center" value={configs.max_tables_per_restaurant} onChange={e => setConfigs({...configs, max_tables_per_restaurant: e.target.value})} />
                 </SettingRow>
-
-                <SettingRow label="Productos por Restaurante" description="Límite de ítems del menú por establecimiento.">
-                  <Input type="number" className="glass h-10 rounded-xl w-24 font-bold text-center" value={configs.max_products_per_restaurant} onChange={e => setConfigs({...configs, max_products_per_restaurant: e.target.value})} />
+ 
+                <SettingRow label="Productos por Restaurante" description="Límite de ítems del menú por estabelecimento.">
+                  <Input type="number" className="bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 h-10 rounded-xl w-24 font-bold text-center" value={configs.max_products_per_restaurant} onChange={e => setConfigs({...configs, max_products_per_restaurant: e.target.value})} />
                 </SettingRow>
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="automation" className="animate-in fade-in slide-in-from-bottom-4">
-            <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-              <CardHeader className="bg-white/10 px-8 pt-8">
+            <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+              <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                 <div className="size-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 mb-4">
                   <Database size={24} />
                 </div>

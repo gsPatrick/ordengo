@@ -85,7 +85,7 @@ export default function TeamPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={20} />
             <Input
               placeholder="Buscar por nombre o email..."
-              className="pl-12 glass border-none h-12 rounded-2xl shadow-lg"
+              className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
@@ -120,12 +120,12 @@ export default function TeamPage() {
               </TableHeader>
               <TableBody>
                 {team.map(member => (
-                  <TableRow key={member.id} className="border-b border-white/5 hover:bg-white/40 dark:hover:bg-white/5 transition-all group">
+                  <TableRow key={member.id} className="border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5 transition-all group">
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                         <div className="size-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                            <User size={20} />
-                         </div>
+                          <div className="size-10 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 flex items-center justify-center">
+                             <User size={20} />
+                          </div>
                          <span className="font-bold">{member.name}</span>
                       </div>
                     </TableCell>
@@ -133,10 +133,10 @@ export default function TeamPage() {
                        <span className="text-xs flex items-center gap-2"><Mail size={12} className="text-[#df0024]" /> {member.email}</span>
                     </TableCell>
                     <TableCell className="py-4">
-                       <Badge variant="outline" className="text-[10px] uppercase font-black border-white/20 bg-white/5">
-                          {member.role === 'superadmin' ? <Shield size={10} className="mr-1 text-red-500" /> : null}
-                          {member.role}
-                       </Badge>
+                        <Badge variant="outline" className="text-[10px] uppercase font-black border-gray-100 dark:border-white/20 bg-gray-50 dark:bg-white/5">
+                           {member.role === 'superadmin' ? <Shield size={10} className="mr-1 text-red-500" /> : null}
+                           {member.role}
+                        </Badge>
                     </TableCell>
                     <TableCell className="py-4">
                        <div className="flex items-center gap-2 text-green-500">
@@ -166,20 +166,20 @@ export default function TeamPage() {
              <form onSubmit={handleCreate} className="space-y-6 mt-4">
                 <div className="space-y-2">
                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre Completo</label>
-                   <Input className="glass h-12 rounded-2xl font-bold" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
-                </div>
-                <div className="space-y-2">
-                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Email</label>
-                   <Input type="email" className="glass h-12 rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
-                </div>
-                <div className="space-y-2">
-                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Contraseña</label>
-                   <Input type="password" className="glass h-12 rounded-2xl font-bold" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} required />
-                </div>
-                <div className="space-y-2">
-                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Rol / Permisos</label>
-                   <Select value={formData.role} onValueChange={v => setFormData({...formData, role: v})}>
-                      <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                    <Input className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Email</label>
+                    <Input type="email" className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Contraseña</label>
+                    <Input type="password" className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} required />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Rol / Permisos</label>
+                    <Select value={formData.role} onValueChange={v => setFormData({...formData, role: v})}>
+                       <SelectTrigger className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
                       <SelectContent className="bg-white dark:bg-zinc-900">
                          <SelectItem value="superadmin">Super Admin (Total)</SelectItem>
                          <SelectItem value="admin_support">Soporte Técnico</SelectItem>

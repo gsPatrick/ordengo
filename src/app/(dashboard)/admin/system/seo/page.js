@@ -83,8 +83,8 @@ export default function SEOPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Main SEO Settings */}
-          <Card className="lg:col-span-2 glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="bg-white/10 px-8 pt-8">
+          <Card className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+            <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
               <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4">
                 <Search size={24} />
               </div>
@@ -94,7 +94,7 @@ export default function SEOPage() {
             <CardContent className="p-8 space-y-6">
               <Field label="Meta Title (Título de la Página)" icon={FileText}>
                 <Input 
-                  className="glass h-12 rounded-2xl font-bold" 
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" 
                   value={settings.seo_title} 
                   onChange={e => setSettings({...settings, seo_title: e.target.value})}
                   maxLength={70}
@@ -104,7 +104,7 @@ export default function SEOPage() {
 
               <Field label="Meta Description" icon={FileText}>
                 <textarea 
-                  className="w-full glass rounded-2xl p-4 font-medium text-sm min-h-[100px] outline-none border-2 border-transparent focus:border-primary/30 transition-all resize-none"
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl p-4 font-medium text-sm min-h-[100px] outline-none border-2 border-transparent focus:border-primary/30 transition-all resize-none"
                   value={settings.seo_description}
                   onChange={e => setSettings({...settings, seo_description: e.target.value})}
                   maxLength={160}
@@ -114,7 +114,7 @@ export default function SEOPage() {
 
               <Field label="Keywords (separadas por coma)" icon={Tag}>
                 <Input 
-                  className="glass h-12 rounded-2xl font-medium text-sm" 
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-medium text-sm" 
                   value={settings.seo_keywords} 
                   onChange={e => setSettings({...settings, seo_keywords: e.target.value})}
                 />
@@ -122,7 +122,7 @@ export default function SEOPage() {
 
               <Field label="URL Canónica" icon={Link2}>
                 <Input 
-                  className="glass h-12 rounded-2xl font-mono text-sm" 
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-mono text-sm" 
                   value={settings.seo_canonical_url} 
                   onChange={e => setSettings({...settings, seo_canonical_url: e.target.value})}
                 />
@@ -130,7 +130,7 @@ export default function SEOPage() {
 
               <Field label="Imagen OpenGraph (URL)" icon={ImageIcon}>
                 <Input 
-                  className="glass h-12 rounded-2xl font-mono text-sm" 
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-mono text-sm" 
                   placeholder="https://ordengo.com/og-image.jpg"
                   value={settings.seo_og_image} 
                   onChange={e => setSettings({...settings, seo_og_image: e.target.value})}
@@ -142,8 +142,8 @@ export default function SEOPage() {
           {/* Preview + Verification */}
           <div className="space-y-8">
             {/* Google Preview */}
-            <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-              <CardHeader className="bg-white/10 px-8 pt-8">
+            <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+              <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                 <div className="flex justify-between items-start">
                   <div className="size-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 mb-4">
                     <Eye size={24} />
@@ -153,17 +153,17 @@ export default function SEOPage() {
                 <CardTitle className="text-xl font-black">Vista en Google</CardTitle>
               </CardHeader>
               <CardContent className="p-8">
-                <div className="bg-white rounded-2xl p-5 shadow-inner border border-gray-100 space-y-2">
-                  <p className="text-xs text-green-700 font-medium truncate">{settings.seo_canonical_url}</p>
-                  <h4 className="text-lg font-bold text-[#1a0dab] leading-tight line-clamp-1">{settings.seo_title}</h4>
-                  <p className="text-sm text-gray-600 line-clamp-2 leading-snug">{settings.seo_description}</p>
+                <div className="bg-white dark:bg-zinc-800 rounded-2xl p-5 shadow-inner border border-gray-100 dark:border-white/5 space-y-2">
+                  <p className="text-xs text-green-700 dark:text-green-400 font-medium truncate">{settings.seo_canonical_url}</p>
+                  <h4 className="text-lg font-bold text-[#1a0dab] dark:text-blue-400 leading-tight line-clamp-1">{settings.seo_title}</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-snug">{settings.seo_description}</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Search Console Verification */}
-            <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-              <CardHeader className="bg-white/10 px-8 pt-8">
+            <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+              <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                 <div className="size-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 mb-4">
                   <Globe size={24} />
                 </div>
@@ -173,7 +173,7 @@ export default function SEOPage() {
               <CardContent className="p-8 space-y-6">
                 <Field label="Google Search Console" icon={Globe}>
                   <Input 
-                    className="glass h-12 rounded-2xl font-mono text-xs" 
+                    className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-mono text-xs" 
                     placeholder="google-site-verification=..."
                     value={settings.seo_google_verification} 
                     onChange={e => setSettings({...settings, seo_google_verification: e.target.value})}
@@ -181,7 +181,7 @@ export default function SEOPage() {
                 </Field>
                 <Field label="Bing Webmaster" icon={Globe}>
                   <Input 
-                    className="glass h-12 rounded-2xl font-mono text-xs" 
+                    className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-mono text-xs" 
                     placeholder="msvalidate.01=..."
                     value={settings.seo_bing_verification} 
                     onChange={e => setSettings({...settings, seo_bing_verification: e.target.value})}

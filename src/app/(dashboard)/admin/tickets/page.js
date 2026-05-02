@@ -103,7 +103,7 @@ export default function TicketsPage() {
             <p className="text-muted-foreground mt-1 text-sm italic">Atenda as solicitações dos seus clientes em tempo real.</p>
           </div>
           <div className="flex items-center gap-4">
-             <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 backdrop-blur-md">
+             <div className="flex bg-gray-50 dark:bg-zinc-800 p-1 rounded-xl border border-gray-100 dark:border-white/10">
                 <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} label="Todos" count={tickets.length} />
                 <FilterButton active={filter === 'open'} onClick={() => setFilter('open')} label="Abiertos" color="text-red-500" count={tickets.filter(t => t.status === 'open').length} />
                 <FilterButton active={filter === 'closed'} onClick={() => setFilter('closed')} label="Cerrados" color="text-gray-500" count={tickets.filter(t => t.status === 'closed').length} />
@@ -119,7 +119,7 @@ export default function TicketsPage() {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={18} />
                 <Input 
                   placeholder="Buscar ticket o restaurante..." 
-                  className="pl-12 glass border-none h-12 rounded-2xl shadow-lg"
+                  className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                 />
@@ -144,7 +144,7 @@ export default function TicketsPage() {
                     onClick={() => fetchTicketDetails(t.id)}
                     className={cn(
                       "p-5 rounded-[1.5rem] border border-transparent transition-all cursor-pointer group relative",
-                      selectedTicket?.id === t.id ? "glass bg-white/10 border-white/10 shadow-xl" : "hover:bg-white/5"
+                      selectedTicket?.id === t.id ? "bg-white dark:bg-zinc-800 border-gray-200 dark:border-white/10 shadow-xl" : "hover:bg-gray-50 dark:hover:bg-white/5"
                     )}
                   >
                     <div className="flex justify-between items-start mb-2">
@@ -161,10 +161,10 @@ export default function TicketsPage() {
           </div>
 
           {/* Detail */}
-          <div className="flex-1 glass border-none shadow-2xl rounded-[2.5rem] flex flex-col overflow-hidden">
+          <div className="flex-1 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] flex flex-col overflow-hidden">
              {selectedTicket ? (
                 <>
-                  <div className="p-8 border-b border-white/10 flex justify-between items-start bg-white/5">
+                  <div className="p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-start bg-gray-50 dark:bg-zinc-800">
                      <div className="space-y-2">
                         <div className="flex items-center gap-3">
                            <Badge className={cn("border-none font-bold text-[10px] uppercase", selectedTicket.status === 'open' ? 'bg-red-500' : 'bg-green-500')}>{selectedTicket.status}</Badge>
@@ -180,11 +180,11 @@ export default function TicketsPage() {
                   <div className="flex-1 p-8 overflow-y-auto space-y-8">
                      {/* Mensagem Inicial */}
                      <div className="flex gap-4">
-                        <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 shrink-0">
+                        <div className="size-10 rounded-xl bg-gray-50 dark:bg-zinc-800 flex items-center justify-center border border-gray-100 dark:border-white/10 shrink-0">
                            <UserIcon size={20} />
                         </div>
                         <div className="space-y-2 max-w-[80%]">
-                           <div className="bg-white/5 p-5 rounded-2xl rounded-tl-none border border-white/5 text-sm leading-relaxed whitespace-pre-wrap">
+                           <div className="bg-gray-50 dark:bg-zinc-800 p-5 rounded-2xl rounded-tl-none border border-gray-100 dark:border-white/10 text-sm leading-relaxed whitespace-pre-wrap">
                               {selectedTicket.description}
                            </div>
                            <p className="text-[10px] opacity-40 font-bold ml-2 uppercase">Ticket Iniciado</p>
@@ -194,20 +194,20 @@ export default function TicketsPage() {
                      {/* Thread de Mensagens */}
                      {selectedTicket.messages?.map(msg => (
                         <div key={msg.id} className={cn("flex gap-4", msg.isAdminReply ? "flex-row-reverse" : "")}>
-                           <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg", msg.isAdminReply ? "bg-[#df0024] text-white" : "bg-white/5 border border-white/10")}>
+                           <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg", msg.isAdminReply ? "bg-[#df0024] text-white" : "bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-white/10")}>
                               {msg.isAdminReply ? <Store size={20} /> : <UserIcon size={20} />}
                            </div>
                            <div className={cn("space-y-2 max-w-[80%]", msg.isAdminReply ? "text-right" : "")}>
                               <div className={cn(
                                 "p-5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
-                                msg.isAdminReply ? "bg-[#df0024]/10 rounded-tr-none border border-[#df0024]/20" : "bg-white/5 rounded-tl-none border border-white/5"
+                                msg.isAdminReply ? "bg-[#df0024]/10 rounded-tr-none border border-[#df0024]/20" : "bg-gray-50 dark:bg-zinc-800 rounded-tl-none border border-gray-100 dark:border-white/10"
                               )}>
                                  {msg.content}
                                  
                                  {msg.attachments?.length > 0 && (
                                    <div className="mt-4 flex flex-wrap gap-2">
                                       {msg.attachments.map((url, i) => (
-                                        <a key={i} href={url} target="_blank" className="size-20 rounded-lg overflow-hidden border border-white/10 hover:opacity-80 transition-opacity">
+                                        <a key={i} href={url} target="_blank" className="size-20 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10 hover:opacity-80 transition-opacity">
                                            <img src={url} alt="attachment" className="size-full object-cover" />
                                         </a>
                                       ))}
@@ -221,11 +221,11 @@ export default function TicketsPage() {
                   </div>
 
                   {/* Reply Input */}
-                  <div className="p-6 border-t border-white/10 bg-white/5">
+                  <div className="p-6 border-t border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5">
                      {attachments.length > 0 && (
                        <div className="flex gap-2 mb-4">
                           {attachments.map((file, i) => (
-                            <div key={i} className="relative size-16 rounded-xl overflow-hidden border border-white/10">
+                            <div key={i} className="relative size-16 rounded-xl overflow-hidden border border-gray-200 dark:border-white/10">
                                <img src={URL.createObjectURL(file)} className="size-full object-cover" />
                                <button onClick={() => removeAttachment(i)} className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5"><X size={10} /></button>
                             </div>
@@ -235,13 +235,13 @@ export default function TicketsPage() {
                      
                      <form onSubmit={handleReply} className="relative">
                         <textarea 
-                           className="w-full glass border-none rounded-3xl p-6 pr-20 text-sm focus:ring-2 focus:ring-[#df0024]/50 min-h-[100px] resize-none"
+                           className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-3xl p-6 pr-20 text-sm focus:ring-2 focus:ring-[#df0024]/50 min-h-[100px] resize-none"
                            placeholder="Escriba su resposta..."
                            value={reply}
                            onChange={(e) => setReply(e.target.value)}
                          />
                          <div className="absolute right-4 bottom-4 flex items-center gap-2">
-                            <label className="cursor-pointer p-2 hover:bg-white/10 rounded-xl transition-colors">
+                            <label className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl transition-colors">
                                <Paperclip size={20} className="text-muted-foreground" />
                                <input type="file" multiple className="hidden" onChange={handleFileChange} accept="image/*" />
                             </label>
@@ -267,10 +267,9 @@ export default function TicketsPage() {
 
 function FilterButton({ active, onClick, label, count, color = "" }) {
   return (
-    <button onClick={onClick} className={cn("px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-tight transition-all flex items-center gap-2", active ? "bg-white text-black shadow-lg" : "text-muted-foreground hover:text-white")}>
+    <button onClick={onClick} className={cn("px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-tight transition-all flex items-center gap-2", active ? "bg-white dark:bg-zinc-700 text-foreground shadow-lg" : "text-muted-foreground hover:text-foreground")}>
       <span className={cn(active ? "" : color)}>{label}</span>
       <span className="opacity-40">{count}</span>
     </button>
   );
 }
-

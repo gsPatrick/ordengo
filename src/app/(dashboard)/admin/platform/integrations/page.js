@@ -69,7 +69,7 @@ export default function IntegrationsPage() {
               Conecte OrdenGO con servicios externos y APIs de terceros.
             </p>
           </div>
-          <Button variant="ghost" className="glass rounded-xl border-none h-12 px-6 font-bold gap-2">
+          <Button variant="ghost" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl h-12 px-6 font-bold gap-2">
             <ShieldCheck size={18} /> Documentación API
           </Button>
         </div>
@@ -80,7 +80,7 @@ export default function IntegrationsPage() {
             <Card 
               key={integration.name}
               className={cn(
-                "glass border-none shadow-xl rounded-[2.5rem] overflow-hidden group hover:scale-[1.02] transition-all duration-300 relative",
+                "bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden group hover:scale-[1.02] transition-all duration-300 relative",
                 integration.status === 'coming_soon' && "opacity-70"
               )}
             >
@@ -93,7 +93,7 @@ export default function IntegrationsPage() {
                 </div>
               )}
 
-              <CardHeader className="bg-white/10 px-8 pt-8">
+              <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                 <div className={cn("size-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500", integration.color)}>
                   <integration.icon size={28} />
                 </div>
@@ -106,12 +106,12 @@ export default function IntegrationsPage() {
                   <div className="flex items-center gap-3">
                     <div className="size-2.5 bg-green-500 rounded-full animate-pulse" />
                     <span className="text-xs font-bold text-green-600 uppercase">Conectado</span>
-                    <Button size="sm" variant="ghost" className="ml-auto rounded-xl text-xs font-bold hover:bg-white/10">
+                    <Button size="sm" variant="ghost" className="ml-auto rounded-xl text-xs font-bold hover:bg-gray-100 dark:hover:bg-zinc-800">
                       Configurar
                     </Button>
                   </div>
                 ) : (
-                  <Button disabled className="w-full glass border-none rounded-2xl h-11 font-bold text-xs opacity-60">
+                  <Button disabled className="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl h-11 font-bold text-xs opacity-60">
                     <Zap size={14} className="mr-2" /> Activar Integración
                   </Button>
                 )}

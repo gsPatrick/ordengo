@@ -63,13 +63,8 @@ export default function Dashboard() {
     name, value
   })) : [];
 
-  // Mock data para o gráfico de tendência (MRR)
-  const mrrTrend = [
-    { month: 'Jan', value: (stats?.financial?.mrr || 0) * 0.8 },
-    { month: 'Feb', value: (stats?.financial?.mrr || 0) * 0.85 },
-    { month: 'Mar', value: (stats?.financial?.mrr || 0) * 0.9 },
-    { month: 'Apr', value: stats?.financial?.mrr || 0 },
-  ];
+  // MRR trend — only from real API data
+  const mrrTrend = stats?.financial?.mrrHistory || [];
 
   return (
     <AdminLayout>
@@ -82,7 +77,7 @@ export default function Dashboard() {
             <p className="text-muted-foreground mt-1 text-sm">Monitoramento em tempo real do ecossistema OrdenGO.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="glass rounded-xl font-bold">Exportar PDF</Button>
+            <Button variant="outline" size="sm" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl font-bold">Exportar PDF</Button>
             <Button size="sm" className="bg-[#df0024] hover:bg-red-700 text-white rounded-xl font-bold px-6 shadow-lg shadow-red-500/20">Novo Cliente</Button>
           </div>
         </div>
@@ -97,7 +92,6 @@ export default function Dashboard() {
             color="text-red-500" 
             bg="bg-red-500/10"
             sub={`+${stats?.tenants?.newLast30Days || 0} nos últimos 30 dias`}
-            trend="+12%"
           />
 
           <MetricCard 
@@ -107,7 +101,6 @@ export default function Dashboard() {
             color="text-green-500" 
             bg="bg-green-500/10"
             sub="Faturamento recorrente bruto"
-            trend="+8.4%"
           />
 
           <MetricCard 
@@ -117,7 +110,6 @@ export default function Dashboard() {
             color="text-purple-500" 
             bg="bg-purple-500/10"
             sub="Total transacionado na rede"
-            trend="+15.2%"
           />
 
           <MetricCard 
@@ -127,7 +119,6 @@ export default function Dashboard() {
             color="text-orange-500" 
             bg="bg-orange-500/10"
             sub={`${stats?.tickets?.closed || 0} fechados hoje`}
-            trend="-2"
           />
         </div>
 
@@ -135,13 +126,13 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Gráfico de Tendência MRR */}
-          <Card className="lg:col-span-2 glass border-none shadow-xl rounded-3xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 px-6 pt-6">
+          <Card className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 px-6 pt-6 bg-gray-50 dark:bg-white/5">
               <CardTitle className="text-lg font-bold">Crescimento Financeiro (MRR)</CardTitle>
-              <div className="text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded-full uppercase">Alvo Atingido</div>
             </CardHeader>
             <CardContent className="p-0">
               <div className="h-[300px] w-full pt-4">
+                {mrrTrend.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={mrrTrend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                     <defs>
@@ -160,13 +151,19 @@ export default function Dashboard() {
                     <Area type="monotone" dataKey="value" stroke="#df0024" strokeWidth={3} fillOpacity={1} fill="url(#colorMrr)" />
                   </AreaChart>
                 </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center opacity-30 gap-3">
+                    <TrendingUp size={48} strokeWidth={1} />
+                    <p className="text-sm font-bold">Datos históricos no disponibles</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Distribuição de Planos */}
-          <Card className="glass border-none shadow-xl rounded-3xl overflow-hidden">
-            <CardHeader className="px-6 pt-6">
+          <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="px-6 pt-6 bg-gray-50 dark:bg-white/5">
               <CardTitle className="text-lg font-bold">Distribuição de Planos</CardTitle>
             </CardHeader>
             <CardContent>
@@ -199,8 +196,8 @@ export default function Dashboard() {
 
         {/* Status de Saúde e Clientes Suspensos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="glass border-none shadow-xl rounded-3xl overflow-hidden">
-            <CardHeader className="px-6 pt-6">
+          <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="px-6 pt-6 bg-gray-50 dark:bg-white/5">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-bold">Saúde do Sistema</CardTitle>
                 <div className="flex items-center gap-1.5 text-xs font-bold text-green-500">
@@ -219,8 +216,8 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="glass border-none shadow-xl rounded-3xl overflow-hidden">
-            <CardHeader className="px-6 pt-6">
+          <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="px-6 pt-6 bg-gray-50 dark:bg-white/5">
               <CardTitle className="text-lg font-bold">Clientes Suspensos</CardTitle>
             </CardHeader>
             <CardContent className="px-6 pb-6">
@@ -243,7 +240,7 @@ export default function Dashboard() {
 
 function MetricCard({ title, value, icon: Icon, color, bg, sub, trend }) {
   return (
-    <Card className="glass border-none shadow-lg rounded-2xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-2xl">
+    <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-2xl">
       <CardContent className="p-5">
         <div className="flex justify-between items-start mb-4">
           <div className={cn("p-2.5 rounded-xl", bg, color)}>
@@ -270,7 +267,7 @@ function MetricCard({ title, value, icon: Icon, color, bg, sub, trend }) {
 
 function StatusRow({ label, status, latency }) {
   return (
-    <div className="flex items-center justify-between p-3.5 bg-white/20 dark:bg-white/5 rounded-xl border border-white/10 group hover:bg-white/40 transition-all">
+    <div className="flex items-center justify-between p-3.5 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-100 dark:border-white/10 group hover:bg-gray-100 dark:hover:bg-white/10 transition-all">
       <div className="flex items-center gap-3">
         <CheckCircle2 size={16} className="text-green-500" />
         <span className="text-sm font-bold text-foreground/80">{label}</span>

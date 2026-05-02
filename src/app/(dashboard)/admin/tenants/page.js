@@ -234,15 +234,15 @@ export default function TenantsPage() {
            <div className="relative w-full max-w-md group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={20} />
             <Input
-              placeholder="Buscar por nombre, slug o email..."
-              className="pl-12 glass border-none h-12 rounded-2xl shadow-lg focus-visible:ring-2 focus-visible:ring-[#df0024]/50"
+              placeholder="Buscar por nombre, ciudad o región..."
+              className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex gap-2">
-             <Badge className="glass bg-green-500/10 text-green-500 border-none px-4 py-2 rounded-xl font-bold">{tenants.filter(t => t.isActive).length} Activos</Badge>
-             <Badge className="glass bg-red-500/10 text-red-500 border-none px-4 py-2 rounded-xl font-bold">{tenants.filter(t => !t.isActive).length} Bloqueados</Badge>
+             <Badge className="bg-green-500/10 text-green-500 border border-green-500/20 px-4 py-2 rounded-xl font-bold">{tenants.filter(t => t.isActive).length} Activos</Badge>
+             <Badge className="bg-red-500/10 text-red-500 border border-red-500/20 px-4 py-2 rounded-xl font-bold">{tenants.filter(t => !t.isActive).length} Bloqueados</Badge>
           </div>
         </div>
 
@@ -342,19 +342,19 @@ export default function TenantsPage() {
                           </Button>
 
                           <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-10 gap-2 glass border-none font-bold rounded-xl hover:bg-[#df0024] hover:text-white transition-all shadow-md active:scale-95"
-                            onClick={() => handleImpersonate(tenant.id, tenant.name)}
-                          >
-                            <LogIn size={16} /> <span className="hidden xl:inline">Acceder</span>
-                          </Button>
+                             size="sm"
+                             variant="outline"
+                             className="h-10 gap-2 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 font-bold rounded-xl hover:bg-[#df0024] hover:text-white transition-all shadow-sm active:scale-95"
+                             onClick={() => handleImpersonate(tenant.id, tenant.name)}
+                           >
+                             <LogIn size={16} /> <span className="hidden xl:inline">Acceder</span>
+                           </Button>
 
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl font-black text-xl">⋮</Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-2xl p-2 min-w-[180px]">
+                            <DropdownMenuContent align="end" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 shadow-xl rounded-2xl p-2 min-w-[180px]">
                               <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => router.push(`/admin/tenants/${tenant.id}`)}>
                                 <ExternalLink size={16} className="mr-3 text-[#df0024]" /> Detalles y Docs
                               </DropdownMenuItem>
@@ -367,8 +367,8 @@ export default function TenantsPage() {
                               <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => handleToggleStatus(tenant.id, tenant.isActive)}>
                                 {tenant.isActive ? <><XCircle size={16} className="mr-3 text-red-500" /> Bloquear</> : <><CheckCircle size={16} className="mr-3 text-green-500" /> Reactivar</>}
                               </DropdownMenuItem>
-                              <div className="h-px bg-white/10 my-1"></div>
-                              <DropdownMenuItem className="rounded-xl font-bold cursor-pointer text-red-600 hover:bg-red-500/10" onClick={() => handleDelete(tenant.id)}>
+                              <div className="h-px bg-gray-100 dark:bg-zinc-800 my-1"></div>
+                              <DropdownMenuItem className="rounded-xl font-bold cursor-pointer text-red-600 hover:bg-red-50" onClick={() => handleDelete(tenant.id)}>
                                 <Trash2 size={16} className="mr-3" /> Eliminar
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -385,7 +385,7 @@ export default function TenantsPage() {
 
         {/* CREATE MODAL */}
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogContent className="max-w-4xl bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 overflow-y-auto max-h-[90vh]">
+          <DialogContent className="max-w-4xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 shadow-2xl rounded-[2.5rem] p-8 overflow-y-auto max-h-[90vh]">
             <DialogHeader>
               <DialogTitle className="text-3xl font-black">Nuevo Cliente</DialogTitle>
               <DialogDescription className="font-medium text-muted-foreground">Configura el entorno del nuevo restaurante en el sistema.</DialogDescription>
@@ -402,20 +402,20 @@ export default function TenantsPage() {
                    <div className="space-y-4">
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre Comercial</label>
-                        <Input className="glass h-12 rounded-2xl font-bold" placeholder="Ej: Luigi's Pizza" value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
+                        <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" placeholder="Ej: Luigi's Pizza" value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase ml-1 opacity-60">Dirección Completa (Publica)</label>
-                        <Input className="glass h-12 rounded-2xl font-bold" placeholder="Calle, Número, Ciudad, CP" value={formData.fullAddress} onChange={e => setFormData({ ...formData, fullAddress: e.target.value })} />
+                        <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" placeholder="Calle, Número, Ciudad, CP" value={formData.fullAddress} onChange={e => setFormData({ ...formData, fullAddress: e.target.value })} />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                          <div className="space-y-2">
                             <label className="text-xs font-bold uppercase ml-1 opacity-60">NIF / Tax ID</label>
-                            <Input className="glass h-12 rounded-2xl font-bold" placeholder="B12345678" value={formData.taxId} onChange={e => setFormData({ ...formData, taxId: e.target.value })} />
+                            <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" placeholder="B12345678" value={formData.taxId} onChange={e => setFormData({ ...formData, taxId: e.target.value })} />
                          </div>
                          <div className="space-y-2">
                             <label className="text-xs font-bold uppercase ml-1 opacity-60">Slug (URL)</label>
-                            <Input className="glass h-12 rounded-2xl font-bold" placeholder="luigis-pizza" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} required />
+                            <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" placeholder="luigis-pizza" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} required />
                          </div>
                       </div>
                    </div>
@@ -432,31 +432,31 @@ export default function TenantsPage() {
                          <div className="space-y-2">
                             <label className="text-xs font-bold uppercase ml-1 opacity-60">Plan</label>
                             <Select value={formData.planId} onValueChange={v => setFormData({ ...formData, planId: v })} required>
-                              <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
+                              <SelectTrigger className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
                               <SelectContent className="bg-white dark:bg-zinc-900">{plans.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
                             </Select>
                          </div>
                          <div className="space-y-2">
                             <label className="text-xs font-bold uppercase ml-1 opacity-60">Región</label>
                             <Select value={formData.regionId} onValueChange={v => setFormData({ ...formData, regionId: v })} required>
-                              <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
+                              <SelectTrigger className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
                               <SelectContent className="bg-white dark:bg-zinc-900">{regions.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
                             </Select>
                          </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase ml-1 opacity-60">Gerente (Email)</label>
-                        <Input className="glass h-12 rounded-2xl font-bold" type="email" placeholder="gerente@email.com" value={formData.managerEmail} onChange={e => setFormData({ ...formData, managerEmail: e.target.value })} required />
+                        <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" type="email" placeholder="gerente@email.com" value={formData.managerEmail} onChange={e => setFormData({ ...formData, managerEmail: e.target.value })} required />
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase ml-1 opacity-60">Contraseña Inicial</label>
-                        <Input className="glass h-12 rounded-2xl font-bold" type="password" placeholder="••••••••" value={formData.managerPassword} onChange={e => setFormData({ ...formData, managerPassword: e.target.value })} required />
+                        <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" type="password" placeholder="••••••••" value={formData.managerPassword} onChange={e => setFormData({ ...formData, managerPassword: e.target.value })} required />
                       </div>
                    </div>
                 </div>
               </div>
 
-              <DialogFooter className="pt-6 border-t border-white/10">
+              <DialogFooter className="pt-6 border-t border-gray-100 dark:border-zinc-800">
                 <Button type="button" variant="ghost" onClick={() => setIsCreateOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
                 <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "CREAR CLIENTE"}
@@ -468,7 +468,7 @@ export default function TenantsPage() {
 
         {/* EDIT MODAL */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-4xl bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 overflow-y-auto max-h-[90vh]">
+          <DialogContent className="max-w-4xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 shadow-2xl rounded-[2.5rem] p-8 overflow-y-auto max-h-[90vh]">
             <DialogHeader>
               <DialogTitle className="text-3xl font-black">Editar Cliente</DialogTitle>
             </DialogHeader>
@@ -479,20 +479,20 @@ export default function TenantsPage() {
                     <div className="space-y-4">
                        <div className="space-y-2">
                          <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre Comercial</label>
-                         <Input className="glass h-12 rounded-2xl font-bold" value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
+                         <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
                        </div>
                        <div className="space-y-2">
                          <label className="text-xs font-bold uppercase ml-1 opacity-60">Dirección Completa</label>
-                         <Input className="glass h-12 rounded-2xl font-bold" value={formData.fullAddress} onChange={e => setFormData({ ...formData, fullAddress: e.target.value })} />
+                         <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.fullAddress} onChange={e => setFormData({ ...formData, fullAddress: e.target.value })} />
                        </div>
                        <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                              <label className="text-xs font-bold uppercase ml-1 opacity-60">NIF / Tax ID</label>
-                             <Input className="glass h-12 rounded-2xl font-bold" value={formData.taxId} onChange={e => setFormData({ ...formData, taxId: e.target.value })} />
+                             <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.taxId} onChange={e => setFormData({ ...formData, taxId: e.target.value })} />
                           </div>
                           <div className="space-y-2">
                              <label className="text-xs font-bold uppercase ml-1 opacity-60">Slug (URL)</label>
-                             <Input className="glass h-12 rounded-2xl font-bold" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} required />
+                             <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} required />
                           </div>
                        </div>
                     </div>
@@ -505,14 +505,14 @@ export default function TenantsPage() {
                          <div className="space-y-2">
                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Plan</label>
                            <Select value={formData.planId} onValueChange={v => setFormData({ ...formData, planId: v })} required>
-                             <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                             <SelectTrigger className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
                              <SelectContent className="bg-white dark:bg-zinc-900">{plans.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
                            </Select>
                          </div>
                          <div className="space-y-2">
                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Región</label>
                            <Select value={formData.regionId} onValueChange={v => setFormData({ ...formData, regionId: v })} required>
-                             <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                             <SelectTrigger className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
                              <SelectContent className="bg-white dark:bg-zinc-900">{regions.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
                            </Select>
                          </div>
@@ -520,7 +520,7 @@ export default function TenantsPage() {
                        <div className="space-y-2">
                           <label className="text-xs font-bold uppercase ml-1 opacity-60">Timezone</label>
                           <Select value={formData.timezone} onValueChange={v => setFormData({ ...formData, timezone: v })}>
-                             <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                             <SelectTrigger className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
                              <SelectContent className="bg-white dark:bg-zinc-900">
                                 <SelectItem value="Europe/Madrid">Madrid (ES)</SelectItem>
                                 <SelectItem value="Europe/Paris">Paris (FR)</SelectItem>
@@ -532,7 +532,7 @@ export default function TenantsPage() {
                  </div>
               </div>
 
-              <DialogFooter className="pt-6 border-t border-white/10">
+              <DialogFooter className="pt-6 border-t border-gray-100 dark:border-zinc-800">
                 <Button type="button" variant="ghost" onClick={() => setIsEditOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
                 <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "GUARDAR CAMBIOS"}
@@ -544,7 +544,7 @@ export default function TenantsPage() {
 
         {/* PASSWORD MODAL */}
         <Dialog open={isPasswordOpen} onOpenChange={setIsPasswordOpen}>
-          <DialogContent className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2rem] p-8 max-w-md">
+          <DialogContent className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 shadow-2xl rounded-[2rem] p-8 max-w-md">
             <DialogHeader>
               <div className="size-14 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
                  <KeyRound size={28} />
@@ -556,7 +556,7 @@ export default function TenantsPage() {
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase ml-1 opacity-60">Nova Senha</label>
                 <Input
-                  className="glass h-12 rounded-2xl font-bold"
+                  className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold"
                   type="password"
                   placeholder="Min. 6 caracteres"
                   value={newPassword}

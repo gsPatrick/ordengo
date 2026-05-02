@@ -73,7 +73,7 @@ export default function AdvertisersPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={20} />
             <Input
               placeholder="Buscar anunciante..."
-              className="pl-12 glass border-none h-12 rounded-2xl shadow-lg"
+              className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
@@ -107,7 +107,7 @@ export default function AdvertisersPage() {
               </TableHeader>
               <TableBody>
                 {advertisers.map(adv => (
-                  <TableRow key={adv.id} className="border-b border-white/5 hover:bg-white/40 dark:hover:bg-white/5 transition-all">
+                  <TableRow key={adv.id} className="border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-4">
                          <div className="size-10 rounded-xl bg-[#df0024]/10 flex items-center justify-center text-[#df0024]">
@@ -123,7 +123,7 @@ export default function AdvertisersPage() {
                        </div>
                     </TableCell>
                     <TableCell className="py-4">
-                       <span className="font-mono text-xs bg-white/5 px-2 py-1 rounded">{adv.taxId || 'N/A'}</span>
+                       <span className="font-mono text-xs bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 px-2 py-1 rounded">{adv.taxId || 'N/A'}</span>
                     </TableCell>
                     <TableCell className="text-right px-6 py-4">
                        <div className="flex justify-end gap-2">
@@ -147,20 +147,20 @@ export default function AdvertisersPage() {
              <form onSubmit={handleCreate} className="space-y-6 mt-4">
                 <div className="space-y-2">
                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre de la Empresa</label>
-                   <Input className="glass h-12 rounded-2xl font-bold" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+                   <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
                 </div>
                 <div className="space-y-2">
                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Email Comercial</label>
-                   <Input type="email" className="glass h-12 rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
+                   <Input type="email" className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
                       <label className="text-xs font-bold uppercase ml-1 opacity-60">Teléfono</label>
-                      <Input className="glass h-12 rounded-2xl font-bold" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                      <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                    </div>
                    <div className="space-y-2">
                       <label className="text-xs font-bold uppercase ml-1 opacity-60">Tax ID</label>
-                      <Input className="glass h-12 rounded-2xl font-bold" value={formData.taxId} onChange={e => setFormData({...formData, taxId: e.target.value})} />
+                      <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.taxId} onChange={e => setFormData({...formData, taxId: e.target.value})} />
                    </div>
                 </div>
                 <DialogFooter>

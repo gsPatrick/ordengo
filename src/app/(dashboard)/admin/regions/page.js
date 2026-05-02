@@ -161,11 +161,11 @@ export default function RegionsPage() {
 
         {/* Toolbar de Filtro */}
         {regions.length > 0 && (
-          <div className="flex items-center gap-2 bg-white p-2 rounded-lg border shadow-sm max-w-md">
+          <div className="flex items-center gap-2 bg-white dark:bg-zinc-800 p-2 rounded-lg border border-gray-200 dark:border-white/10 shadow-sm max-w-md">
             <Search className="text-gray-400 ml-2" size={18} />
             <Input
               placeholder="Buscar região ou país..."
-              className="border-none shadow-none focus-visible:ring-0"
+              className="border-none shadow-none focus-visible:ring-0 bg-transparent"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
@@ -190,37 +190,37 @@ export default function RegionsPage() {
               .map(reg => {
                 const countryInfo = COUNTRIES.find(c => c.code === reg.country) || { flag: '🌍', name: reg.country };
                 return (
-                  <Card key={reg.id} className="hover:shadow-lg transition-all duration-300 group border-l-4 border-l-transparent hover:border-l-[#df0024]">
+                  <Card key={reg.id} className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden hover:shadow-2xl transition-all duration-300 group border-l-4 border-l-transparent hover:border-l-[#df0024]">
                     <CardContent className="p-6">
 
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="text-3xl bg-gray-50 w-12 h-12 flex items-center justify-center rounded-full border border-gray-100">
+                          <div className="text-3xl bg-gray-50 dark:bg-white/5 w-12 h-12 flex items-center justify-center rounded-full border border-gray-100 dark:border-white/10">
                             {countryInfo.flag}
                           </div>
                           <div>
-                            <h3 className="font-bold text-lg text-gray-900 leading-tight">{reg.name}</h3>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mt-0.5">{countryInfo.name}</p>
+                            <h3 className="font-bold text-lg text-foreground leading-tight">{reg.name}</h3>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-0.5">{countryInfo.name}</p>
                           </div>
                         </div>
-                        <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200">
+                        <Badge variant="outline" className="bg-gray-50 dark:bg-white/5 text-foreground border-gray-200 dark:border-white/10">
                           {reg.country}
                         </Badge>
                       </div>
 
-                      {/* Info Fiscal */}
-                      <div className="bg-blue-50/50 rounded-lg p-3 mb-4 border border-blue-100">
+                       {/* Info Fiscal */}
+                      <div className="bg-blue-500/5 dark:bg-blue-500/10 rounded-lg p-3 mb-4 border border-blue-500/10">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs text-blue-600 font-bold uppercase flex items-center gap-1">
+                          <span className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase flex items-center gap-1">
                             <Landmark size={12} /> Regra Fiscal
                           </span>
-                          <span className="text-xs text-blue-800 font-mono bg-blue-100 px-1.5 rounded">AUTO</span>
+                          <span className="text-xs text-blue-800 dark:text-blue-300 font-mono bg-blue-500/10 px-1.5 rounded">AUTO</span>
                         </div>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold text-gray-900">{reg.taxRule}%</span>
-                          <span className="text-sm font-medium text-gray-500">{reg.taxName}</span>
+                          <span className="text-2xl font-bold text-foreground">{reg.taxRule}%</span>
+                          <span className="text-sm font-medium text-muted-foreground">{reg.taxName}</span>
                         </div>
-                        <p className="text-[10px] text-gray-400 mt-1">Aplicado automaticamente em faturas desta região.</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">Aplicado automaticamente em faturas desta região.</p>
                       </div>
 
                       <div className="flex justify-between items-center pt-2 border-t border-gray-100">
@@ -252,12 +252,12 @@ export default function RegionsPage() {
 
         {/* --- MODAL DE CRIAÇÃO --- */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
+              <DialogTitle className="text-2xl font-black flex items-center gap-2">
                 <MapPin className="text-[#df0024]" /> {newRegion.id ? 'Editar Zona Fiscal' : 'Nova Zona Fiscal'}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="font-medium text-muted-foreground">
                 Defina uma região geográfica para aplicar impostos e segmentar publicidade.
               </DialogDescription>
             </DialogHeader>
@@ -267,12 +267,12 @@ export default function RegionsPage() {
               {/* Coluna Esquerda: Formulário */}
               <form id="region-form" onSubmit={handleCreate} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase text-gray-500">País</label>
+                  <label className="text-xs font-bold uppercase text-muted-foreground opacity-60">País</label>
                   <Select value={newRegion.country} onValueChange={handleCountryChange}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white dark:bg-zinc-900">
                       {COUNTRIES.map(c => (
                         <SelectItem key={c.code} value={c.code}>
                           <span className="mr-2">{c.flag}</span> {c.name}
@@ -283,41 +283,42 @@ export default function RegionsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase text-gray-500">Nome da Região</label>
+                  <label className="text-xs font-bold uppercase text-muted-foreground opacity-60">Nome da Região</label>
                   <Input
                     placeholder="Ex: Ilhas Canárias, Bavária..."
                     value={newRegion.name}
                     onChange={e => setNewRegion({ ...newRegion, name: e.target.value })}
+                    className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold"
                     required
                   />
 
                   {/* Sugestão de Cidades (API) */}
-                  <div className="bg-gray-50 border rounded-md p-2">
-                    <p className="text-[10px] font-bold text-gray-400 mb-2 flex items-center gap-1">
+                  <div className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl p-4">
+                    <p className="text-[10px] font-bold text-muted-foreground mb-3 flex items-center gap-1 uppercase tracking-widest">
                       <Globe size={10} /> SUGESTÕES DE {newRegion.country} ({cities.length})
                     </p>
                     <Input
                       placeholder="Filtrar cidade..."
-                      className="h-7 text-xs mb-2 bg-white"
+                      className="h-10 text-xs mb-3 bg-white dark:bg-zinc-800 border-gray-200 dark:border-white/10 rounded-xl"
                       value={citySearch}
                       onChange={e => setCitySearch(e.target.value)}
                     />
-                    <ScrollArea className="h-24 w-full rounded-md border bg-white p-1">
+                     <ScrollArea className="h-28 w-full rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-zinc-900 p-2">
                       {loadingCities ? (
-                        <div className="flex justify-center py-4"><Loader2 className="animate-spin h-4 w-4 text-gray-400" /></div>
+                        <div className="flex justify-center py-6"><Loader2 className="animate-spin h-5 w-5 text-[#df0024]" /></div>
                       ) : (
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1.5">
                           {filteredCities.map((city, idx) => (
                             <Badge
                               key={idx}
                               variant="secondary"
-                              className="cursor-pointer hover:bg-gray-200 font-normal text-[10px]"
+                              className="cursor-pointer hover:bg-[#df0024]/10 hover:text-[#df0024] font-bold text-[10px] bg-gray-50 dark:bg-white/5 border-none"
                               onClick={() => setNewRegion({ ...newRegion, name: city })}
                             >
                               {city}
                             </Badge>
                           ))}
-                          {filteredCities.length === 0 && <span className="text-xs text-gray-400 px-2">Nenhuma cidade encontrada.</span>}
+                          {filteredCities.length === 0 && <span className="text-xs text-muted-foreground px-2 py-4">Nenhuma cidade encontrada.</span>}
                         </div>
                       )}
                     </ScrollArea>
@@ -326,58 +327,59 @@ export default function RegionsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-gray-500">Nome Imposto</label>
-                    <Input value={newRegion.taxName} onChange={e => setNewRegion({ ...newRegion, taxName: e.target.value })} />
+                    <label className="text-xs font-bold uppercase text-muted-foreground opacity-60">Nome Imposto</label>
+                    <Input className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" value={newRegion.taxName} onChange={e => setNewRegion({ ...newRegion, taxName: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-gray-500">Taxa (%)</label>
+                    <label className="text-xs font-bold uppercase text-muted-foreground opacity-60">Taxa (%)</label>
                     <div className="relative">
                       <Input
                         type="number"
                         step="0.01"
+                        className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold pr-10"
                         value={newRegion.taxRule}
                         onChange={e => setNewRegion({ ...newRegion, taxRule: e.target.value })}
                       />
-                      <span className="absolute right-3 top-2 text-sm text-gray-400">%</span>
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-muted-foreground">%</span>
                     </div>
                   </div>
                 </div>
               </form>
 
               {/* Coluna Direita: Simulador */}
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 flex flex-col justify-center">
-                <h4 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-6 border border-gray-100 dark:border-white/10 flex flex-col justify-center">
+                <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                   <Info size={16} className="text-blue-500" /> Simulador de Fatura
                 </h4>
 
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between text-gray-500">
+                  <div className="flex justify-between text-muted-foreground">
                     <span>Assinatura SaaS</span>
                     <span>€ 100,00</span>
                   </div>
-                  <div className="flex justify-between text-gray-800 font-medium">
+                  <div className="flex justify-between text-foreground font-medium">
                     <span>+ {newRegion.taxName || 'Imposto'} ({newRegion.taxRule || 0}%)</span>
                     <span>€ {Number((100 * (newRegion.taxRule || 0)) / 100).toFixed(2)}</span>
                   </div>
-                  <div className="border-t border-gray-200 my-2"></div>
-                  <div className="flex justify-between text-lg font-bold text-[#df0024]">
+                  <div className="border-t border-gray-200 dark:border-white/10 my-2"></div>
+                  <div className="flex justify-between text-lg font-black text-[#df0024]">
                     <span>Total Cliente</span>
                     <span>€ {Number(100 + (100 * (newRegion.taxRule || 0)) / 100).toFixed(2)}</span>
                   </div>
                 </div>
 
-                <div className="mt-6 bg-blue-50 p-3 rounded-lg text-xs text-blue-700 border border-blue-100">
+                <div className="mt-6 bg-blue-500/10 p-3 rounded-lg text-xs text-blue-600 border border-blue-500/10">
                   O sistema usará a alíquota de <strong>{newRegion.taxRule}%</strong> para todas as faturas geradas para clientes desta região.
                 </div>
               </div>
 
             </div>
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-              <Button type="submit" form="region-form" className="bg-[#df0024] hover:bg-red-700" disabled={submitting}>
-                {submitting ? <Loader2 className="animate-spin mr-2" /> : <CheckCircle2 className="mr-2" size={18} />}
-                Confirmar Região
+            <DialogFooter className="pt-6 border-t border-gray-100 dark:border-white/10">
+              <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
+              <Button type="submit" form="region-form" className="bg-[#df0024] hover:bg-red-700 h-14 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                {submitting ? <Loader2 className="animate-spin mr-2" /> : <CheckCircle2 className="mr-2" size={20} />}
+                GUARDAR REGIÃO
               </Button>
             </DialogFooter>
           </DialogContent>

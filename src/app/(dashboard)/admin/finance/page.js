@@ -166,7 +166,7 @@ export default function FinancePage() {
       <div className="space-y-8 animate-in fade-in duration-500">
         
         {/* HEADER + DATE FILTER */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white p-5 rounded-xl border shadow-sm sticky top-4 z-30">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white dark:bg-zinc-900 p-5 rounded-xl border border-gray-200 dark:border-white/10 shadow-sm sticky top-4 z-30">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Gestão Financeira</h1>
             <p className="text-sm text-gray-500">
@@ -178,10 +178,10 @@ export default function FinancePage() {
           
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
             {/* Seletor de Data */}
-            <div className="flex items-center bg-gray-50 border rounded-lg p-1 w-full sm:w-auto">
-              <div className="bg-white border rounded px-2 py-1 flex items-center gap-2 mr-2">
-                <Filter size={14} className="text-gray-500"/>
-                <span className="text-xs font-bold text-gray-700">FILTRO</span>
+            <div className="flex items-center bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg p-1 w-full sm:w-auto">
+              <div className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 rounded px-2 py-1 flex items-center gap-2 mr-2">
+                <Filter size={14} className="text-gray-500 dark:text-gray-400"/>
+                <span className="text-xs font-bold text-gray-700 dark:text-gray-200">FILTRO</span>
               </div>
               
               <div className="relative flex-1 sm:flex-none">
@@ -316,8 +316,8 @@ export default function FinancePage() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="name" />
                     <YAxis />
-                    <RechartsTooltip 
-                      contentStyle={{backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb'}}
+                     <RechartsTooltip 
+                      contentStyle={{backgroundColor: 'var(--card)', borderRadius: '8px', border: '1px solid var(--border)'}}
                       formatter={(value) => `€ ${Number(value).toFixed(2)}`}
                     />
                     <Legend />
@@ -338,7 +338,7 @@ export default function FinancePage() {
 
         {/* TABELAS E LISTAGEM */}
         <Tabs defaultValue="invoices" className="w-full">
-          <TabsList className="bg-gray-100 p-1">
+          <TabsList className="bg-gray-100 dark:bg-zinc-800 p-1">
             <TabsTrigger value="invoices" className="gap-2"><FileText size={16}/> Gestão de Faturas</TabsTrigger>
             <TabsTrigger value="ledger" className="gap-2"><Landmark size={16}/> Livro Razão (Pagamentos)</TabsTrigger>
           </TabsList>
@@ -354,13 +354,13 @@ export default function FinancePage() {
                   </div>
                   
                   {/* FILTROS AVANÇADOS */}
-                  <div className="flex flex-wrap items-center gap-2 bg-gray-50 p-2 rounded-lg border border-gray-200">
+                  <div className="flex flex-wrap items-center gap-2 bg-gray-50 dark:bg-white/5 p-2 rounded-lg border border-gray-100 dark:border-white/10">
                     {/* Busca */}
                     <div className="relative">
                       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
                       <Input 
                         placeholder="Buscar cliente..." 
-                        className="pl-9 w-[200px] h-9 bg-white text-sm" 
+                        className="pl-9 w-[200px] h-9 bg-white dark:bg-zinc-800 text-sm" 
                         value={searchTerm} 
                         onChange={e => setSearchTerm(e.target.value)} 
                       />
@@ -370,7 +370,7 @@ export default function FinancePage() {
 
                     {/* Status */}
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-[140px] h-9 bg-white text-xs">
+                      <SelectTrigger className="w-[140px] h-9 bg-white dark:bg-zinc-800 text-xs">
                         <Filter className="mr-2 h-3 w-3 text-gray-500" />
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>

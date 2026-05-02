@@ -97,13 +97,13 @@ export default function CampaignsPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={20} />
             <Input
               placeholder="Buscar campaña o anunciante..."
-              className="pl-12 glass border-none h-12 rounded-2xl shadow-lg"
+              className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex gap-2">
-             <Button variant="ghost" className="glass gap-2 rounded-xl border-none h-12 px-6 font-bold"><Filter size={18} /> Todos los Status</Button>
+             <Button variant="ghost" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 gap-2 rounded-xl h-12 px-6 font-bold"><Filter size={18} /> Todos los Status</Button>
           </div>
         </div>
 
@@ -124,7 +124,7 @@ export default function CampaignsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {campaigns.map(camp => (
-              <div key={camp.id} className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden flex flex-col group hover:scale-[1.02] transition-all duration-300">
+              <div key={camp.id} className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden flex flex-col group hover:scale-[1.02] transition-all duration-300">
                  {/* Creative Preview */}
                  <div className="relative aspect-[9/16] bg-black/20 overflow-hidden">
                     {camp.Creatives?.[0]?.mediaUrl ? (
@@ -139,7 +139,7 @@ export default function CampaignsPage() {
                       {getStatusBadge(camp.status)}
                     </div>
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button size="icon" className="glass bg-black/40 hover:bg-black/60 text-white rounded-full"><MoreVertical size={16} /></Button>
+                      <Button size="icon" className="bg-black/40 hover:bg-black/60 text-white rounded-full"><MoreVertical size={16} /></Button>
                     </div>
                  </div>
 
@@ -154,11 +154,11 @@ export default function CampaignsPage() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                       <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
+                       <div className="bg-gray-50 dark:bg-white/5 p-3 rounded-2xl border border-gray-100 dark:border-white/5">
                           <p className="text-[10px] uppercase font-black opacity-40">Impresiones</p>
                           <p className="text-lg font-black text-foreground">0</p>
                        </div>
-                       <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
+                       <div className="bg-gray-50 dark:bg-white/5 p-3 rounded-2xl border border-gray-100 dark:border-white/5">
                           <p className="text-[10px] uppercase font-black opacity-40">Clicks</p>
                           <p className="text-lg font-black text-foreground">0</p>
                        </div>
@@ -177,8 +177,8 @@ export default function CampaignsPage() {
                  </div>
 
                  {/* Footer Actions */}
-                 <div className="p-4 bg-white/5 border-t border-white/5 flex gap-2">
-                    <Button variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-white/10"><BarChart3 size={14} className="mr-2" /> Reporte</Button>
+                 <div className="p-4 bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-white/5 flex gap-2">
+                    <Button variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-gray-100 dark:hover:bg-white/10"><BarChart3 size={14} className="mr-2" /> Reporte</Button>
                     {camp.status === 'active' ? (
                       <Button variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-yellow-500/10 text-yellow-500"><Pause size={14} className="mr-2" /> Pausar</Button>
                     ) : (
@@ -204,23 +204,23 @@ export default function CampaignsPage() {
                     <div className="space-y-4">
                        <div className="space-y-2">
                           <label className="text-xs font-bold uppercase ml-1 opacity-60">Título da Campanha</label>
-                          <Input className="glass h-12 rounded-2xl font-bold" placeholder="Ex: Promo Verão Coca-Cola" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
+                          <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold" placeholder="Ex: Promo Verão Coca-Cola" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
                        </div>
                        <div className="space-y-2">
                           <label className="text-xs font-bold uppercase ml-1 opacity-60">Anunciante</label>
                           <Select value={formData.advertiserId} onValueChange={v => setFormData({...formData, advertiserId: v})} required>
-                             <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
+                             <SelectTrigger className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
                              <SelectContent className="bg-white dark:bg-zinc-900">{advertisers.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}</SelectContent>
                           </Select>
                        </div>
                        <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <label className="text-xs font-bold uppercase ml-1 opacity-60">Data Início</label>
-                            <Input type="date" className="glass h-12 rounded-2xl font-bold" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} required />
+                            <Input type="date" className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} required />
                           </div>
                           <div className="space-y-2">
                             <label className="text-xs font-bold uppercase ml-1 opacity-60">Data Fim</label>
-                            <Input type="date" className="glass h-12 rounded-2xl font-bold" value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} required />
+                            <Input type="date" className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold" value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} required />
                           </div>
                        </div>
                     </div>
@@ -231,13 +231,13 @@ export default function CampaignsPage() {
                     <div className="space-y-4">
                        <div className="space-y-2">
                           <label className="text-xs font-bold uppercase ml-1 opacity-60">URL da Imagem / Vídeo</label>
-                          <Input className="glass h-12 rounded-2xl font-bold" placeholder="https://..." value={formData.mediaUrl} onChange={e => setFormData({...formData, mediaUrl: e.target.value})} required />
+                          <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold" placeholder="https://..." value={formData.mediaUrl} onChange={e => setFormData({...formData, mediaUrl: e.target.value})} required />
                        </div>
                        
                        {/* 9:16 PREVIEW BOX */}
                        <div className="space-y-2">
                           <label className="text-xs font-bold uppercase ml-1 opacity-60">Prévia (9:16 Retrato)</label>
-                          <div className="aspect-[9/16] max-w-[200px] mx-auto glass rounded-2xl border-dashed border-2 border-white/20 flex items-center justify-center overflow-hidden">
+                          <div className="aspect-[9/16] max-w-[200px] mx-auto bg-gray-50 dark:bg-zinc-800 rounded-2xl border-dashed border-2 border-gray-200 dark:border-white/20 flex items-center justify-center overflow-hidden">
                              {formData.mediaUrl ? (
                                <img src={formData.mediaUrl} className="w-full h-full object-cover" alt="Preview" />
                              ) : (
@@ -256,7 +256,7 @@ export default function CampaignsPage() {
                  </div>
               </div>
 
-              <DialogFooter className="pt-6 border-t border-white/10">
+              <DialogFooter className="pt-6 border-t border-gray-200 dark:border-white/10">
                 <Button type="button" variant="ghost" onClick={() => setIsCreateOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
                 <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "CREAR CAMPAÑA"}

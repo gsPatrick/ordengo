@@ -51,14 +51,8 @@ export default function ReportsPage() {
   const formatCurrency = (val) => 
     new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(Number(val || 0));
 
-  // Mock MRR trend data
-  const mrrTrend = [
-    { month: 'Ene', value: (stats?.financial?.mrr || 0) * 0.7 },
-    { month: 'Feb', value: (stats?.financial?.mrr || 0) * 0.78 },
-    { month: 'Mar', value: (stats?.financial?.mrr || 0) * 0.85 },
-    { month: 'Abr', value: (stats?.financial?.mrr || 0) * 0.92 },
-    { month: 'May', value: stats?.financial?.mrr || 0 },
-  ];
+  // MRR trend — only populated from real API data
+  const mrrTrend = stats?.financial?.mrrHistory || [];
 
   const revenueData = stats ? [
     { name: 'Assinaturas', value: Number(stats.financial?.revenueSaaS || 0) },
@@ -66,7 +60,7 @@ export default function ReportsPage() {
   ].filter(d => d.value > 0) : [];
 
   const KpiCard = ({ title, value, icon: Icon, trend, trendUp, color = "text-primary" }) => (
-    <Card className="glass border-none shadow-xl rounded-[2rem] overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+    <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2rem] overflow-hidden group hover:scale-[1.02] transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className={cn("p-2.5 rounded-xl", color === "text-primary" ? "bg-primary/10" : "bg-green-500/10")}>
@@ -99,13 +93,13 @@ export default function ReportsPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center glass rounded-2xl h-12 px-4 gap-3 border-none">
+            <div className="flex items-center bg-white dark:bg-zinc-950 border border-gray-200 dark:border-white/10 rounded-2xl h-12 px-4 gap-3 shadow-sm">
               <Calendar size={16} className="text-muted-foreground" />
               <Input type="date" className="bg-transparent border-none h-8 text-xs w-28 focus-visible:ring-0" value={dateRange.start} onChange={e => setDateRange({...dateRange, start: e.target.value})} />
               <span className="text-muted-foreground text-xs">—</span>
               <Input type="date" className="bg-transparent border-none h-8 text-xs w-28 focus-visible:ring-0" value={dateRange.end} onChange={e => setDateRange({...dateRange, end: e.target.value})} />
             </div>
-            <Button variant="ghost" className="glass rounded-xl border-none h-12 px-6 font-bold gap-2">
+            <Button variant="ghost" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl h-12 px-6 font-bold gap-2">
               <Download size={18} /> Exportar
             </Button>
           </div>
@@ -113,18 +107,18 @@ export default function ReportsPage() {
 
         {/* KPI Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <KpiCard title="MRR (Recurrente)" value={formatCurrency(stats?.financial?.mrr)} icon={DollarSign} trend="+8.4%" trendUp color="text-primary" />
-          <KpiCard title="GMV Global" value={formatCurrency(stats?.financial?.globalGMV)} icon={TrendingUp} trend="+15.2%" trendUp color="text-green-500" />
-          <KpiCard title="Clientes Activos" value={stats?.tenants?.active || 0} icon={Users} trend="+12%" trendUp color="text-primary" />
-          <KpiCard title="Tablets Online" value={stats?.operational?.activeTablets || 0} icon={Smartphone} trend="+3" trendUp color="text-green-500" />
+          <KpiCard title="MRR (Recurrente)" value={formatCurrency(stats?.financial?.mrr)} icon={DollarSign} color="text-primary" />
+          <KpiCard title="GMV Global" value={formatCurrency(stats?.financial?.globalGMV)} icon={TrendingUp} color="text-green-500" />
+          <KpiCard title="Clientes Activos" value={stats?.tenants?.active || 0} icon={Users} color="text-primary" />
+          <KpiCard title="Tablets Online" value={stats?.operational?.activeTablets || 0} icon={Smartphone} color="text-green-500" />
         </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* MRR Trend */}
-          <Card className="lg:col-span-2 glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="bg-white/10 px-8 pt-8">
+          <Card className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+            <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
               <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4">
                 <BarChart3 size={24} />
               </div>
@@ -132,6 +126,7 @@ export default function ReportsPage() {
               <CardDescription>Tendencia de ingresos recurrentes mensuales.</CardDescription>
             </CardHeader>
             <CardContent className="p-8 h-[350px]">
+              {mrrTrend.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={mrrTrend}>
                   <defs>
@@ -147,12 +142,15 @@ export default function ReportsPage() {
                   <Area type="monotone" dataKey="value" stroke="#df0024" strokeWidth={3} fillOpacity={1} fill="url(#colorMrr)" />
                 </AreaChart>
               </ResponsiveContainer>
+              ) : (
+                <EmptyState icon={BarChart3} title="Sin datos históricos" subtitle="Los datos de tendencia MRR aparecerán aquí cuando haya histórico de facturación." />
+              )}
             </CardContent>
           </Card>
 
           {/* Revenue Distribution */}
-          <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="bg-white/10 px-8 pt-8">
+          <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+            <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
               <div className="size-12 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 mb-4">
                 <Target size={24} />
               </div>

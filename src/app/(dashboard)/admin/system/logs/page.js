@@ -96,7 +96,7 @@ export default function LogsPage() {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button onClick={fetchLogs} variant="ghost" className="glass rounded-xl border-none h-12 px-6 font-bold gap-2">
+            <Button onClick={fetchLogs} variant="ghost" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl h-12 px-6 font-bold gap-2">
               <RefreshCw size={18} /> Actualizar
             </Button>
           </div>
@@ -108,19 +108,19 @@ export default function LogsPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
             <Input 
               placeholder="Buscar por usuario, acción o recurso..." 
-              className="pl-12 glass border-none h-12 rounded-2xl shadow-lg"
+              className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 backdrop-blur-md">
+           <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl border border-gray-200 dark:border-white/10">
             {['all', 'login', 'create', 'update', 'delete', 'error'].map(f => (
               <button 
                 key={f}
                 onClick={() => setFilter(f)} 
                 className={cn(
                   "px-4 py-2.5 rounded-lg text-xs font-black uppercase tracking-tight transition-all",
-                  filter === f ? "bg-white text-black shadow-lg dark:bg-white/20 dark:text-white" : "text-muted-foreground hover:text-foreground"
+                  filter === f ? "bg-white dark:bg-zinc-700 text-black dark:text-white shadow-lg" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {f === 'all' ? 'Todos' : f}
@@ -130,8 +130,8 @@ export default function LogsPage() {
         </div>
 
         {/* Logs Table */}
-        <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-          <CardHeader className="bg-white/10 px-8 pt-8">
+        <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+          <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
             <div className="flex justify-between items-center">
               <div>
                 <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4">

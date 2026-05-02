@@ -163,17 +163,15 @@
   animation-delay: 4s;
 }
 
-/* Glassmorphism Utilities */
+/* Glassmorphism Utilities - Redefined to Opaque for Premium Readability */
 .glass {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: oklch(1 0 0); /* White */
+  border: 1px solid oklch(0.92 0 0); /* border color */
 }
 
 .dark .glass {
-  background: rgba(20, 20, 25, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: oklch(0.205 0 0); /* Zinc 900 equivalent from theme */
+  border: 1px solid oklch(1 0 0 / 10%);
 }
 
 @layer base {

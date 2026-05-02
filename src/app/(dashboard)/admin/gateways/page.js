@@ -111,12 +111,12 @@ export default function GatewaysPage() {
         </div>
 
         {/* Security Note */}
-        <div className="glass border-none rounded-2xl p-5 flex items-center gap-4 shadow-lg">
+        <div className="bg-green-500/5 dark:bg-green-500/10 border border-green-500/20 rounded-2xl p-5 flex items-center gap-4 shadow-lg">
           <div className="size-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 shrink-0">
             <Shield size={24} />
           </div>
           <div>
-            <p className="text-sm font-bold">Seguridad de Claves API</p>
+            <p className="text-sm font-bold text-foreground">Seguridad de Claves API</p>
             <p className="text-xs text-muted-foreground">Las claves secretas se almacenan encriptadas. Nunca se exponen en el frontend del cliente.</p>
           </div>
         </div>
@@ -125,10 +125,10 @@ export default function GatewaysPage() {
         <div className="grid grid-cols-1 gap-8">
           {GATEWAYS.map(gw => (
             <Card key={gw.id} className={cn(
-              "glass border-none shadow-xl rounded-[2.5rem] overflow-hidden transition-all duration-300",
+              "bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden transition-all duration-300",
               !activeGateways[gw.id] && "opacity-60"
             )}>
-              <CardHeader className="bg-white/10 px-8 pt-8">
+              <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-4">
                     <div className={cn("size-14 rounded-2xl bg-gradient-to-br flex items-center justify-center text-2xl shadow-lg", gw.color)}>
@@ -157,10 +157,10 @@ export default function GatewaysPage() {
                     {gw.fields.map(field => (
                       <div key={field.key} className="space-y-2">
                         <Label className="text-xs font-bold uppercase ml-1 opacity-60">{field.label}</Label>
-                        <div className="relative">
+                         <div className="relative">
                           <Input 
                             type={field.type === 'password' && !showSecrets[field.key] ? 'password' : 'text'}
-                            className="glass h-12 rounded-2xl font-mono text-xs pr-12"
+                            className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 h-12 rounded-2xl font-mono text-xs pr-12"
                             placeholder={`Ingrese su ${field.label}...`}
                             value={configs[field.key] || ''}
                             onChange={e => setConfigs(prev => ({ ...prev, [field.key]: e.target.value }))}

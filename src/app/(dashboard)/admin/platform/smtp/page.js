@@ -91,7 +91,7 @@ export default function SMTPPage() {
             <p className="text-muted-foreground mt-1 text-sm italic">Gestão central de comunicação transacional e marketing por email.</p>
           </div>
           <div className="flex gap-3">
-             <Button onClick={handleTest} variant="ghost" className="glass gap-2 rounded-xl border-none h-12 px-6 font-bold"><Send size={18} /> Probar Envío</Button>
+             <Button onClick={handleTest} variant="ghost" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 gap-2 rounded-xl h-12 px-6 font-bold"><Send size={18} /> Probar Envío</Button>
              <Button onClick={handleSave} disabled={submitting} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8 h-12 font-bold">
                 {submitting ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} Guardar Cambios
              </Button>
@@ -99,7 +99,7 @@ export default function SMTPPage() {
         </div>
 
         <Tabs defaultValue="server" className="space-y-8">
-          <TabsList className="glass p-1 rounded-2xl h-14 w-full max-w-md border-none">
+          <TabsList className="bg-gray-100 dark:bg-zinc-800 p-1 rounded-2xl h-14 w-full max-w-md border-gray-200 dark:border-white/10">
             <TabsTrigger value="server" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-[#df0024] data-[state=active]:text-white">
               <Server size={18} className="mr-2" /> Servidor
             </TabsTrigger>
@@ -110,8 +110,8 @@ export default function SMTPPage() {
 
           <TabsContent value="server" className="animate-in fade-in slide-in-from-bottom-4">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-               <Card className="lg:col-span-2 glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-                  <CardHeader className="bg-white/10 px-8 pt-8">
+               <Card className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+                  <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                      <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
                         <Server size={24} />
                      </div>
@@ -122,25 +122,25 @@ export default function SMTPPage() {
                      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div className="md:col-span-3 space-y-2">
                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Host SMTP</label>
-                           <Input className="glass h-12 rounded-2xl font-bold" placeholder="smtp.gmail.com" value={settings.smtp_host} onChange={e => setSettings({...settings, smtp_host: e.target.value})} />
+                           <Input className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" placeholder="smtp.gmail.com" value={settings.smtp_host} onChange={e => setSettings({...settings, smtp_host: e.target.value})} />
                         </div>
                         <div className="space-y-2">
                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Puerto</label>
-                           <Input className="glass h-12 rounded-2xl font-bold" placeholder="587" value={settings.smtp_port} onChange={e => setSettings({...settings, smtp_port: e.target.value})} />
+                           <Input className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" placeholder="587" value={settings.smtp_port} onChange={e => setSettings({...settings, smtp_port: e.target.value})} />
                         </div>
                      </div>
 
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Usuario / Email</label>
-                           <Input className="glass h-12 rounded-2xl font-bold" value={settings.smtp_user} onChange={e => setSettings({...settings, smtp_user: e.target.value})} />
+                           <Input className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" value={settings.smtp_user} onChange={e => setSettings({...settings, smtp_user: e.target.value})} />
                         </div>
                         <div className="space-y-2">
                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Contraseña</label>
                            <div className="relative">
                               <Input 
                                 type={showPassword ? 'text' : 'password'} 
-                                className="glass h-12 rounded-2xl font-bold pr-12" 
+                                className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold pr-12" 
                                 value={settings.smtp_password} 
                                 onChange={e => setSettings({...settings, smtp_password: e.target.value})} 
                               />
@@ -153,8 +153,8 @@ export default function SMTPPage() {
                   </CardContent>
                </Card>
 
-               <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-                  <CardHeader className="bg-white/10 px-8 pt-8">
+               <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+                  <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                      <div className="size-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 mb-4">
                         <Mail size={24} />
                      </div>
@@ -164,11 +164,11 @@ export default function SMTPPage() {
                   <CardContent className="p-8 space-y-6">
                      <div className="space-y-2">
                         <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre del Remitente</label>
-                        <Input className="glass h-12 rounded-2xl font-bold" value={settings.smtp_from_name} onChange={e => setSettings({...settings, smtp_from_name: e.target.value})} />
+                        <Input className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" value={settings.smtp_from_name} onChange={e => setSettings({...settings, smtp_from_name: e.target.value})} />
                      </div>
                      <div className="space-y-2">
                         <label className="text-xs font-bold uppercase ml-1 opacity-60">Email de Respuesta</label>
-                        <Input className="glass h-12 rounded-2xl font-bold" value={settings.smtp_from_email} onChange={e => setSettings({...settings, smtp_from_email: e.target.value})} />
+                        <Input className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" value={settings.smtp_from_email} onChange={e => setSettings({...settings, smtp_from_email: e.target.value})} />
                      </div>
                      <div className="bg-blue-500/10 p-4 rounded-2xl border border-blue-500/20 flex gap-3">
                         <Info className="text-blue-500 shrink-0" size={18} />
@@ -184,8 +184,8 @@ export default function SMTPPage() {
           <TabsContent value="templates" className="animate-in fade-in slide-in-from-bottom-4">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                {/* --- HTML CODE EDITOR --- */}
-               <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden flex flex-col">
-                  <CardHeader className="bg-white/10 px-8 pt-8">
+               <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden flex flex-col">
+                  <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                      <div className="flex justify-between items-start">
                         <div>
                           <div className="size-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-500 mb-4">
@@ -199,7 +199,7 @@ export default function SMTPPage() {
                   </CardHeader>
                   <CardContent className="p-8 pt-0 flex-1">
                      <div className="space-y-4">
-                        <div className="rounded-3xl overflow-hidden border-2 border-white/10 bg-[#2d2d2d] min-h-[500px]">
+                        <div className="rounded-3xl overflow-hidden border-2 border-gray-200 dark:border-white/10 bg-[#2d2d2d] min-h-[500px]">
                           <Editor
                             value={settings.email_template_html}
                             onValueChange={code => setSettings({...settings, email_template_html: code})}
@@ -216,18 +216,18 @@ export default function SMTPPage() {
                           />
                         </div>
                         <div className="flex flex-wrap gap-2">
-                           <Badge variant="outline" className="cursor-pointer hover:bg-white/10">{"{{name}}"}</Badge>
-                           <Badge variant="outline" className="cursor-pointer hover:bg-white/10">{"{{message}}"}</Badge>
-                           <Badge variant="outline" className="cursor-pointer hover:bg-white/10">{"{{link}}"}</Badge>
-                           <Badge variant="outline" className="cursor-pointer hover:bg-white/10">{"{{restaurant}}"}</Badge>
+                           <Badge variant="outline" className="cursor-pointer hover:bg-gray-100">{"{{name}}"}</Badge>
+                           <Badge variant="outline" className="cursor-pointer hover:bg-gray-100">{"{{message}}"}</Badge>
+                           <Badge variant="outline" className="cursor-pointer hover:bg-gray-100">{"{{link}}"}</Badge>
+                           <Badge variant="outline" className="cursor-pointer hover:bg-gray-100">{"{{restaurant}}"}</Badge>
                         </div>
                      </div>
                   </CardContent>
                </Card>
 
                {/* --- LIVE PREVIEW --- */}
-               <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
-                  <CardHeader className="bg-white/10 px-8 pt-8">
+               <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
+                  <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
                      <div className="size-12 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 mb-4">
                         <Layout size={24} />
                      </div>

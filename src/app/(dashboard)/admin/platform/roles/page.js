@@ -125,7 +125,7 @@ export default function RolesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {roles.map(role => (
-              <div key={role.id} className="glass border-none shadow-xl rounded-[2.5rem] p-8 flex flex-col group hover:shadow-red-500/10 transition-all duration-300">
+              <div key={role.id} className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] p-8 flex flex-col group hover:shadow-red-500/10 transition-all duration-300">
                  <div className="flex justify-between items-start mb-6">
                     <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024]">
                        <ShieldCheck size={24} />
@@ -140,14 +140,14 @@ export default function RolesPage() {
                  
                  <div className="flex flex-wrap gap-2 mb-8 flex-1">
                     {role.Permissions?.slice(0, 5).map(p => (
-                      <Badge key={p.id} className="bg-white/5 border-white/5 text-[10px] uppercase">{p.name}</Badge>
+                      <Badge key={p.id} className="bg-gray-50 dark:bg-white/5 border-none text-[10px] uppercase text-foreground/70">{p.name}</Badge>
                     ))}
                     {role.Permissions?.length > 5 && (
-                      <Badge className="bg-white/5 border-white/5 text-[10px] uppercase">+{role.Permissions.length - 5} mais</Badge>
+                      <Badge className="bg-gray-50 dark:bg-white/5 border-none text-[10px] uppercase text-foreground/70">+{role.Permissions.length - 5} mais</Badge>
                     )}
                  </div>
-
-                 <Button variant="ghost" className="w-full rounded-2xl font-black bg-white/5 hover:bg-[#df0024] hover:text-white transition-all h-12" onClick={() => handleEdit(role)}>
+ 
+                 <Button variant="ghost" className="w-full rounded-2xl font-black bg-gray-50 dark:bg-zinc-800 hover:bg-[#df0024] hover:text-white transition-all h-12" onClick={() => handleEdit(role)}>
                     GESTIONAR ACCESO
                  </Button>
               </div>
@@ -167,11 +167,11 @@ export default function RolesPage() {
                <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-2">
                      <label className="text-xs font-bold uppercase ml-1 opacity-60 tracking-widest">Nombre del Cargo</label>
-                     <Input placeholder="Ex: Suporte Nível 1" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="glass h-12 rounded-2xl font-bold" />
+                     <Input placeholder="Ex: Suporte Nível 1" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" />
                   </div>
                   <div className="space-y-2">
                      <label className="text-xs font-bold uppercase ml-1 opacity-60 tracking-widest">Descrição</label>
-                     <Input placeholder="Breve descrição das responsabilidades" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="glass h-12 rounded-2xl font-bold" />
+                     <Input placeholder="Breve descrição das responsabilidades" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" />
                   </div>
                </div>
 
@@ -205,12 +205,12 @@ export default function RolesPage() {
                   </div>
                </div>
 
-               <DialogFooter className="pt-8 border-t border-white/10">
-                  <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                  <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-14 px-12 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
-                    {submitting ? <Loader2 className="animate-spin" /> : 'GUARDAR CONFIGURACIÓN'}
-                  </Button>
-               </DialogFooter>
+                <DialogFooter className="pt-8 border-t border-gray-100 dark:border-white/10">
+                   <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
+                   <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-14 px-12 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                     {submitting ? <Loader2 className="animate-spin" /> : 'GUARDAR CONFIGURACIÓN'}
+                   </Button>
+                </DialogFooter>
             </form>
           </DialogContent>
         </Dialog>
