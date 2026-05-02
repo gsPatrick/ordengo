@@ -50,10 +50,10 @@ export default function AdsOverviewPage() {
             <p className="text-muted-foreground mt-1 text-sm italic">Monitore e controle a rede de anúncios global.</p>
           </div>
           <div className="flex gap-3">
-             <Button onClick={() => router.push('/admin/ads/campanas')} variant="outline" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl font-bold gap-2">
+             <Button onClick={() => router.push('/admin/campaigns')} variant="outline" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl font-bold gap-2">
                 <LayoutGrid size={18} /> Ver Campañas
              </Button>
-             <Button onClick={() => router.push('/admin/ads/campanas')} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 font-bold">
+             <Button onClick={() => router.push('/admin/campaigns')} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 font-bold">
                 <PlusCircle size={18} /> Nueva Campaña
              </Button>
           </div>
@@ -72,19 +72,19 @@ export default function AdsOverviewPage() {
            <QuickLinkCard 
               title="Anunciantes" 
               desc="Gerencie marcas, contratos e faturamento." 
-              href="/admin/ads/anunciantes" 
+              href="/admin/advertisers" 
               color="from-blue-600 to-blue-400"
            />
            <QuickLinkCard 
               title="Campañas" 
               desc="Crie anúncios, defina filtros e prioridades." 
-              href="/admin/ads/campanas" 
+              href="/admin/campaigns" 
               color="from-red-600 to-red-400"
            />
            <QuickLinkCard 
               title="Configuración" 
               desc="Batch sizes, idle times e regras globais." 
-              href="/admin/ads/configuracion" 
+              href="/admin/ads/config" 
               color="from-gray-800 to-gray-600"
            />
         </div>

@@ -91,12 +91,10 @@ export default function AdsConfigPage() {
           </Button>
         </div>
 
-        <Alert className="bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 shadow-lg rounded-2xl text-blue-600 dark:text-blue-400">
-          <Info className="h-4 w-4" />
-        <Alert className="bg-white dark:bg-zinc-900 border-l-4 border-l-blue-500 shadow-lg rounded-xl">
+        <Alert className="bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 shadow-lg rounded-2xl">
           <Info className="h-4 w-4 text-blue-500" />
           <AlertDescription className="font-medium text-xs text-blue-600 dark:text-blue-400">
-            Essas configurações afetam o comportamento de todos os tablets da rede, a menos que o cliente tenha uma configuração personalizada.
+            Estas configuraciones afectan el comportamiento de todos los tablets de la red, a menos que el cliente tenga una configuración personalizada.
           </AlertDescription>
         </Alert>
 

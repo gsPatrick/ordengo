@@ -32,7 +32,7 @@ const ADMIN_MENU = [
   {
     title: "Publicidad",
     items: [
-      { name: "Visão geral", icon: Megaphone, path: "/admin/ads" },
+      { name: "Visión General", icon: Megaphone, path: "/admin/ads" },
       { name: "Anunciantes", icon: UserCircle, path: "/admin/advertisers" },
       { name: "Campañas", icon: Layers, path: "/admin/campaigns" },
       { name: "Configuración", icon: Settings, path: "/admin/ads/config" },
@@ -90,7 +90,6 @@ const MANAGER_MENU = [
   {
     title: "Configuraciones",
     items: [
-      { name: "Publicidad", icon: Megaphone, path: "/dashboard/ads" },
       { name: "Mesas y QR Code", icon: Layers, path: "/dashboard/tables" },
       { name: "Equipe (RBAC)", icon: Users, path: "/dashboard/settings/team" },
       { name: "Personalização", icon: Palette, path: "/dashboard/appearance" },
