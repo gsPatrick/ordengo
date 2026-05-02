@@ -283,7 +283,3 @@ function FeatureToggle({ label, checked, onChange }) {
     </div>
   );
 }
-      </div>
-    </AdminLayout>
-  );
-}
