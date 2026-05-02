@@ -10,7 +10,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend 
 } from 'recharts';
 import api from '@/lib/api';
-import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
+import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function FinancePage() {
   // --- ESTADOS ---
@@ -158,15 +159,7 @@ export default function FinancePage() {
 
   // --- COMPONENTES VISUAIS ---
 
-  const EmptyState = ({ title, subtitle }) => (
-    <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/30 h-full">
-      <div className="bg-white p-4 rounded-full shadow-sm mb-3">
-        <Ban className="text-gray-300" size={32} />
-      </div>
-      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-500 max-w-sm mt-1">{subtitle}</p>
-    </div>
-  );
+  // (EmptyState is now imported from global component)
 
   return (
     <AdminLayout>
@@ -278,7 +271,7 @@ export default function FinancePage() {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-xs font-bold text-gray-500 uppercase">A Receber (Pendente)</p>
-                  <h3 className="text-2xl font-bold text-blue-600 mt-1 flex items-center gap-1">
+                  <h3 className="text-2xl font-bold text-amber-600 mt-1 flex items-center gap-1">
                     <DollarSign size={20}/> 
                     {loading ? '...' : formatCurrency(kpis.aReceber)}
                   </h3>
@@ -334,6 +327,7 @@ export default function FinancePage() {
                 </ResponsiveContainer>
               ) : (
                 <EmptyState 
+                  icon={Ban}
                   title="Sem dados no período" 
                   subtitle="Gere faturas ou ajuste o filtro de datas para visualizar o gráfico." 
                 />
@@ -401,7 +395,7 @@ export default function FinancePage() {
                 {loading ? (
                   <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]"/></div>
                 ) : filteredInvoices.length === 0 ? (
-                  <EmptyState title="Nenhum registro encontrado" subtitle="Tente ajustar os filtros de busca." />
+                  <EmptyState icon={Search} title="Nenhum registro encontrado" subtitle="Tente ajustar os filtros de busca." />
                 ) : (
                   <Table>
                     <TableHeader>
@@ -478,7 +472,7 @@ export default function FinancePage() {
               </CardHeader>
               <CardContent>
                 {filteredInvoices.filter(i => i.status === 'paid').length === 0 ? (
-                  <EmptyState title="Livro Razão Vazio" subtitle="Nenhum pagamento registrado neste filtro." />
+                  <EmptyState icon={Landmark} title="Livro Razão Vazio" subtitle="Nenhum pagamento registrado neste filtro." />
                 ) : (
                   <Table>
                     <TableHeader>

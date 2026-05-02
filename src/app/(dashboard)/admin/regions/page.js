@@ -6,7 +6,7 @@ import {
   Landmark, Info, Loader2, CheckCircle2, Edit
 } from 'lucide-react';
 import api from '@/lib/api';
-import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
+import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import EmptyStateComponent from '@/components/ui/EmptyState';
 
 // Configuração Estática de Países (Suportados pelo Backend)
 const COUNTRIES = [
@@ -139,20 +140,7 @@ export default function RegionsPage() {
 
   // --- HELPER COMPONENTS ---
 
-  const EmptyState = () => (
-    <div className="col-span-full flex flex-col items-center justify-center py-16 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 text-center">
-      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-        <Globe className="text-gray-400" size={32} />
-      </div>
-      <h3 className="text-lg font-bold text-gray-900">Nenhuma Região Definida</h3>
-      <p className="text-sm text-gray-500 max-w-sm mt-2 mb-6">
-        Configure zonas geográficas para aplicar regras fiscais (IVA/IGIC) e segmentar campanhas de publicidade.
-      </p>
-      <Button onClick={() => setIsModalOpen(true)} className="bg-[#df0024] hover:bg-red-700">
-        Criar Primeira Região
-      </Button>
-    </div>
-  );
+  // (EmptyState is now imported from global component)
 
   const filteredCities = cities.filter(c => c.toLowerCase().includes(citySearch.toLowerCase())).slice(0, 50);
 
@@ -188,7 +176,13 @@ export default function RegionsPage() {
         {loading ? (
           <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]" size={32} /></div>
         ) : regions.length === 0 ? (
-          <EmptyState />
+          <EmptyStateComponent
+            icon={Globe}
+            title="Nenhuma Região Definida"
+            subtitle="Configure zonas geográficas para aplicar regras fiscais (IVA/IGIC) e segmentar campanhas de publicidade."
+            ctaLabel="Criar Primeira Região"
+            onCtaClick={() => setIsModalOpen(true)}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {regions

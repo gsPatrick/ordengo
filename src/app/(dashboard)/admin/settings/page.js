@@ -5,7 +5,7 @@ import {
   Shield, Key, Users, Globe, Save, Loader2, Trash2 
 } from 'lucide-react';
 import api from '@/lib/api';
-import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
+import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

@@ -3,26 +3,25 @@
 import { useState, useEffect } from 'react';
 import {
   Package, Check, Plus, Edit2, Power,
-  CreditCard, Tablet, ShieldCheck, Loader2, X, PackageOpen, LayoutList, Ban, Trash2
+  CreditCard, Tablet, ShieldCheck, Loader2, X, PackageOpen, LayoutList, Ban, Trash2, CheckCircle2
 } from 'lucide-react';
 import api from '@/lib/api';
-import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
+import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from '@/components/ui/use-toast'; // Added toast import
+import { cn } from "@/lib/utils";
 
 export default function PlansPage() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const { toast } = useToast(); // Initialize toast
 
   // Estado do Formulário
   const [formData, setFormData] = useState({
@@ -31,7 +30,7 @@ export default function PlansPage() {
     priceMonthly: '',
     priceYearly: '',
     currency: 'EUR',
-    maxTablets: '', // 0 = Ilimitado
+    maxTablets: '', 
     features: {
       removeAds: false,
       prioritySupport: false,
@@ -43,16 +42,10 @@ export default function PlansPage() {
   const fetchPlans = async () => {
     setLoading(true);
     try {
-      // CORREÇÃO: Adicionado prefixo /admin
       const res = await api.get('/admin/plans?active=false');
       setPlans(res.data.data.plans);
     } catch (error) {
       console.error("Erro ao buscar planos:", error);
-      toast({
-        title: "Erro",
-        description: "Falha ao carregar planos.",
-        variant: 'destructive'
-      });
     } finally {
       setLoading(false);
     }
@@ -60,9 +53,7 @@ export default function PlansPage() {
 
   useEffect(() => { fetchPlans(); }, []);
 
-  // --- HANDLERS ---
-
-  const handleEdit = (plan = null) => { // Renamed openModal to handleEdit
+  const handleEdit = (plan = null) => {
     if (plan) {
       setFormData({
         id: plan.id,
@@ -100,289 +91,198 @@ export default function PlansPage() {
       };
 
       if (formData.id) {
-        // CORREÇÃO: Adicionado prefixo /admin
         await api.patch(`/admin/plans/${formData.id}`, payload);
-        toast({
-          title: "Sucesso",
-          description: "Plano atualizado com sucesso.",
-        });
       } else {
-        // CORREÇÃO: Adicionado prefixo /admin
         await api.post('/admin/plans', payload);
-        toast({
-          title: "Sucesso",
-          description: "Plano criado com sucesso.",
-        });
       }
 
       setIsModalOpen(false);
       fetchPlans();
     } catch (error) {
-      const msg = error.response?.data?.message || 'Erro ao salvar plano.';
-      toast({
-        title: "Erro",
-        description: msg,
-        variant: 'destructive'
-      });
+      alert(error.response?.data?.message || 'Erro ao salvar plano.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const toggleStatus = async (planId) => { // Renamed handleToggleStatus to toggleStatus
+  const toggleStatus = async (planId) => {
     if (!confirm("Alterar status do plano?")) return;
     try {
-      // CORREÇÃO: Adicionado prefixo /admin
       await api.patch(`/admin/plans/${planId}/toggle`);
-      toast({
-        title: "Sucesso",
-        description: "Status do plano alterado.",
-      });
       fetchPlans();
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: "Erro",
-        description: "Falha ao alterar status.",
-        variant: 'destructive'
-      });
-    }
+    } catch (error) { console.error(error); }
   };
 
   const handleDelete = async (planId) => {
     if (!confirm('Tem certeza que deseja excluir este plano permanentemente?')) return;
-
     try {
-      await api.delete(`/admin/plans/${planId}`); // Added /admin prefix
-      toast({
-        title: "Sucesso",
-        description: "Plano excluído com sucesso.",
-      });
+      await api.delete(`/admin/plans/${planId}`);
       fetchPlans();
-    } catch (error) {
-      console.error(error);
-      const msg = error.response?.data?.message || 'Falha ao excluir plano.';
-      toast({
-        title: "Erro",
-        description: msg,
-        variant: 'destructive'
-      });
-    }
+    } catch (error) { console.error(error); }
   };
 
-  const formatCurrency = (val, curr) => new Intl.NumberFormat('pt-PT', { style: 'currency', currency: curr }).format(val);
-
-  // --- EMPTY STATE COMPONENT ---
-  const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 animate-in fade-in zoom-in duration-300">
-      <div className="bg-white p-6 rounded-full shadow-lg shadow-gray-100 mb-6">
-        <PackageOpen className="text-gray-300" size={64} />
-      </div>
-      <h3 className="text-2xl font-bold text-gray-900 mb-2">Nenhum Plano de Assinatura</h3>
-      <p className="text-gray-500 max-w-md mb-8 text-lg">
-        Crie níveis de serviço (Tiers) para monetizar sua plataforma SaaS. Defina limites de tablets, preços e recursos exclusivos.
-      </p>
-      <Button onClick={() => handleEdit()} className="bg-[#df0024] hover:bg-red-700 text-white px-8 py-6 text-lg h-auto rounded-xl shadow-lg shadow-red-100 transition-transform hover:scale-105">
-        <Plus className="mr-2 h-6 w-6" /> Criar Primeiro Plano
-      </Button>
-    </div>
-  );
+  const formatCurrency = (val, curr) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: curr }).format(val);
 
   return (
     <AdminLayout>
-      <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="space-y-8 pb-12 animate-in fade-in duration-500">
 
-        {/* Header só aparece se tiver planos ou durante loading */}
-        {(loading || plans.length > 0) && (
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Planos & Preços</h1>
-              <p className="text-gray-500">Configure os tiers de assinatura e estratégias de monetização.</p>
-            </div>
-            <Button onClick={() => handleEdit()} className="bg-[#df0024] hover:bg-red-700 text-white gap-2">
-              <Plus size={18} /> Criar Novo Plano
-            </Button>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight">Planes de Suscripción</h1>
+            <p className="text-muted-foreground mt-1 text-sm italic">Defina as regras de monetização e limites de serviço.</p>
           </div>
-        )}
+          <Button onClick={() => handleEdit()} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
+            <Plus size={18} /> Crear Nuevo Plan
+          </Button>
+        </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
             <Loader2 className="animate-spin text-[#df0024]" size={48} />
-            <p className="text-gray-400 font-medium">Carregando catálogo de planos...</p>
+            <p className="text-muted-foreground font-medium animate-pulse">Carregando catálogo de planos...</p>
           </div>
         ) : plans.length === 0 ? (
-          <EmptyState />
+          <div className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[3rem] p-24 flex flex-col items-center text-center gap-6">
+             <div className="size-24 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+                <PackageOpen size={48} className="opacity-20" />
+             </div>
+             <div>
+                <h3 className="text-2xl font-black">Sin Planes Configuradores</h3>
+                <p className="text-muted-foreground max-w-md mt-2">Empiece a monetizar su SaaS creando su primer plan de suscripción.</p>
+             </div>
+             <Button onClick={() => handleEdit()} className="bg-[#df0024] px-10 h-14 rounded-2xl font-black">CREAR PRIMER PLAN</Button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {plans.map(plan => (
-              <Card key={plan.id} className={`shadow-sm hover:shadow-md transition-shadow ${!plan.isActive ? 'opacity-70' : ''}`}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg">{plan.name}</CardTitle>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${plan.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {plan.isActive ? 'Ativo' : 'Inativo'}
-                      </span>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3 pb-3">
-                  <div className="text-2xl font-bold">
-                    {formatCurrency(plan.priceMonthly, plan.currency || 'EUR')}
-                    <span className="text-sm font-normal text-muted-foreground">/mês</span>
-                  </div>
-                  {plan.priceYearly > 0 && (
-                    <div className="text-sm text-muted-foreground">
-                      ou {formatCurrency(plan.priceYearly, plan.currency || 'EUR')}/ano
-                    </div>
-                  )}
+              <div key={plan.id} className={cn(
+                "glass border-none shadow-xl rounded-[2.5rem] p-8 flex flex-col group transition-all duration-500",
+                !plan.isActive && "opacity-40 grayscale"
+              )}>
+                <div className="flex justify-between items-start mb-6">
+                   <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024]">
+                      <Package size={24} />
+                   </div>
+                   <Badge className={cn("border-none font-bold uppercase text-[10px]", plan.isActive ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500")}>
+                      {plan.isActive ? 'Activo' : 'Inactivo'}
+                   </Badge>
+                </div>
+                
+                <h3 className="text-xl font-black tracking-tight mb-2">{plan.name}</h3>
+                
+                <div className="mb-6">
+                   <span className="text-3xl font-black">{formatCurrency(plan.priceMonthly, plan.currency || 'EUR')}</span>
+                   <span className="text-xs font-bold opacity-40 uppercase ml-2">/ mes</span>
+                </div>
 
-                  <div className="space-y-1">
-                    <p className="text-sm flex items-center">
-                      <span className="font-semibold mr-2">{plan.maxTablets}</span> Tablets
-                    </p>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {Object.keys(plan.features || {}).length} recursos extras
-                    </p>
-                  </div>
-                </CardContent>
-                <CardFooter className="pt-0 border-t mt-2 flex justify-between items-center gap-2 p-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => handleEdit(plan)}
-                  >
-                    Editar
-                  </Button>
+                <div className="space-y-3 mb-8 flex-1">
+                   <div className="flex items-center gap-3 text-sm font-medium">
+                      <Tablet size={16} className="text-[#df0024]" />
+                      <span>{plan.maxTablets === 0 ? 'Tablets Ilimitados' : `${plan.maxTablets} Tablets Máx.`}</span>
+                   </div>
+                   {Object.entries(plan.features || {}).map(([key, val]) => val && (
+                     <div key={key} className="flex items-center gap-3 text-xs opacity-70">
+                        <CheckCircle2 size={14} className="text-green-500" />
+                        <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                     </div>
+                   ))}
+                </div>
 
-                  <Button
-                    variant={plan.isActive ? "secondary" : "default"}
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => toggleStatus(plan.id)}
-                  >
-                    {plan.isActive ? (
-                      <>
-                        <Ban className="w-4 h-4 mr-1" /> Desativar
-                      </>
-                    ) : (
-                      <>
-                        <Check className="w-4 h-4 mr-1" /> Ativar
-                      </>
-                    )}
-                  </Button>
-
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="w-8 h-8 p-0"
-                    title="Excluir Permanentemente"
-                    onClick={() => handleDelete(plan.id)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </CardFooter>
-              </Card>
+                <div className="pt-6 border-t border-white/10 flex gap-2">
+                   <Button variant="ghost" size="icon" className="rounded-xl hover:bg-[#df0024]/10 hover:text-[#df0024]" onClick={() => handleEdit(plan)}>
+                      <Edit2 size={16} />
+                   </Button>
+                   <Button variant="ghost" size="icon" className={cn("rounded-xl", plan.isActive ? "hover:bg-yellow-500/10 text-yellow-500" : "hover:bg-green-500/10 text-green-500")} onClick={() => toggleStatus(plan.id)}>
+                      {plan.isActive ? <Ban size={16} /> : <Check size={16} />}
+                   </Button>
+                   <Button variant="ghost" size="icon" className="rounded-xl hover:bg-red-500/10 text-red-500" onClick={() => handleDelete(plan.id)}>
+                      <Trash2 size={16} />
+                   </Button>
+                </div>
+              </div>
             ))}
           </div>
         )}
 
-        {/* MODAL DE CRIAÇÃO/EDIÇÃO */}
+        {/* MODAL */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-3xl bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 overflow-y-auto max-h-[90vh]">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <LayoutList className="text-[#df0024]" />
-                {formData.id ? 'Editar Plano' : 'Criar Novo Plano'}
-              </DialogTitle>
-              <DialogDescription>Defina as regras de cobrança e recursos disponíveis para este tier.</DialogDescription>
+              <DialogTitle className="text-3xl font-black">{formData.id ? 'Editar Plan' : 'Nuevo Plan'}</DialogTitle>
+              <DialogDescription className="font-medium">Defina as regras de cobrança e recursos disponíveis.</DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit} className="space-y-6 mt-2">
-              {/* Básico */}
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-8 mt-6">
+              <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-gray-500 uppercase">Nome do Plano</Label>
-                  <Input placeholder="Ex: Enterprise" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} required className="font-bold" />
+                  <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre del Plan</label>
+                  <Input placeholder="Ex: Pro Business" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} required className="glass h-12 rounded-2xl font-bold" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-gray-500 uppercase">Limite Tablets (0 = Ilimitado)</Label>
-                  <Input type="number" placeholder="Ex: 10" value={formData.maxTablets} onChange={e => setFormData({ ...formData, maxTablets: e.target.value })} required />
+                  <label className="text-xs font-bold uppercase ml-1 opacity-60">Límite de Tablets (0 = Ilimitado)</label>
+                  <Input type="number" placeholder="Ej: 10" value={formData.maxTablets} onChange={e => setFormData({ ...formData, maxTablets: e.target.value })} required className="glass h-12 rounded-2xl font-bold" />
                 </div>
               </div>
 
-              {/* Preços */}
-              <div className="grid grid-cols-3 gap-4 bg-blue-50 p-4 rounded-xl border border-blue-100">
+              <div className="grid grid-cols-3 gap-6 bg-white/5 p-6 rounded-3xl border border-white/5">
                 <div className="space-y-2">
-                  <Label className="text-blue-900 font-bold text-xs">Moeda</Label>
+                  <label className="text-xs font-bold uppercase ml-1 opacity-60">Moneda</label>
                   <Select value={formData.currency} onValueChange={v => setFormData({ ...formData, currency: v })}>
-                    <SelectTrigger className="bg-white h-10">
-                      <SelectValue placeholder="Moeda" />
-                    </SelectTrigger>
-                    <SelectContent>
+                    <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-zinc-900">
                       <SelectItem value="EUR">EUR (€)</SelectItem>
                       <SelectItem value="USD">USD ($)</SelectItem>
-                      <SelectItem value="BRL">BRL (R$)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-blue-900 font-bold text-xs">Preço Mensal</Label>
-                  <Input type="number" step="0.01" value={formData.priceMonthly} onChange={e => setFormData({ ...formData, priceMonthly: e.target.value })} required className="bg-white" />
+                  <label className="text-xs font-bold uppercase ml-1 opacity-60">Precio Mensual</label>
+                  <Input type="number" step="0.01" value={formData.priceMonthly} onChange={e => setFormData({ ...formData, priceMonthly: e.target.value })} required className="glass h-12 rounded-2xl font-bold" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-blue-900 font-bold text-xs">Preço Anual</Label>
-                  <Input type="number" step="0.01" value={formData.priceYearly} onChange={e => setFormData({ ...formData, priceYearly: e.target.value })} required className="bg-white" />
+                  <label className="text-xs font-bold uppercase ml-1 opacity-60">Precio Anual</label>
+                  <Input type="number" step="0.01" value={formData.priceYearly} onChange={e => setFormData({ ...formData, priceYearly: e.target.value })} required className="glass h-12 rounded-2xl font-bold" />
                 </div>
               </div>
 
-              {/* Features (Toggles) */}
               <div className="space-y-4">
-                <Label className="text-xs font-bold uppercase text-gray-500">Funcionalidades Habilitadas</Label>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className={`flex items-center justify-between border p-3 rounded-lg transition-colors ${formData.features.removeAds ? 'bg-green-50 border-green-200' : 'bg-white'}`}>
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-medium cursor-pointer">Remover Ads</Label>
-                      <p className="text-xs text-gray-500">Não exibe publicidade.</p>
-                    </div>
-                    <Switch checked={formData.features.removeAds} onCheckedChange={c => setFormData(p => ({ ...p, features: { ...p.features, removeAds: c } }))} />
-                  </div>
-
-                  <div className={`flex items-center justify-between border p-3 rounded-lg transition-colors ${formData.features.prioritySupport ? 'bg-green-50 border-green-200' : 'bg-white'}`}>
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-medium cursor-pointer">Suporte Prioritário</Label>
-                      <p className="text-xs text-gray-500">SLA reduzido.</p>
-                    </div>
-                    <Switch checked={formData.features.prioritySupport} onCheckedChange={c => setFormData(p => ({ ...p, features: { ...p.features, prioritySupport: c } }))} />
-                  </div>
-
-                  <div className={`flex items-center justify-between border p-3 rounded-lg transition-colors ${formData.features.customBranding ? 'bg-green-50 border-green-200' : 'bg-white'}`}>
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-medium cursor-pointer">Whitelabel</Label>
-                      <p className="text-xs text-gray-500">Remove marca &quot;OrdenGo&quot;.</p>
-                    </div>
-                    <Switch checked={formData.features.customBranding} onCheckedChange={c => setFormData(p => ({ ...p, features: { ...p.features, customBranding: c } }))} />
-                  </div>
-
-                  <div className={`flex items-center justify-between border p-3 rounded-lg transition-colors ${formData.features.analytics ? 'bg-green-50 border-green-200' : 'bg-white'}`}>
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-medium cursor-pointer">Analytics Pro</Label>
-                      <p className="text-xs text-gray-500">Relatórios avançados.</p>
-                    </div>
-                    <Switch checked={formData.features.analytics} onCheckedChange={c => setFormData(p => ({ ...p, features: { ...p.features, analytics: c } }))} />
-                  </div>
+                <label className="text-xs font-bold uppercase ml-1 opacity-60">Funcionalidades</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FeatureToggle label="Remover Ads" checked={formData.features.removeAds} onChange={c => setFormData(p => ({ ...p, features: { ...p.features, removeAds: c } }))} />
+                  <FeatureToggle label="Soporte Prioritario" checked={formData.features.prioritySupport} onChange={c => setFormData(p => ({ ...p, features: { ...p.features, prioritySupport: c } }))} />
+                  <FeatureToggle label="Marca Blanca" checked={formData.features.customBranding} onChange={c => setFormData(p => ({ ...p, features: { ...p.features, customBranding: c } }))} />
+                  <FeatureToggle label="Analytics Pro" checked={formData.features.analytics} onChange={c => setFormData(p => ({ ...p, features: { ...p.features, analytics: c } }))} />
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-[#df0024] hover:bg-red-700 h-11 text-base font-bold shadow-md shadow-red-100" disabled={submitting}>
-                {submitting && <Loader2 className="animate-spin mr-2" />} Salvar Configuração
-              </Button>
+              <DialogFooter className="pt-6 border-t border-white/10">
+                <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
+                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-14 px-12 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                  {submitting ? <Loader2 className="animate-spin" size={20} /> : "GUARDAR PLAN"}
+                </Button>
+              </DialogFooter>
             </form>
           </DialogContent>
         </Dialog>
 
+      </div>
+    </AdminLayout>
+  );
+}
+
+function FeatureToggle({ label, checked, onChange }) {
+  return (
+    <div className={cn(
+      "flex items-center justify-between p-4 rounded-2xl border transition-all",
+      checked ? "bg-white/10 border-[#df0024]/50" : "bg-white/5 border-white/5"
+    )}>
+      <span className="text-sm font-bold">{label}</span>
+      <Switch checked={checked} onCheckedChange={onChange} />
+    </div>
+  );
+}
       </div>
     </AdminLayout>
   );

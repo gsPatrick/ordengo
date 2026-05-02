@@ -9,13 +9,14 @@ import {
   BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid 
 } from 'recharts';
 import api from '@/lib/api';
-import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
+import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import EmptyState from '@/components/ui/EmptyState';
 
 const COLORS = ['#df0024', '#1f1c1d', '#9ca3af', '#ef4444'];
 
@@ -70,15 +71,7 @@ export default function AnalyticsPage() {
   };
 
   // --- COMPONENTE DE ESTADO VAZIO ---
-  const EmptyState = ({ title, subtitle, icon: Icon }) => (
-    <div className="flex flex-col items-center justify-center py-16 text-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/30 h-full">
-      <div className="bg-white p-4 rounded-full shadow-sm mb-3">
-        <Icon className="text-gray-300" size={32} />
-      </div>
-      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-500 max-w-sm mt-1">{subtitle}</p>
-    </div>
-  );
+  // (EmptyState is now imported from global component)
 
   // Preparar dados para o Gráfico de Distribuição de Receita (SaaS vs Ads)
   const revenueDistributionData = saasStats ? [

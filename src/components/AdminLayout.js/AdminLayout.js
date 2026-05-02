@@ -1,185 +1,67 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
-import {
-  LayoutDashboard,
-  Store,
-  Megaphone,
-  Landmark, // Finanças
-  MapPin,   // Regiões
-  FileBarChart, // Relatórios
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  User,
-  ShieldCheck,
-  MonitorPlay
-} from 'lucide-react';
+import React from "react";
+import { Search, Bell } from "lucide-react";
+import { AppSidebar } from "@/components/layout/AppSidebar";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function AdminLayout({ children }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [user, setUser] = useState(null);
-  const pathname = usePathname();
-  const router = useRouter();
-
-  useEffect(() => {
-    // Carregar dados do usuário do cookie
-    const userData = Cookies.get('ordengo_user');
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (e) {
-        // Se o cookie estiver inválido
-        router.push('/login');
-      }
-    } else {
-      // Se não tiver cookie (comentar essa linha se quiser testar sem login)
-      // router.push('/auth/login');
-    }
-  }, []);
-
-  const handleLogout = () => {
-    Cookies.remove('ordengo_token');
-    Cookies.remove('ordengo_user');
-    router.push('/login');
-  };
-
-  // Menu Completo conforme PDF + Features Implementadas
-  const menuItems = [
-    {
-      name: 'Dashboard Global',
-      icon: LayoutDashboard,
-      path: '/admin/dashboard'
-    },
-    {
-      name: 'Restaurantes',
-      icon: Store,
-      path: '/admin/tenants'
-    },
-    {
-      name: 'Red de Publicidad',
-      icon: Megaphone,
-      path: '/admin/ads'
-    },
-    {
-      name: 'Banners Globais',
-      icon: MonitorPlay,
-      path: '/admin/systemads'
-    },
-    {
-      name: 'Finanzas y Contabilidad',
-      icon: Landmark,
-      path: '/admin/finance'
-    },
-    {
-      name: 'Regiones y Fiscal',
-      icon: MapPin,
-      path: '/admin/regions'
-    },
-    {
-      name: 'Reportes',
-      icon: FileBarChart,
-      path: '/admin/analytics'
-    },
-    {
-      name: 'Planes',
-      icon: Landmark,
-      path: '/admin/plans'
-    },
-
-    {
-      name: 'Configuración',
-      icon: Settings,
-      path: '/admin/settings'
-    },
-  ];
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-sans">
+    <div className="relative min-h-screen w-full bg-background overflow-hidden flex">
+      
+      {/* --- CANVAS BACKGROUND --- */}
+      <div className="fixed inset-0 -z-10 pointer-events-none select-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full mix-blend-multiply filter blur-[120px] animate-blob opacity-40 dark:opacity-20"></div>
+        <div className="absolute top-[30%] right-[-10%] w-[400px] h-[400px] bg-red-400/10 rounded-full mix-blend-multiply filter blur-[120px] animate-blob animation-delay-2000 opacity-40 dark:opacity-20"></div>
+        <div className="absolute bottom-[-10%] left-[20%] w-[600px] h-[600px] bg-gray-400/10 rounded-full mix-blend-multiply filter blur-[120px] animate-blob animation-delay-4000 opacity-40 dark:opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20 dark:opacity-5"></div>
+      </div>
 
-      {/* SIDEBAR */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#1f1c1d] text-white transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:relative lg:translate-x-0 flex flex-col`}
-      >
-        {/* Logo */}
-        <div className="h-20 flex items-center px-6 border-b border-gray-800">
-          <div className="flex items-center gap-2">
-            <Image src="/logocerta1.png" width={40} height={40} alt="OrdenGo" className="object-contain" />
-            <div>
-              <span className="text-xl font-bold tracking-tighter text-white block leading-none">OrdenGo</span>
-              <span className="text-[10px] font-mono text-gray-400 tracking-widest uppercase">Super Admin</span>
+      {/* --- SIDEBAR --- */}
+      <AppSidebar isCollapsed={isCollapsed} onCollapse={setIsCollapsed} />
+
+      {/* --- MAIN CONTENT AREA --- */}
+      <main className={cn(
+        "flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out w-full py-4 px-4 lg:pr-10",
+        isCollapsed ? "lg:pl-28" : "lg:pl-72"
+      )}>
+        
+        {/* Topbar Flutuante */}
+        <header className="h-16 mb-6 glass rounded-2xl px-4 sm:px-6 flex items-center justify-end sm:justify-between sticky top-4 z-30 bg-white/40 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/5 shadow-sm ml-12 lg:ml-0">
+          
+          <div className="hidden sm:flex items-center gap-4 w-full max-w-md">
+            <div className="relative w-full group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground size-4 group-focus-within:text-primary transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Pesquisar en la Plataforma..." 
+                className="w-full bg-transparent border-none outline-none pl-10 text-sm placeholder:text-muted-foreground/70 focus:ring-0 text-foreground"
+              />
             </div>
           </div>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
-          {menuItems.map((item) => {
-            const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
-            return (
-              <Link
-                key={item.path}
-                href={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
-                  ? 'bg-[#df0024] text-white shadow-lg shadow-red-900/20'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                  }`}
-              >
-                <item.icon size={20} className={isActive ? 'text-white' : 'text-gray-500 group-hover:text-white transition-colors'} />
-                <span className="font-medium text-sm">{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User & Logout */}
-        <div className="p-4 border-t border-gray-800 bg-black/20">
-          <div className="flex items-center gap-3 mb-4 px-2">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 flex items-center justify-center text-white shadow-inner">
-              <User size={16} />
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-bold text-white truncate">{user?.name || 'Administrador'}</p>
-              <p className="text-[10px] text-gray-500 truncate uppercase">{user?.role || 'Super User'}</p>
+          
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="ghost" size="icon" className="relative hover:bg-white/20 rounded-xl">
+              <Bell className="size-5 text-muted-foreground" />
+              <span className="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full animate-pulse ring-2 ring-white dark:ring-black"></span>
+            </Button>
+            <div className="w-[1px] h-6 bg-white/20 hidden sm:block"></div>
+            <div className="text-xs font-bold text-muted-foreground hidden sm:block">
+               SUPER ADMIN v2.0
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-red-400 hover:text-white hover:bg-red-600/20 rounded-lg transition-colors border border-transparent hover:border-red-900/50"
-          >
-            <LogOut size={14} />
-            CERRAR SESIÓN
-          </button>
-        </div>
-      </aside>
-
-      {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen">
-
-        {/* Mobile Header */}
-        <header className="lg:hidden bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 shrink-0">
-          <span className="font-bold text-gray-900 flex items-center gap-2">
-            <div className="w-6 h-6 bg-[#df0024] rounded flex items-center justify-center"><ShieldCheck size={12} className="text-white" /></div>
-            OrdenGo
-          </span>
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-gray-600 p-2 rounded-md hover:bg-gray-100">
-            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </header>
 
-        {/* Scrollable Content Area */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 bg-gray-50 scroll-smooth">
+        {/* Conteúdo da Página */}
+        <div className="flex-1 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

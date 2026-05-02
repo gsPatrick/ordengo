@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { MonitorPlay, Plus, Trash2, Loader2, Image as ImageIcon, MapPin, Edit } from 'lucide-react';
-import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
+import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";

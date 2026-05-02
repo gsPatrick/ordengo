@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Plus, Search, CheckCircle, XCircle, Store, Mail, Loader2, ShieldCheck, Globe, LogIn, Edit, Trash2, MapPin, CreditCard, ExternalLink
+  Plus, Search, CheckCircle, XCircle, Store, Mail, Loader2, ShieldCheck, Globe, LogIn, Edit, Trash2, MapPin, CreditCard, ExternalLink, KeyRound
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import api from '@/lib/api';
-import AdminLayout from '../../../../components/AdminLayout.js/AdminLayout';
+import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function TenantsPage() {
   const router = useRouter();
@@ -31,14 +33,16 @@ export default function TenantsPage() {
   // Modals
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isPasswordOpen, setIsPasswordOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Edit State
   const [currentTenant, setCurrentTenant] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
 
   // Form State
   const initialForm = {
-    restaurantName: '', slug: '', taxId: '',
+    restaurantName: '', slug: '', taxId: '', billingAddress: '', fullAddress: '',
     contactPerson: '', timezone: 'Europe/Madrid', country: 'ES', currency: 'EUR',
     planId: '', regionId: '',
     managerName: '', managerEmail: '', managerPassword: '',
@@ -73,7 +77,6 @@ export default function TenantsPage() {
     setSubmitting(true);
     try {
       await api.post('/admin/tenants', formData);
-      alert('Restaurante criado com sucesso!');
       setIsCreateOpen(false);
       setFormData(initialForm);
       fetchData();
@@ -90,6 +93,8 @@ export default function TenantsPage() {
       restaurantName: tenant.name,
       slug: tenant.slug,
       taxId: tenant.taxId || '',
+      billingAddress: tenant.billingAddress || '',
+      fullAddress: tenant.fullAddress || '',
       contactPerson: tenant.contactPerson || '',
       timezone: tenant.timezone,
       country: tenant.country,
@@ -111,7 +116,6 @@ export default function TenantsPage() {
     setSubmitting(true);
     try {
       await api.put(`/admin/tenants/${currentTenant.id}`, formData);
-      alert('Restaurante atualizado com sucesso!');
       setIsEditOpen(false);
       fetchData();
     } catch (error) {
@@ -121,18 +125,33 @@ export default function TenantsPage() {
     }
   };
 
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      await api.patch(`/admin/tenants/${currentTenant.id}/update-password`, { password: newPassword });
+      setIsPasswordOpen(false);
+      setNewPassword('');
+      alert('Contraseña actualizada con éxito');
+    } catch (error) {
+      alert(error.response?.data?.message || 'Erro ao atualizar senha.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleDelete = async (id) => {
-    if (!confirm('ATENÇÃO: Isso excluirá permanentemente o restaurante e todos os seus dados. Continuar?')) return;
+    if (!confirm('ATENÇÃO: Isso excluirá permanentemente o cliente e todos os seus dados. Continuar?')) return;
     try {
       await api.delete(`/admin/tenants/${id}`);
       fetchData();
     } catch (error) {
-      alert('Erro ao excluir restaurante.');
+      alert('Erro ao excluir cliente.');
     }
   };
 
   const handleToggleStatus = async (id, currentStatus) => {
-    if (!confirm(`Deseja realmente ${currentStatus ? 'bloquear' : 'ativar'} este restaurante?`)) return;
+    if (!confirm(`Deseja realmente ${currentStatus ? 'bloquear' : 'ativar'} este cliente?`)) return;
     try {
       await api.patch(`/admin/tenants/${id}/toggle-status`);
       fetchData();
@@ -148,7 +167,6 @@ export default function TenantsPage() {
       const { token, data } = res.data;
       const user = data.user;
 
-      // Save admin session
       const currentToken = Cookies.get('ordengo_token');
       const currentUser = Cookies.get('ordengo_user');
       if (currentToken) Cookies.set('ordengo_admin_token', currentToken, { expires: 1 });
@@ -198,260 +216,250 @@ export default function TenantsPage() {
         </div>
       )}
 
-      <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="space-y-8 animate-in fade-in duration-500 pb-12">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Restaurantes</h1>
-            <p className="text-gray-500">Gestión completa de clientes, contratos y acceso.</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Clientes</h1>
+            <p className="text-muted-foreground mt-1 text-sm italic">Gestão completa de restaurantes, contratos e acessos.</p>
           </div>
-          <Button onClick={() => setIsCreateOpen(true)} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-md shadow-red-100">
+          <Button onClick={() => setIsCreateOpen(true)} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
             <Plus size={18} /> Nuevo Cliente
           </Button>
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center bg-white p-2 rounded-xl border shadow-sm max-w-md">
-          <Search className="text-gray-400 ml-2" size={20} />
-          <Input
-            placeholder="Buscar por nombre, slug o email..."
-            className="border-none shadow-none focus-visible:ring-0"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-          />
+        {/* Search & Stats Bar */}
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+           <div className="relative w-full max-w-md group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={20} />
+            <Input
+              placeholder="Buscar por nombre, slug o email..."
+              className="pl-12 glass border-none h-12 rounded-2xl shadow-lg focus-visible:ring-2 focus-visible:ring-[#df0024]/50"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-2">
+             <Badge className="glass bg-green-500/10 text-green-500 border-none px-4 py-2 rounded-xl font-bold">{tenants.filter(t => t.isActive).length} Activos</Badge>
+             <Badge className="glass bg-red-500/10 text-red-500 border-none px-4 py-2 rounded-xl font-bold">{tenants.filter(t => !t.isActive).length} Bloqueados</Badge>
+          </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+        {/* Table Container */}
+        <div className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden">
           {loading ? (
-            <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]" size={32} /></div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead>Restaurante</TableHead>
-                  <TableHead>Plan y Región</TableHead>
-                  <TableHead>Contacto (Gerente)</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredTenants.map((tenant) => (
-                  <TableRow key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
-                    <TableCell>
-                      <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push(`/admin/tenants/${tenant.id}`)}>
-                        <div className="w-10 h-10 rounded-full bg-[#1f1c1d] flex items-center justify-center text-white font-bold shadow-sm">
-                          {tenant.name.charAt(0)}
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900 hover:text-[#df0024] transition-colors">{tenant.name}</p>
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <Globe size={10} /> {tenant.slug}
-                            <span className="text-gray-300">|</span>
-                            <span className="uppercase font-mono">{tenant.taxId || 'S/NIF'}</span>
+            <div className="flex flex-col items-center justify-center py-24 gap-4">
+              <Loader2 className="animate-spin text-[#df0024]" size={48} />
+              <p className="text-muted-foreground font-medium animate-pulse">Carregando carteira de clientes...</p>
+            </div>
+          ) : filteredTenants.length === 0 ? (
+              <EmptyState
+                icon={Store}
+                title="Ningún cliente registrado"
+                subtitle="Aún no hay restaurantes en la plataforma. Cree el primer cliente para comenzar a gestionar su cartera."
+                ctaLabel="Crear Primer Cliente"
+                onCtaClick={() => setIsCreateOpen(true)}
+              />
+            ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b border-white/10 hover:bg-transparent">
+                    <TableHead className="px-6 py-4 font-bold text-foreground">Establecimiento</TableHead>
+                    <TableHead className="py-4 font-bold text-foreground">Contrato</TableHead>
+                    <TableHead className="py-4 font-bold text-foreground">Gerente</TableHead>
+                    <TableHead className="py-4 font-bold text-foreground">Estado</TableHead>
+                    <TableHead className="text-right px-6 py-4 font-bold text-foreground">Acciones</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTenants.map((tenant) => (
+                    <TableRow key={tenant.id} className="border-b border-white/5 hover:bg-white/40 dark:hover:bg-white/5 transition-all group">
+                      <TableCell className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className={cn(
+                            "size-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-inner",
+                            tenant.isActive ? "bg-gradient-to-br from-gray-800 to-black" : "bg-gray-400"
+                          )}>
+                            {tenant.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-extrabold text-foreground text-lg leading-tight group-hover:text-[#df0024] transition-colors">{tenant.name}</p>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                              <Globe size={10} className="text-[#df0024]" /> {tenant.slug}
+                              <span className="opacity-20">|</span>
+                              <span className="font-mono bg-muted/50 px-1.5 rounded uppercase">{tenant.taxId || 'S/NIF'}</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
 
-                    <TableCell>
-                      <div className="space-y-1">
-                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 flex w-fit items-center gap-1">
-                          <CreditCard size={10} /> {tenant.Plan?.name || 'Sin Plan'}
-                        </Badge>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <MapPin size={10} /> {tenant.Region?.name || 'Global'}
+                      <TableCell className="py-4">
+                        <div className="space-y-1.5">
+                          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-none flex w-fit items-center gap-1.5 font-bold">
+                            <CreditCard size={12} /> {tenant.Plan?.name || 'Sin Plan'}
+                          </Badge>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+                            <MapPin size={12} className="text-[#df0024]" /> {tenant.Region?.name || 'Global'}
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
 
-                    <TableCell>
-                      <div className="text-sm">
-                        <p className="font-medium text-gray-900">{tenant.Users?.[0]?.name || '---'}</p>
-                        <p className="text-xs text-gray-500 flex items-center gap-1">
-                          <Mail size={10} /> {tenant.Users?.[0]?.email || '---'}
-                        </p>
-                      </div>
-                    </TableCell>
+                      <TableCell className="py-4">
+                        <div className="space-y-1">
+                          <p className="font-bold text-foreground/80">{tenant.Users?.[0]?.name || '---'}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                            <Mail size={12} className="text-[#df0024]" /> {tenant.Users?.[0]?.email || '---'}
+                          </p>
+                        </div>
+                      </TableCell>
 
-                    <TableCell>
-                      {tenant.isActive ? (
-                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200">Activo</Badge>
-                      ) : (
-                        <Badge variant="destructive">Bloqueado</Badge>
-                      )}
-                    </TableCell>
+                      <TableCell className="py-4">
+                        {tenant.isActive ? (
+                          <div className="flex items-center gap-2 text-green-500">
+                             <div className="size-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
+                             <span className="text-xs font-black uppercase">Activo</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-red-500">
+                             <div className="size-2 bg-red-500 rounded-full"></div>
+                             <span className="text-xs font-black uppercase">Bloqueado</span>
+                          </div>
+                        )}
+                      </TableCell>
 
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0"
-                          onClick={() => router.push(`/admin/tenants/${tenant.id}`)}
-                          title="Ver Detalhes"
-                        >
-                          <ExternalLink size={16} className="text-gray-500 hover:text-[#df0024]" />
-                        </Button>
+                      <TableCell className="text-right px-6 py-4">
+                        <div className="flex items-center justify-end gap-3">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-10 w-10 rounded-xl hover:bg-[#df0024]/10 hover:text-[#df0024] transition-all"
+                            onClick={() => router.push(`/admin/tenants/${tenant.id}`)}
+                            title="Ver Detalhes"
+                          >
+                            <ExternalLink size={18} />
+                          </Button>
 
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-8 gap-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-[#df0024] hover:border-[#df0024]"
-                          onClick={() => handleImpersonate(tenant.id, tenant.name)}
-                          title="Acceder como Gerente"
-                        >
-                          <LogIn size={14} /> <span className="hidden md:inline">Acceder</span>
-                        </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-10 gap-2 glass border-none font-bold rounded-xl hover:bg-[#df0024] hover:text-white transition-all shadow-md active:scale-95"
+                            onClick={() => handleImpersonate(tenant.id, tenant.name)}
+                          >
+                            <LogIn size={16} /> <span className="hidden xl:inline">Acceder</span>
+                          </Button>
 
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="ghost" className="h-8 w-8"><div className="rotate-90 font-bold text-lg">...</div></Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => router.push(`/admin/tenants/${tenant.id}`)}>
-                              <ExternalLink size={14} className="mr-2" /> Detalles y Docs
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleEditOpen(tenant)}>
-                              <Edit size={14} className="mr-2" /> Editar Datos
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleToggleStatus(tenant.id, tenant.isActive)}>
-                              {tenant.isActive ? <><XCircle size={14} className="mr-2 text-red-500" /> Bloquear</> : <><CheckCircle size={14} className="mr-2 text-green-500" /> Reactivar</>}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(tenant.id)}>
-                              <Trash2 size={14} className="mr-2" /> Eliminar
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl font-black text-xl">⋮</Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-2xl p-2 min-w-[180px]">
+                              <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => router.push(`/admin/tenants/${tenant.id}`)}>
+                                <ExternalLink size={16} className="mr-3 text-[#df0024]" /> Detalles y Docs
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => handleEditOpen(tenant)}>
+                                <Edit size={16} className="mr-3 text-[#df0024]" /> Editar Datos
+                              </DropdownMenuItem>
+                               <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => { setCurrentTenant(tenant); setIsPasswordOpen(true); }}>
+                                <KeyRound size={16} className="mr-3 text-[#df0024]" /> Alterar Senha
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => handleToggleStatus(tenant.id, tenant.isActive)}>
+                                {tenant.isActive ? <><XCircle size={16} className="mr-3 text-red-500" /> Bloquear</> : <><CheckCircle size={16} className="mr-3 text-green-500" /> Reactivar</>}
+                              </DropdownMenuItem>
+                              <div className="h-px bg-white/10 my-1"></div>
+                              <DropdownMenuItem className="rounded-xl font-bold cursor-pointer text-red-600 hover:bg-red-500/10" onClick={() => handleDelete(tenant.id)}>
+                                <Trash2 size={16} className="mr-3" /> Eliminar
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </div>
 
         {/* CREATE MODAL */}
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 overflow-y-auto max-h-[90vh]">
             <DialogHeader>
-              <DialogTitle>Registrar Nuevo Restaurante</DialogTitle>
-              <DialogDescription>Complete los datos contractuales y cree el acceso del gerente.</DialogDescription>
+              <DialogTitle className="text-3xl font-black">Nuevo Cliente</DialogTitle>
+              <DialogDescription className="font-medium text-muted-foreground">Configura el entorno del nuevo restaurante en el sistema.</DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-6 mt-2">
-              {/* Form Fields (Simplified for brevity, but keeping structure) */}
-              <div className="space-y-4 border p-4 rounded-lg bg-gray-50/50">
-                <h4 className="text-xs font-bold uppercase text-gray-500 flex items-center gap-2"><Store size={14} /> Datos del Establecimiento</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Nombre Comercial</label>
-                    <Input placeholder="Pizzaria do Luigi" value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Slug (URL)</label>
-                    <div className="flex">
-                      <span className="bg-gray-100 border border-r-0 rounded-l-md px-2 py-2 text-xs text-gray-500 flex items-center">app.ordengo/</span>
-                      <Input className="rounded-l-none" placeholder="pizzaria-luigi" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} required />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">NIF / Tax ID</label>
-                    <Input placeholder="B-12345678" value={formData.taxId} onChange={e => setFormData({ ...formData, taxId: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Fuso Horário</label>
-                    <Select value={formData.timezone} onValueChange={v => setFormData({ ...formData, timezone: v })}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Europe/Madrid">Madrid (ES)</SelectItem>
-                        <SelectItem value="Atlantic/Canary">Canárias (ES)</SelectItem>
-                        <SelectItem value="Europe/Lisbon">Lisboa (PT)</SelectItem>
-                        <SelectItem value="Europe/Berlin">Berlin (DE)</SelectItem>
-                        <SelectItem value="Europe/Rome">Roma (IT)</SelectItem>
-                        <SelectItem value="Europe/Paris">Paris (FR)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+            <form onSubmit={handleCreate} className="space-y-8 mt-6">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Lado A: Establecimiento */}
+                <div className="space-y-6">
+                   <div className="flex items-center gap-3 text-[#df0024]">
+                      <Store size={20} />
+                      <h4 className="font-black uppercase tracking-tighter text-sm">Información Comercial</h4>
+                   </div>
+                   <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre Comercial</label>
+                        <Input className="glass h-12 rounded-2xl font-bold" placeholder="Ej: Luigi's Pizza" value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Dirección Completa (Publica)</label>
+                        <Input className="glass h-12 rounded-2xl font-bold" placeholder="Calle, Número, Ciudad, CP" value={formData.fullAddress} onChange={e => setFormData({ ...formData, fullAddress: e.target.value })} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                         <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase ml-1 opacity-60">NIF / Tax ID</label>
+                            <Input className="glass h-12 rounded-2xl font-bold" placeholder="B12345678" value={formData.taxId} onChange={e => setFormData({ ...formData, taxId: e.target.value })} />
+                         </div>
+                         <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Slug (URL)</label>
+                            <Input className="glass h-12 rounded-2xl font-bold" placeholder="luigis-pizza" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} required />
+                         </div>
+                      </div>
+                   </div>
+                </div>
+
+                {/* Lado B: Contrato y Acceso */}
+                <div className="space-y-6">
+                   <div className="flex items-center gap-3 text-[#df0024]">
+                      <ShieldCheck size={20} />
+                      <h4 className="font-black uppercase tracking-tighter text-sm">Contrato y Acceso</h4>
+                   </div>
+                   <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                         <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Plan</label>
+                            <Select value={formData.planId} onValueChange={v => setFormData({ ...formData, planId: v })} required>
+                              <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
+                              <SelectContent className="bg-white dark:bg-zinc-900">{plans.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
+                            </Select>
+                         </div>
+                         <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase ml-1 opacity-60">Región</label>
+                            <Select value={formData.regionId} onValueChange={v => setFormData({ ...formData, regionId: v })} required>
+                              <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
+                              <SelectContent className="bg-white dark:bg-zinc-900">{regions.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
+                            </Select>
+                         </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Gerente (Email)</label>
+                        <Input className="glass h-12 rounded-2xl font-bold" type="email" placeholder="gerente@email.com" value={formData.managerEmail} onChange={e => setFormData({ ...formData, managerEmail: e.target.value })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Contraseña Inicial</label>
+                        <Input className="glass h-12 rounded-2xl font-bold" type="password" placeholder="••••••••" value={formData.managerPassword} onChange={e => setFormData({ ...formData, managerPassword: e.target.value })} required />
+                      </div>
+                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4 border p-4 rounded-lg bg-blue-50/30">
-                <h4 className="text-xs font-bold uppercase text-blue-600 flex items-center gap-2"><CreditCard size={14} /> Plan y Contrato</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Plan (Nivel)</label>
-                    <Select value={formData.planId} onValueChange={v => setFormData({ ...formData, planId: v })} required>
-                      <SelectTrigger className="bg-white"><SelectValue placeholder="Seleccione..." /></SelectTrigger>
-                      <SelectContent>
-                        {plans.map(p => <SelectItem key={p.id} value={p.id}>{p.name} (€ {p.priceMonthly})</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Región (Fiscal)</label>
-                    <Select value={formData.regionId} onValueChange={v => setFormData({ ...formData, regionId: v })} required>
-                      <SelectTrigger className="bg-white"><SelectValue placeholder="Seleccione..." /></SelectTrigger>
-                      <SelectContent>
-                        {regions.map(r => <SelectItem key={r.id} value={r.id}>{r.name} ({r.country})</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Moneda</label>
-                    <Select value={formData.currency} onValueChange={v => setFormData({ ...formData, currency: v })}>
-                      <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="EUR">Euro (€)</SelectItem>
-                        <SelectItem value="USD">Dólar ($)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4 border p-4 rounded-lg bg-yellow-50/30">
-                <h4 className="text-xs font-bold uppercase text-yellow-700 flex items-center gap-2"><ShieldCheck size={14} /> Acceso del Gerente</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1 md:col-span-2">
-                    <label className="text-xs font-medium">Nombre Completo</label>
-                    <Input className="bg-white" placeholder="Gerente Responsable" value={formData.managerName} onChange={e => setFormData({ ...formData, managerName: e.target.value })} required />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Email de Login</label>
-                    <Input className="bg-white" type="email" placeholder="gerente@restaurante.com" value={formData.managerEmail} onChange={e => setFormData({ ...formData, managerEmail: e.target.value })} required />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Contraseña Inicial</label>
-                    <Input className="bg-white" type="password" placeholder="••••••" value={formData.managerPassword} onChange={e => setFormData({ ...formData, managerPassword: e.target.value })} required />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4 border p-4 rounded-lg bg-purple-50/30">
-                <h4 className="text-xs font-bold uppercase text-purple-700 flex items-center gap-2"><CreditCard size={14} /> Configuración de Screensaver</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Admin Batch</label>
-                    <Input type="number" placeholder="3" value={formData.screensaverAdminBatchSize || 3} onChange={e => setFormData({ ...formData, screensaverAdminBatchSize: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Client Batch</label>
-                    <Input type="number" placeholder="1" value={formData.screensaverClientBatchSize || 1} onChange={e => setFormData({ ...formData, screensaverClientBatchSize: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Tiempo Inactividad (s)</label>
-                    <Input type="number" placeholder="120" value={formData.screensaverIdleTime || 120} onChange={e => setFormData({ ...formData, screensaverIdleTime: e.target.value })} />
-                  </div>
-                </div>
-              </div>
-
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>Cancelar</Button>
-                <Button type="submit" className="bg-[#df0024] hover:bg-red-700" disabled={submitting}>
-                  {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />} Crear Restaurante
+              <DialogFooter className="pt-6 border-t border-white/10">
+                <Button type="button" variant="ghost" onClick={() => setIsCreateOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
+                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                  {submitting ? <Loader2 className="animate-spin" size={20} /> : "CREAR CLIENTE"}
                 </Button>
               </DialogFooter>
             </form>
@@ -460,65 +468,107 @@ export default function TenantsPage() {
 
         {/* EDIT MODAL */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 overflow-y-auto max-h-[90vh]">
             <DialogHeader>
-              <DialogTitle>Editar Restaurante</DialogTitle>
+              <DialogTitle className="text-3xl font-black">Editar Cliente</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleUpdate} className="space-y-6 mt-2">
-              <div className="space-y-4 border p-4 rounded-lg bg-gray-50/50">
-                <h4 className="text-xs font-bold uppercase text-gray-500 flex items-center gap-2"><Store size={14} /> Dados do Estabelecimento</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Nome Fantasia</label>
-                    <Input value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Slug (URL)</label>
-                    <Input value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} required />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">NIF / Tax ID</label>
-                    <Input value={formData.taxId} onChange={e => setFormData({ ...formData, taxId: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Fuso Horário</label>
-                    <Select value={formData.timezone} onValueChange={v => setFormData({ ...formData, timezone: v })}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Europe/Madrid">Madrid (ES)</SelectItem>
-                        <SelectItem value="Atlantic/Canary">Canárias (ES)</SelectItem>
-                        <SelectItem value="Europe/Lisbon">Lisboa (PT)</SelectItem>
-                        <SelectItem value="Europe/Berlin">Berlin (DE)</SelectItem>
-                        <SelectItem value="Europe/Rome">Roma (IT)</SelectItem>
-                        <SelectItem value="Europe/Paris">Paris (FR)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+            <form onSubmit={handleUpdate} className="space-y-8 mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div className="space-y-6">
+                    <div className="flex items-center gap-3 text-[#df0024]"><Store size={20} /><h4 className="font-black uppercase tracking-tighter text-sm">Información Comercial</h4></div>
+                    <div className="space-y-4">
+                       <div className="space-y-2">
+                         <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre Comercial</label>
+                         <Input className="glass h-12 rounded-2xl font-bold" value={formData.restaurantName} onChange={e => setFormData({ ...formData, restaurantName: e.target.value })} required />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-xs font-bold uppercase ml-1 opacity-60">Dirección Completa</label>
+                         <Input className="glass h-12 rounded-2xl font-bold" value={formData.fullAddress} onChange={e => setFormData({ ...formData, fullAddress: e.target.value })} />
+                       </div>
+                       <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                             <label className="text-xs font-bold uppercase ml-1 opacity-60">NIF / Tax ID</label>
+                             <Input className="glass h-12 rounded-2xl font-bold" value={formData.taxId} onChange={e => setFormData({ ...formData, taxId: e.target.value })} />
+                          </div>
+                          <div className="space-y-2">
+                             <label className="text-xs font-bold uppercase ml-1 opacity-60">Slug (URL)</label>
+                             <Input className="glass h-12 rounded-2xl font-bold" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} required />
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+
+                 <div className="space-y-6">
+                    <div className="flex items-center gap-3 text-[#df0024]"><ShieldCheck size={20} /><h4 className="font-black uppercase tracking-tighter text-sm">Configuración Técnica</h4></div>
+                    <div className="space-y-4">
+                       <div className="grid grid-cols-2 gap-4">
+                         <div className="space-y-2">
+                           <label className="text-xs font-bold uppercase ml-1 opacity-60">Plan</label>
+                           <Select value={formData.planId} onValueChange={v => setFormData({ ...formData, planId: v })} required>
+                             <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                             <SelectContent className="bg-white dark:bg-zinc-900">{plans.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
+                           </Select>
+                         </div>
+                         <div className="space-y-2">
+                           <label className="text-xs font-bold uppercase ml-1 opacity-60">Región</label>
+                           <Select value={formData.regionId} onValueChange={v => setFormData({ ...formData, regionId: v })} required>
+                             <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                             <SelectContent className="bg-white dark:bg-zinc-900">{regions.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
+                           </Select>
+                         </div>
+                       </div>
+                       <div className="space-y-2">
+                          <label className="text-xs font-bold uppercase ml-1 opacity-60">Timezone</label>
+                          <Select value={formData.timezone} onValueChange={v => setFormData({ ...formData, timezone: v })}>
+                             <SelectTrigger className="glass h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
+                             <SelectContent className="bg-white dark:bg-zinc-900">
+                                <SelectItem value="Europe/Madrid">Madrid (ES)</SelectItem>
+                                <SelectItem value="Europe/Paris">Paris (FR)</SelectItem>
+                                <SelectItem value="Europe/Berlin">Berlin (DE)</SelectItem>
+                             </SelectContent>
+                          </Select>
+                       </div>
+                    </div>
+                 </div>
               </div>
 
-              <div className="space-y-4 border p-4 rounded-lg bg-purple-50/30">
-                <h4 className="text-xs font-bold uppercase text-purple-700 flex items-center gap-2"><CreditCard size={14} /> Configuração de Screensaver</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Admin Batch</label>
-                    <Input type="number" placeholder="3" value={formData.screensaverAdminBatchSize || 3} onChange={e => setFormData({ ...formData, screensaverAdminBatchSize: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Client Batch</label>
-                    <Input type="number" placeholder="1" value={formData.screensaverClientBatchSize || 1} onChange={e => setFormData({ ...formData, screensaverClientBatchSize: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium">Idle Time (s)</label>
-                    <Input type="number" placeholder="120" value={formData.screensaverIdleTime || 120} onChange={e => setFormData({ ...formData, screensaverIdleTime: e.target.value })} />
-                  </div>
-                </div>
-              </div>
+              <DialogFooter className="pt-6 border-t border-white/10">
+                <Button type="button" variant="ghost" onClick={() => setIsEditOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
+                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                  {submitting ? <Loader2 className="animate-spin" size={20} /> : "GUARDAR CAMBIOS"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
 
+        {/* PASSWORD MODAL */}
+        <Dialog open={isPasswordOpen} onOpenChange={setIsPasswordOpen}>
+          <DialogContent className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2rem] p-8 max-w-md">
+            <DialogHeader>
+              <div className="size-14 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
+                 <KeyRound size={28} />
+              </div>
+              <DialogTitle className="text-2xl font-black">Alterar Senha</DialogTitle>
+              <DialogDescription className="font-medium">Defina uma nova senha de acesso para o gerente de <b>{currentTenant?.name}</b>.</DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handlePasswordUpdate} className="space-y-6 mt-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase ml-1 opacity-60">Nova Senha</label>
+                <Input
+                  className="glass h-12 rounded-2xl font-bold"
+                  type="password"
+                  placeholder="Min. 6 caracteres"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>Cancelar</Button>
-                <Button type="submit" className="bg-[#df0024] hover:bg-red-700" disabled={submitting}>
-                  {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />} Salvar Alterações
+                <Button type="button" variant="ghost" onClick={() => setIsPasswordOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
+                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-8 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                  {submitting ? <Loader2 className="animate-spin" size={20} /> : "ATUALIZAR SENHA"}
                 </Button>
               </DialogFooter>
             </form>

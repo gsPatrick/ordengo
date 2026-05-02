@@ -23,12 +23,40 @@ import api from '@/lib/api';
 import ManagerLayout from '../../../components/ManagerLayout.js/ManagerLayout';
 import DateRangeFilter from '../../../components/DateRangeFilter';
 import { useRestaurant } from '@/context/RestaurantContext';
+import { useSocket } from '@/context/SocketContext';
 
 export default function DashboardPage() {
   const { currency } = useRestaurant();
+  const socket = useSocket();
   const [stats, setStats] = useState(null);
   const [tables, setTables] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Escutar atualizações via Socket
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('table_updated', () => {
+       console.log('🔄 Mesa atualizada via Socket, recarregando...');
+       fetchTablesOnly(); // Função dedicada para não pesar o dashboard todo
+    });
+
+    socket.on('new_order', () => {
+       fetchData(); // Recarrega tudo se houver novo pedido para atualizar faturamento
+    });
+
+    return () => {
+      socket.off('table_updated');
+      socket.off('new_order');
+    };
+  }, [socket]);
+
+  const fetchTablesOnly = async () => {
+    try {
+      const res = await api.get('/tables');
+      setTables(res.data.data.tables);
+    } catch (e) {}
+  };
 
   // Função central de carregamento
   // Se receber datas, filtra estatísticas. Mesas são sempre "Ao Vivo".
@@ -140,7 +168,7 @@ export default function DashboardPage() {
                       {stats?.summary.totalOrders}
                     </h3>
                   </div>
-                  <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
+                  <div className="p-3 bg-gray-100 rounded-xl text-gray-600">
                     <ShoppingBag size={24} />
                   </div>
                 </div>
@@ -233,9 +261,9 @@ export default function DashboardPage() {
                       <span className="text-green-700 font-medium">Mesas Livres</span>
                       <span className="text-2xl font-bold text-green-700">{tableStats.free}</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-xl border border-blue-100">
-                      <span className="text-blue-700 font-medium">Ocupadas</span>
-                      <span className="text-2xl font-bold text-blue-700">{tableStats.occupied}</span>
+                    <div className="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100">
+                      <span className="text-amber-700 font-medium">Ocupadas</span>
+                      <span className="text-2xl font-bold text-amber-700">{tableStats.occupied}</span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-red-50 rounded-xl border border-red-100 animate-pulse">
                       <span className="text-red-700 font-medium">Chamando / Conta</span>
