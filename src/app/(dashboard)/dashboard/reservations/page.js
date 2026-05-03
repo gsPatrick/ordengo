@@ -34,10 +34,8 @@ export default function ReservationsPage() {
   const fetchReservations = async () => {
     setLoading(true);
     try {
-      // Nota: Aquí asumo que existe un endpoint /reservations o similar
-      // Si no existe, simulamos datos para que la UI funcione
-      const res = await api.get('/manager/reservations').catch(() => ({ data: { data: [] } }));
-      setReservations(res.data.data || []);
+      const res = await api.get('/reservations');
+      setReservations(res.data.data.reservations || []);
     } catch (error) {
       console.error("Error al cargar reservas:", error);
     } finally {
@@ -48,15 +46,13 @@ export default function ReservationsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/manager/reservations', formData);
+      await api.post('/reservations', formData);
       setIsModalOpen(false);
       fetchReservations();
       setFormData({ customerName: '', date: '', time: '', people: 2, observations: '', status: 'confirmed' });
     } catch (error) {
-      alert("Error al guardar reserva. (Endpoint en desarrollo)");
-      // Mock para demo
-      setReservations([...reservations, { ...formData, id: Date.now() }]);
-      setIsModalOpen(false);
+      console.error(error);
+      alert("Error al guardar reserva.");
     }
   };
 
@@ -65,88 +61,97 @@ export default function ReservationsPage() {
   );
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in duration-500 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-gray-900">Reservas</h1>
-          <p className="text-gray-500">Gestiona las mesas y bookings de tu restaurante</p>
+          <h1 className="text-4xl font-black tracking-tight text-gray-900">Agenda de Reservas</h1>
+          <p className="text-gray-500">Organiza las mesas y la llegada de tus clientes</p>
         </div>
         
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-200">
-              <Plus size={18} />
-              Nueva Reserva Manual
+            <Button className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-200 h-12 px-8 rounded-2xl font-bold">
+              <Plus size={20} />
+              Crear Reserva Manual
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] rounded-3xl border-none shadow-2xl">
+          <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] border-none shadow-2xl p-8">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-                <Calendar className="text-[#df0024]" />
-                Registrar Reserva
+              <DialogTitle className="text-2xl font-black flex items-center gap-2">
+                <div className="size-10 bg-red-50 rounded-xl flex items-center justify-center">
+                  <Calendar className="text-[#df0024]" size={20} />
+                </div>
+                Nueva Reserva
               </DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+            <form onSubmit={handleSubmit} className="space-y-5 pt-6">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700">Nombre del Cliente</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nombre Completo</label>
                 <Input 
                   required
-                  placeholder="Ej: Juan Pérez" 
+                  placeholder="Ej: Alessandro Volpi" 
                   value={formData.customerName}
                   onChange={e => setFormData({...formData, customerName: e.target.value})}
-                  className="rounded-xl border-gray-200 focus:ring-[#df0024]"
+                  className="rounded-2xl border-gray-100 h-12 bg-gray-50/50 focus:ring-[#df0024]"
                 />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700">Fecha</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Fecha</label>
                   <Input 
                     required
                     type="date" 
                     value={formData.date}
                     onChange={e => setFormData({...formData, date: e.target.value})}
-                    className="rounded-xl border-gray-200"
+                    className="rounded-2xl border-gray-100 h-12 bg-gray-50/50"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700">Hora</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Hora</label>
                   <Input 
                     required
                     type="time" 
                     value={formData.time}
                     onChange={e => setFormData({...formData, time: e.target.value})}
-                    className="rounded-xl border-gray-200"
+                    className="rounded-2xl border-gray-100 h-12 bg-gray-50/50"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700">Número de Personas</label>
-                <div className="flex items-center gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Comensales</label>
                   <Input 
                     type="number" 
                     min="1"
                     value={formData.people}
                     onChange={e => setFormData({...formData, people: e.target.value})}
-                    className="rounded-xl border-gray-200"
+                    className="rounded-2xl border-gray-100 h-12 bg-gray-50/50"
                   />
-                  <Users className="text-gray-400" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ubicación</label>
+                  <select className="w-full h-12 rounded-2xl border border-gray-100 bg-gray-50/50 px-4 text-sm outline-none focus:ring-2 ring-red-50">
+                    <option>Interior</option>
+                    <option>Terraza</option>
+                    <option>VIP</option>
+                  </select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700">Observaciones (Opcional)</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Notas del Chef</label>
                 <textarea 
-                  className="w-full min-h-[100px] rounded-xl border border-gray-200 p-3 text-sm focus:ring-[#df0024] outline-none"
-                  placeholder="Ej: Alergia al gluten, mesa cerca de la ventana..."
+                  className="w-full min-h-[100px] rounded-2xl border border-gray-100 p-4 text-sm bg-gray-50/50 outline-none focus:ring-2 ring-red-50"
+                  placeholder="Ej: Cumpleaños, alergias..."
                   value={formData.observations}
                   onChange={e => setFormData({...formData, observations: e.target.value})}
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-[#df0024] hover:bg-red-700 text-white rounded-xl h-12 font-bold shadow-lg shadow-red-100">
-                Guardar Reserva
+              <Button type="submit" className="w-full bg-[#df0024] hover:bg-red-700 text-white rounded-2xl h-14 font-black text-lg shadow-xl shadow-red-100 mt-2">
+                Confirmar Reserva
               </Button>
             </form>
           </DialogContent>
@@ -154,110 +159,99 @@ export default function ReservationsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-none shadow-sm bg-white rounded-3xl">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Hoy</p>
-                <h3 className="text-3xl font-black mt-1">{reservations.length}</h3>
-              </div>
-              <div className="bg-blue-50 p-3 rounded-2xl">
-                <Calendar className="text-blue-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-4">
+          <div className="size-14 bg-red-50 rounded-2xl flex items-center justify-center text-[#df0024]">
+            <Calendar size={28} />
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Hoy</p>
+            <h3 className="text-3xl font-black text-gray-900">{reservations.length}</h3>
+          </div>
+        </div>
         
-        {/* Filtros y Buscador */}
-        <Card className="md:col-span-3 border-none shadow-sm bg-white rounded-3xl overflow-hidden">
-          <CardContent className="p-2 flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <Input 
-                placeholder="Buscar por nombre de cliente..." 
-                className="pl-12 border-none h-12 bg-transparent focus-visible:ring-0 text-gray-700"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Button variant="ghost" className="rounded-2xl gap-2 text-gray-500">
-              <Filter size={18} />
-              Filtros
-            </Button>
-          </CardContent>
+        <Card className="md:col-span-3 border-none shadow-sm bg-white rounded-[2rem] overflow-hidden flex items-center px-6">
+          <Search className="text-gray-300" size={24} />
+          <Input 
+            placeholder="Buscar por nombre, mesa o fecha..." 
+            className="border-none h-16 bg-transparent focus-visible:ring-0 text-lg font-medium text-gray-700 placeholder:text-gray-300"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+          <div className="flex gap-2">
+             <Button variant="ghost" className="rounded-xl size-10 p-0 text-gray-400"><Filter size={20} /></Button>
+          </div>
         </Card>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left">
             <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-100">
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-400">Cliente</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-400">Fecha y Hora</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-400">Personas</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-400">Estado</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-400 text-right">Acciones</th>
+              <tr className="bg-gray-50/30">
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Huésped</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Horario</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Grupo</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Mesa</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {filteredReservations.length > 0 ? filteredReservations.map((res) => (
                 <tr key={res.id} className="hover:bg-gray-50/50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="size-10 rounded-xl bg-red-50 flex items-center justify-center text-[#df0024] font-bold">
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-4">
+                      <div className="size-12 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center text-white font-black text-lg">
                         {res.customerName?.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900">{res.customerName}</p>
-                        <p className="text-xs text-gray-400">{res.observations || 'Sin notas'}</p>
+                        <p className="font-black text-gray-900">{res.customerName}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{res.observations || 'SIN PREFERENCIAS'}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold text-gray-700 flex items-center gap-1">
-                        <Calendar size={14} className="text-gray-400" />
-                        {res.date}
-                      </span>
-                      <span className="text-xs text-gray-400 flex items-center gap-1 mt-1">
-                        <Clock size={14} />
+                  <td className="px-8 py-6">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5 text-sm font-black text-gray-700">
+                        <Clock size={14} className="text-[#df0024]" />
                         {res.time} hs
-                      </span>
+                      </div>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase">{new Date(res.date).toLocaleDateString(undefined, { day: 'numeric', month: 'long' })}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm font-bold">
-                      <Users size={14} />
-                      {res.people}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase tracking-tighter border border-green-100">
-                      <CheckCircle2 size={12} />
-                      Confirmada
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="size-8 rounded-lg hover:bg-gray-100">
-                        <MoreVertical size={16} className="text-gray-400" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="size-8 rounded-lg hover:bg-red-50 hover:text-red-600">
-                        <Trash2 size={16} />
-                      </Button>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center -space-x-2">
+                       {[...Array(Math.min(res.people, 3))].map((_, i) => (
+                         <div key={i} className="size-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400">
+                            <User size={12} />
+                         </div>
+                       ))}
+                       {res.people > 3 && (
+                         <div className="size-8 rounded-full border-2 border-white bg-red-50 flex items-center justify-center text-[10px] font-black text-[#df0024]">
+                           +{res.people - 3}
+                         </div>
+                       )}
                     </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-green-50 text-green-600 rounded-xl text-[9px] font-black uppercase tracking-widest border border-green-100">
+                      Confirmado
+                    </span>
+                  </td>
+                  <td className="px-8 py-6 text-right">
+                    <Button variant="outline" className="rounded-xl border-gray-100 font-black text-xs text-gray-400 hover:text-[#df0024] hover:bg-red-50 hover:border-red-100 transition-all">
+                      ASIGNAR
+                    </Button>
                   </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="5" className="px-6 py-20 text-center text-gray-400">
-                    <div className="flex flex-col items-center">
-                      <div className="size-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                        <Calendar size={32} className="opacity-20" />
+                  <td colSpan="5" className="px-8 py-24 text-center">
+                    <div className="flex flex-col items-center max-w-xs mx-auto">
+                      <div className="size-20 bg-gray-50 rounded-[2rem] flex items-center justify-center mb-6">
+                        <Calendar size={40} className="text-gray-200" />
                       </div>
-                      <p className="font-bold text-gray-900">No hay reservas registradas</p>
-                      <p className="text-sm">Las nuevas reservas aparecerán aquí</p>
+                      <h4 className="text-lg font-black text-gray-900">Sin Reservas Pendientes</h4>
+                      <p className="text-sm text-gray-400 mt-2">Tu agenda está libre por ahora. Las nuevas reservas aparecerán aquí automáticamente.</p>
                     </div>
                   </td>
                 </tr>

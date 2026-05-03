@@ -13,21 +13,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import api from '@/lib/api';
 
 export default function TeamManagementPage() {
   const [activeTab, setActiveTab] = useState('employees');
   const [loading, setLoading] = useState(false);
 
-  const [employees, setEmployees] = useState([
-    { id: 1, name: 'Pedro Sánchez', email: 'pedro@restaurante.com', role: 'Camarero', status: 'active', phone: '+34 600 000 000' },
-    { id: 2, name: 'Lucía López', email: 'lucia@restaurante.com', role: 'Gerente de Turno', status: 'active', phone: '+34 600 111 222' },
-  ]);
+  const [employees, setEmployees] = useState([]);
+  const [roles, setRoles] = useState([]);
 
-  const [roles, setRoles] = useState([
-    { id: 1, name: 'Camarero', permissions: ['Menu', 'Mesas', 'Reservas'], color: 'bg-blue-100 text-blue-600' },
-    { id: 2, name: 'Gerente de Turno', permissions: ['Menu', 'Mesas', 'Reservas', 'Ofertas', 'Finanzas'], color: 'bg-[#df0024] text-white' },
-    { id: 3, name: 'Cocinero', permissions: ['Menu'], color: 'bg-green-100 text-green-600' },
-  ]);
+  useEffect(() => {
+    fetchTeamData();
+  }, []);
+
+  const fetchTeamData = async () => {
+    setLoading(true);
+    try {
+      const [teamRes, rolesRes] = await Promise.all([
+        api.get('/team'),
+        api.get('/roles')
+      ]);
+      setEmployees(teamRes.data.data.users || []);
+      setRoles(rolesRes.data.data.roles || []);
+    } catch (error) {
+      console.error("Error al cargar datos del equipo:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-10">
@@ -101,7 +114,7 @@ export default function TeamManagementPage() {
                       </td>
                       <td className="px-6 py-4">
                         <Badge className="bg-gray-100 text-gray-600 border-none rounded-lg px-3 py-1 text-[10px] font-black uppercase">
-                          {emp.role}
+                          {emp.userRole?.name || emp.role}
                         </Badge>
                       </td>
                       <td className="px-6 py-4">

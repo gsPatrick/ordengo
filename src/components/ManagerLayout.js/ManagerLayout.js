@@ -161,8 +161,14 @@ function ManagerLayoutContent({ children }) {
       path: '/dashboard/appearance'
     },
     {
+      name: 'Equipe',
+      sub: 'Roles y Permisos',
+      icon: ChefHat,
+      path: '/dashboard/settings/team'
+    },
+    {
       name: 'Configuración',
-      sub: 'Equipo y Ticket',
+      sub: 'General y Ticket',
       icon: Settings,
       path: '/dashboard/settings'
     },

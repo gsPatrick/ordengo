@@ -17,6 +17,8 @@ export default function TicketsPage() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newTicketData, setNewTicketData] = useState({ subject: '', message: '', priority: 'medium' });
 
   useEffect(() => {
     fetchTickets();
@@ -25,16 +27,12 @@ export default function TicketsPage() {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      // Mock de tickets para la UI
-      const mockTickets = [
-        { id: 1, subject: 'Problema con impresora térmica', lastMessage: 'Hola, mi impresora no está sacando el logo...', status: 'open', date: 'Hace 2h', priority: 'high', messages: [
-          { id: 1, sender: 'manager', text: 'Hola, mi impresora no está sacando el logo en el ticket Z.', time: '10:00' },
-          { id: 2, sender: 'support', text: 'Hola! Entendido. ¿Podrías enviarme una foto de la configuración actual?', time: '10:15' }
-        ]},
-        { id: 2, subject: 'Duda sobre facturación mensual', lastMessage: 'Gracias por la aclaración!', status: 'closed', date: 'Ayer', priority: 'medium', messages: [] },
-      ];
-      setTickets(mockTickets);
-      setSelectedTicket(mockTickets[0]);
+      const res = await api.get('/support');
+      const ticketsList = res.data.data.tickets || [];
+      setTickets(ticketsList);
+      if (ticketsList.length > 0 && !selectedTicket) {
+        fetchTicketDetails(ticketsList[0].id);
+      }
     } catch (error) {
       console.error("Error al cargar tickets:", error);
     } finally {
@@ -42,22 +40,40 @@ export default function TicketsPage() {
     }
   };
 
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
-    
-    const newMsg = {
-      id: Date.now(),
-      sender: 'manager',
-      text: newMessage,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
+  const fetchTicketDetails = async (id) => {
+    try {
+      const res = await api.get(`/support/${id}`);
+      setSelectedTicket(res.data.data.ticket);
+    } catch (error) {
+      console.error("Error al cargar detalle del ticket:", error);
+    }
+  };
 
-    setSelectedTicket({
-      ...selectedTicket,
-      messages: [...selectedTicket.messages, newMsg]
-    });
-    setNewMessage('');
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedTicket) return;
+    
+    try {
+      await api.post(`/support/${selectedTicket.id}/reply`, { content: newMessage });
+      setNewMessage('');
+      fetchTicketDetails(selectedTicket.id); // Recargar mensajes
+    } catch (error) {
+      console.error(error);
+      alert("Error al enviar mensaje");
+    }
+  };
+
+  const handleCreateTicket = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/support', newTicketData);
+      setIsModalOpen(false);
+      setNewTicketData({ subject: '', message: '', priority: 'medium' });
+      fetchTickets();
+    } catch (error) {
+      console.error(error);
+      alert("Error al crear ticket");
+    }
   };
 
   return (
