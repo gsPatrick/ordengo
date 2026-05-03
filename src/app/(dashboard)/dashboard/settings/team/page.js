@@ -43,114 +43,114 @@ export default function TeamManagementPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
+      {/* Header Compacto */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-gray-900">Equipo y Permisos</h1>
-          <p className="text-gray-500">Administra tus empleados y define sus niveles de acceso</p>
+          <p className="text-sm text-gray-500 font-medium">Administra tu personal y niveles de acceso</p>
         </div>
-        
         <div className="flex gap-3">
-          <Button variant="outline" className="rounded-xl border-gray-200">
-            <Lock size={18} className="mr-2" />
-            Auditoría de Logs
+          <Button variant="outline" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase border-gray-200 hover:bg-gray-50">
+            <ShieldCheck size={14} className="mr-2" />
+            Auditoría
           </Button>
-          <Button className="bg-[#df0024] hover:bg-red-700 text-white rounded-xl gap-2 shadow-lg shadow-red-200 h-12 px-8">
-            <UserPlus size={18} />
+          <Button className="bg-[#df0024] hover:bg-red-700 text-white rounded-xl h-10 px-6 text-[10px] font-black uppercase shadow-lg shadow-red-50">
+            <UserPlus size={14} className="mr-2" />
             Añadir Miembro
           </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="employees" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="bg-gray-100 p-1 rounded-2xl mb-8">
-          <TabsTrigger value="employees" className="rounded-xl px-8 font-bold data-[state=active]:bg-white data-[state=active]:text-[#df0024] data-[state=active]:shadow-sm">
-            <Users size={16} className="mr-2" />
-            Empleados
-          </TabsTrigger>
-          <TabsTrigger value="roles" className="rounded-xl px-8 font-bold data-[state=active]:bg-white data-[state=active]:text-[#df0024] data-[state=active]:shadow-sm">
-            <Shield size={16} className="mr-2" />
-            Cargos y Permisos
-          </TabsTrigger>
+      <Tabs defaultValue="employees" className="w-full">
+        <TabsList className="bg-gray-100/50 p-1 rounded-xl mb-6">
+          <TabsTrigger value="employees" className="rounded-lg text-[10px] font-black uppercase px-6">Empleados</TabsTrigger>
+          <TabsTrigger value="roles" className="rounded-lg text-[10px] font-black uppercase px-6">Cargos y Permisos</TabsTrigger>
         </TabsList>
 
-        {/* Tab Empleados */}
-        <TabsContent value="employees" className="space-y-6">
-          <Card className="border-none shadow-sm bg-white rounded-3xl overflow-hidden">
-            <div className="p-4 border-b border-gray-50 flex items-center gap-4 bg-gray-50/30">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <Input placeholder="Buscar por nombre o email..." className="pl-12 border-none h-12 bg-transparent focus-visible:ring-0 text-gray-700 font-medium" />
-              </div>
-              <Button variant="ghost" className="rounded-xl">
-                <Filter size={18} />
-              </Button>
-            </div>
-            
+        <TabsContent value="employees" className="space-y-6 outline-none">
+          {/* Buscador Compacto */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center px-4 relative">
+            <Search className="text-gray-300 absolute left-6" size={18} />
+            <Input 
+              placeholder="Buscar por nombre o email..." 
+              className="border-none h-12 bg-transparent focus-visible:ring-0 text-sm font-medium text-gray-700 placeholder:text-gray-300 pl-10 w-full"
+            />
+            <Button variant="ghost" className="size-9 p-0 text-gray-400"><Filter size={18} /></Button>
+          </div>
+
+          {/* Tabla Estilizada */}
+          <Card className="border-none shadow-sm bg-white rounded-2xl overflow-hidden border border-gray-50 min-h-[400px]">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-gray-50/50">
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Miembro</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Cargo</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Contacto</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Estado</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Acciones</th>
+                  <tr className="bg-gray-50/50 border-b border-gray-100">
+                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Miembro</th>
+                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Cargo</th>
+                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Contacto</th>
+                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Estado</th>
+                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400 text-right">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {employees.map((emp) => (
-                    <tr key={emp.id} className="hover:bg-gray-50/50 transition-colors group">
+                  {employees.length > 0 ? employees.map((emp) => (
+                    <tr key={emp.id} className="hover:bg-gray-50/30 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="size-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 font-bold">
+                          <div className="size-9 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 font-black text-xs">
                             {emp.name.charAt(0)}
                           </div>
                           <div>
-                            <p className="font-bold text-gray-900">{emp.name}</p>
-                            <p className="text-xs text-gray-400">{emp.email}</p>
+                            <p className="font-bold text-sm text-gray-900 leading-tight">{emp.name}</p>
+                            <p className="text-[10px] text-gray-400 font-medium">{emp.email}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <Badge className="bg-gray-100 text-gray-600 border-none rounded-lg px-3 py-1 text-[10px] font-black uppercase">
+                        <Badge className="bg-gray-100 text-gray-500 border-none rounded-md px-2 py-0.5 text-[8px] font-black uppercase">
                           {emp.userRole?.name || emp.role}
                         </Badge>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
-                          <Phone size={14} className="text-gray-300" />
-                          {emp.phone}
+                        <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold">
+                          <Phone size={12} className="text-gray-300" />
+                          {emp.phone || 'No asig.'}
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase tracking-tighter border border-green-100">
-                          <CheckCircle2 size={12} />
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md text-[8px] font-black uppercase tracking-tighter border border-emerald-100">
                           Activo
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="icon" className="size-8 rounded-lg">
-                            <Edit3 size={16} className="text-gray-400" />
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button variant="ghost" size="icon" className="size-8 rounded-lg hover:bg-gray-100">
+                            <Edit3 size={14} className="text-gray-400" />
                           </Button>
                           <Button variant="ghost" size="icon" className="size-8 rounded-lg hover:bg-red-50 hover:text-red-600">
-                            <Trash2 size={16} />
+                            <Trash2 size={14} />
                           </Button>
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td colSpan="5" className="px-6 py-24 text-center">
+                        <div className="flex flex-col items-center max-w-xs mx-auto">
+                          <div className="size-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
+                            <Users size={32} className="text-gray-100" />
+                          </div>
+                          <h4 className="text-md font-black text-gray-900">Sin equipo registrado</h4>
+                          <p className="text-xs text-gray-400 mt-1 leading-relaxed">Añade a tus empleados para que puedan acceder al panel operativo con sus propios roles.</p>
+                          <Button className="mt-6 bg-gray-900 text-white rounded-xl h-10 px-6 text-[10px] font-black uppercase">Vincular mi primer empleado</Button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
           </Card>
-        </TabsContent>
-
-        {/* Tab Cargos */}
-        <TabsContent value="roles" className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {roles.map((role) => (
-            <Card key={role.id} className="border-none shadow-sm bg-white rounded-3xl overflow-hidden hover:scale-[1.02] transition-transform cursor-pointer">
               <CardHeader className={`${role.color} p-6 flex flex-row items-center justify-between`}>
                 <CardTitle className="text-lg font-black">{role.name}</CardTitle>
                 <ShieldCheck size={24} className="opacity-40" />
