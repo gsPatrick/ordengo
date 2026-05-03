@@ -145,27 +145,28 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
     return () => window.removeEventListener('branding_updated', loadBranding);
   }, []);
 
-  const Logo = () => (
-    <div className="flex items-center justify-center w-full px-4">
-      <div className="relative w-full h-12 transition-transform hover:scale-105 duration-300 flex items-center justify-center">
-        {branding?.brand_logo_url ? (
+  const Logo = () => {
+    // Debug para ver se o branding está chegando
+    console.log('Sidebar Branding Logo:', branding?.brand_logo_url);
+    const logoUrl = branding?.brand_logo_url ? formatAssetUrl(branding.brand_logo_url) : "/logocolorida2.png";
+    console.log('Final Logo URL:', logoUrl);
+
+    return (
+      <div className="flex items-center justify-center w-full px-4">
+        <div className="relative w-full h-12 flex items-center justify-center">
           <img 
-            src={formatAssetUrl(branding.brand_logo_url)} 
+            src={logoUrl} 
             alt="Logo" 
-            className="max-h-full max-w-full object-contain"
+            className="max-h-12 w-auto object-contain transition-transform hover:scale-105 duration-300"
+            onError={(e) => {
+              console.error('Erro ao carregar logo da sidebar:', logoUrl);
+              e.target.src = "/logocolorida2.png"; // Fallback se falhar
+            }}
           />
-        ) : (
-          <Image 
-            src="/logocolorida2.png" 
-            alt="OrdenGO Logo" 
-            fill
-            className="object-contain"
-            priority
-          />
-        )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const NavItem = ({ item, collapsed }) => {
     const hasExactMatch = menuGroups.some(group => group.items.some(i => i.path === pathname));
