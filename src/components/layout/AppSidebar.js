@@ -12,7 +12,7 @@ import {
   UtensilsCrossed, Star, ChefHat, BarChart3,
   FileText
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatAssetUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
