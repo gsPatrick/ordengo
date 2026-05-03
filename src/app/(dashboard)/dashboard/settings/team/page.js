@@ -151,49 +151,63 @@ export default function TeamManagementPage() {
               </table>
             </div>
           </Card>
-              <CardHeader className={`${role.color} p-6 flex flex-row items-center justify-between`}>
-                <CardTitle className="text-lg font-black">{role.name}</CardTitle>
-                <ShieldCheck size={24} className="opacity-40" />
-              </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Acceso permitido a:</p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {role.permissions.map((perm) => (
-                    <span key={perm} className="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-xl text-xs font-bold border border-gray-100">
-                      {perm}
-                    </span>
-                  ))}
+        </TabsContent>
+
+        <TabsContent value="roles" className="outline-none">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {roles.map((role) => (
+              <Card key={role.id} className="border-none shadow-sm bg-white rounded-2xl border border-gray-50 flex flex-col h-full hover:shadow-md transition-all">
+                <div className="p-6 flex-1">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="size-10 bg-gray-900 rounded-xl flex items-center justify-center text-white font-black">
+                      {role.name.charAt(0)}
+                    </div>
+                    <Badge className="bg-red-50 text-[#df0024] border-none text-[8px] font-black uppercase">
+                      {role.permissions?.length || 0} Permisos
+                    </Badge>
+                  </div>
+                  <h3 className="font-black text-gray-900 mb-1">{role.name}</h3>
+                  <p className="text-[10px] text-gray-400 font-medium mb-4 uppercase tracking-tighter">Panel Operativo</p>
+                  
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {role.permissions?.map((perm, idx) => (
+                      <span key={idx} className="px-2 py-0.5 bg-gray-50 text-gray-400 rounded text-[8px] font-black uppercase border border-gray-100">
+                        {perm}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex items-center justify-between border-t border-gray-50 pt-4">
-                  <span className="text-xs text-gray-400 font-medium">5 empleados con este cargo</span>
-                  <Button variant="ghost" size="icon" className="rounded-lg">
-                    <Edit3 size={16} className="text-gray-400" />
+                
+                <div className="p-4 bg-gray-50/50 border-t border-gray-50 flex items-center justify-between">
+                  <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Activo</span>
+                  <Button variant="ghost" size="icon" className="size-7 rounded-lg">
+                    <Edit3 size={14} className="text-gray-300" />
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </Card>
+            ))}
 
-          <Card className="border-2 border-dashed border-gray-100 shadow-none bg-transparent rounded-3xl flex flex-col items-center justify-center p-8 text-center group hover:border-[#df0024] transition-colors cursor-pointer">
-            <div className="size-14 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300 mb-4 group-hover:scale-110 group-hover:bg-red-50 group-hover:text-[#df0024] transition-all">
-              <Plus size={32} />
-            </div>
-            <h4 className="font-bold text-gray-900">Crear Nuevo Cargo</h4>
-            <p className="text-xs text-gray-400 mt-1 max-w-[150px]">Define permisos personalizados para tu equipo</p>
-          </Card>
+            <Card className="border-2 border-dashed border-gray-100 shadow-none bg-transparent rounded-2xl flex flex-col items-center justify-center p-8 text-center group hover:border-[#df0024] transition-colors cursor-pointer min-h-[220px]">
+              <div className="size-12 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 mb-4 group-hover:scale-110 group-hover:bg-red-50 group-hover:text-[#df0024] transition-all">
+                <Plus size={24} />
+              </div>
+              <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight">Crear Cargo</h4>
+              <p className="text-[10px] text-gray-400 mt-1 max-w-[150px] font-medium">Define permisos personalizados para tu equipo</p>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 
       {/* Info Box */}
-      <div className="bg-amber-50 rounded-3xl p-6 border border-amber-100">
+      <div className="bg-amber-50/50 p-6 rounded-2xl border border-amber-100">
         <div className="flex gap-4">
-          <div className="size-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-amber-600">
-            <Lock size={24} />
+          <div className="size-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-amber-600 shrink-0">
+            <Lock size={20} />
           </div>
           <div>
-            <h4 className="font-black text-amber-900 uppercase text-xs tracking-widest mb-1">Seguridad de la Plataforma</h4>
-            <p className="text-sm text-amber-700 leading-relaxed max-w-2xl">
-              Recuerda que solo el Administrador principal tiene acceso a la configuración de pasarelas de pago y eliminación total del restaurante. Los roles creados aquí solo limitan el uso del panel operativo.
+            <h4 className="font-black text-amber-900 uppercase text-[10px] tracking-widest mb-1">Seguridad de la Plataforma</h4>
+            <p className="text-xs text-amber-700 leading-relaxed max-w-3xl font-medium">
+              Recuerda que solo el Administrador principal tiene acceso a la configuración de pasarelas de pago y eliminación total del restaurante. Los roles creados aquí solo limitan el uso del panel operativo para evitar acciones accidentales en la configuración base.
             </p>
           </div>
         </div>
