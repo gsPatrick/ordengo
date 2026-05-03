@@ -147,14 +147,22 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
 
   const Logo = () => (
     <div className="flex items-center justify-center w-full px-4">
-      <div className="relative w-full h-12 transition-transform hover:scale-105 duration-300">
-        <Image 
-          src={branding?.brand_logo_url || "/logocolorida2.png"} 
-          alt="OrdenGO Logo" 
-          fill
-          className="object-contain"
-          priority
-        />
+      <div className="relative w-full h-12 transition-transform hover:scale-105 duration-300 flex items-center justify-center">
+        {branding?.brand_logo_url ? (
+          <img 
+            src={formatAssetUrl(branding.brand_logo_url)} 
+            alt="Logo" 
+            className="max-h-full max-w-full object-contain"
+          />
+        ) : (
+          <Image 
+            src="/logocolorida2.png" 
+            alt="OrdenGO Logo" 
+            fill
+            className="object-contain"
+            priority
+          />
+        )}
       </div>
     </div>
   );

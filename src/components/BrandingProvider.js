@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import { formatAssetUrl } from '@/lib/utils';
 
 export default function BrandingProvider({ children }) {
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function BrandingProvider({ children }) {
               link.rel = 'icon';
               document.getElementsByTagName('head')[0].appendChild(link);
             }
-            link.href = branding.brand_favicon_url;
+            link.href = formatAssetUrl(branding.brand_favicon_url);
           }
 
           // 3. Salvar no LocalStorage para uso rápido em outros componentes (como o logo na sidebar)

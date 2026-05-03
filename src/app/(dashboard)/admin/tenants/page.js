@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn, formatAssetUrl } from "@/lib/utils";
 import EmptyState from '@/components/ui/EmptyState';
 
 export default function TenantsPage() {
@@ -283,7 +283,7 @@ export default function TenantsPage() {
                             tenant.isActive ? "bg-gradient-to-br from-gray-800 to-black" : "bg-gray-400"
                           )}>
                             {tenant.config?.logoUrl ? (
-                              <img src={tenant.config.logoUrl} className="size-full object-cover" alt={tenant.name} />
+                              <img src={formatAssetUrl(tenant.config.logoUrl)} className="size-full object-cover" alt={tenant.name} />
                             ) : (
                               tenant.name.charAt(0)
                             )}
