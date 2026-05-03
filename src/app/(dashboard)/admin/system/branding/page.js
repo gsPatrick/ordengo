@@ -168,23 +168,48 @@ export default function BrandingPage() {
               </CardHeader>
               <CardContent className="p-8 space-y-8">
                  <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Color Primario</label>
-                       <div className="flex items-center gap-4">
-                          <div className="size-14 rounded-2xl border-2 border-white/20 shadow-xl" style={{ backgroundColor: settings.brand_primary_color }}></div>
-                          <div className="flex-1 space-y-2">
-                             <Input className="glass h-10 rounded-xl font-mono text-xs" value={settings.brand_primary_color} onChange={e => setSettings({...settings, brand_primary_color: e.target.value})} />
-                             <input type="color" className="w-full h-2 rounded-full cursor-pointer" value={settings.brand_primary_color} onChange={e => setSettings({...settings, brand_primary_color: e.target.value})} />
+                       <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-4">
+                             <div 
+                               className="size-16 rounded-2xl border-2 border-white/20 shadow-xl cursor-pointer hover:scale-105 transition-transform" 
+                               style={{ backgroundColor: settings.brand_primary_color }}
+                               onClick={() => document.getElementById('primary-picker').click()}
+                             ></div>
+                             <div className="flex-1 space-y-2">
+                                <Input className="glass h-12 rounded-2xl font-mono font-bold" value={settings.brand_primary_color} onChange={e => setSettings({...settings, brand_primary_color: e.target.value})} />
+                                <input id="primary-picker" type="color" className="sr-only" value={settings.brand_primary_color} onChange={e => setSettings({...settings, brand_primary_color: e.target.value})} />
+                             </div>
+                          </div>
+                          {/* Presets */}
+                          <div className="flex flex-wrap gap-2">
+                             {['#df0024', '#0070f3', '#0070f3', '#7928ca', '#ff0080', '#f5a623'].map(c => (
+                               <button key={c} type="button" onClick={() => setSettings({...settings, brand_primary_color: c})} className="size-6 rounded-full border border-white/10 hover:scale-110 transition-transform" style={{ backgroundColor: c }} />
+                             ))}
                           </div>
                        </div>
                     </div>
-                    <div className="space-y-3">
+
+                    <div className="space-y-4">
                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Color Secundario</label>
-                       <div className="flex items-center gap-4">
-                          <div className="size-14 rounded-2xl border-2 border-white/20 shadow-xl" style={{ backgroundColor: settings.brand_secondary_color }}></div>
-                          <div className="flex-1 space-y-2">
-                             <Input className="glass h-10 rounded-xl font-mono text-xs" value={settings.brand_secondary_color} onChange={e => setSettings({...settings, brand_secondary_color: e.target.value})} />
-                             <input type="color" className="w-full h-2 rounded-full cursor-pointer" value={settings.brand_secondary_color} onChange={e => setSettings({...settings, brand_secondary_color: e.target.value})} />
+                       <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-4">
+                             <div 
+                               className="size-16 rounded-2xl border-2 border-white/20 shadow-xl cursor-pointer hover:scale-105 transition-transform" 
+                               style={{ backgroundColor: settings.brand_secondary_color }}
+                               onClick={() => document.getElementById('secondary-picker').click()}
+                             ></div>
+                             <div className="flex-1 space-y-2">
+                                <Input className="glass h-12 rounded-2xl font-mono font-bold" value={settings.brand_secondary_color} onChange={e => setSettings({...settings, brand_secondary_color: e.target.value})} />
+                                <input id="secondary-picker" type="color" className="sr-only" value={settings.brand_secondary_color} onChange={e => setSettings({...settings, brand_secondary_color: e.target.value})} />
+                             </div>
+                          </div>
+                          {/* Presets */}
+                          <div className="flex flex-wrap gap-2">
+                             {['#1f1c1d', '#000000', '#333333', '#4b5563', '#1e293b', '#0f172a'].map(c => (
+                               <button key={c} type="button" onClick={() => setSettings({...settings, brand_secondary_color: c})} className="size-6 rounded-full border border-white/10 hover:scale-110 transition-transform" style={{ backgroundColor: c }} />
+                             ))}
                           </div>
                        </div>
                     </div>
