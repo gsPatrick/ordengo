@@ -22,6 +22,11 @@ export default function CampaignsPage() {
   const [advertisers, setAdvertisers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+
+  const FILE_BASE_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
+  
   // Modals
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -72,10 +77,24 @@ export default function CampaignsPage() {
   const handleToggleStatus = async (camp) => {
     try {
       const newStatus = camp.status === 'active' ? 'paused' : 'active';
-      await api.put(`/admin/campaigns/${camp.id}`, { status: newStatus });
+      await api.patch(`/admin/campaigns/${camp.id}/status`, { status: newStatus });
       fetchData();
     } catch (e) {
       alert('Erro ao alterar status da campanha.');
+    }
+  };
+
+  const handleDelete = async () => {
+    setSubmitting(true);
+    try {
+      await api.delete(`/admin/campaigns/${deletingId}`);
+      setIsDeleteOpen(false);
+      setDeletingId(null);
+      fetchData();
+    } catch (e) {
+      alert('Erro ao deletar campanha.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -139,8 +158,19 @@ export default function CampaignsPage() {
               <div key={camp.id} className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden flex flex-col group hover:scale-[1.02] transition-all duration-300">
                  {/* Creative Preview */}
                  <div className="relative aspect-[9/16] bg-black/20 overflow-hidden">
-                    {camp.Creatives?.[0]?.mediaUrl ? (
-                      <img src={camp.Creatives[0].mediaUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={camp.title} />
+                    {camp.creatives?.[0]?.mediaUrl ? (
+                      camp.creatives[0].type === 'video' ? (
+                        <video 
+                          src={`${FILE_BASE_URL}${camp.creatives[0].mediaUrl}`} 
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                          muted 
+                          loop 
+                          onMouseOver={e => e.target.play()}
+                          onMouseOut={e => e.target.pause()}
+                        />
+                      ) : (
+                        <img src={`${FILE_BASE_URL}${camp.creatives[0].mediaUrl}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={camp.title} />
+                      )
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
                         <ImageIcon size={32} strokeWidth={1.5} />
@@ -150,8 +180,8 @@ export default function CampaignsPage() {
                     <div className="absolute top-4 left-4">
                       {getStatusBadge(camp.status)}
                     </div>
-                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button size="icon" className="bg-black/40 hover:bg-black/60 text-white rounded-full"><MoreVertical size={16} /></Button>
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2">
+                       <Button onClick={() => { setDeletingId(camp.id); setIsDeleteOpen(true); }} size="icon" className="bg-red-500/80 hover:bg-red-600 text-white rounded-full"><Trash2 size={16} /></Button>
                     </div>
                  </div>
 
@@ -168,11 +198,11 @@ export default function CampaignsPage() {
                     <div className="grid grid-cols-2 gap-4">
                        <div className="bg-gray-50 dark:bg-white/5 p-3 rounded-2xl border border-gray-100 dark:border-white/5">
                           <p className="text-[10px] uppercase font-black opacity-40">Impresiones</p>
-                          <p className="text-lg font-black text-foreground">0</p>
+                          <p className="text-lg font-black text-foreground">{camp.creatives?.reduce((acc, c) => acc + (c.viewsCount || 0), 0) || 0}</p>
                        </div>
                        <div className="bg-gray-50 dark:bg-white/5 p-3 rounded-2xl border border-gray-100 dark:border-white/5">
                           <p className="text-[10px] uppercase font-black opacity-40">Clicks</p>
-                          <p className="text-lg font-black text-foreground">0</p>
+                          <p className="text-lg font-black text-foreground">{camp.creatives?.reduce((acc, c) => acc + (c.clicksCount || 0), 0) || 0}</p>
                        </div>
                     </div>
 
@@ -275,6 +305,29 @@ export default function CampaignsPage() {
                 </Button>
               </DialogFooter>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* DELETE MODAL */}
+        <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+          <DialogContent className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 max-w-sm">
+             <DialogHeader className="flex flex-col items-center">
+               <div className="size-16 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-full flex items-center justify-center mb-4">
+                  <Trash2 size={32} />
+               </div>
+               <DialogTitle className="text-2xl font-black text-center">¿Eliminar Campaña?</DialogTitle>
+               <p className="text-center text-muted-foreground mt-2">Esta acción removerá permanentemente la campaña y sus creatividades de la red.</p>
+             </DialogHeader>
+             <div className="flex gap-4 mt-8">
+                <Button variant="ghost" className="flex-1 rounded-xl font-bold h-12" onClick={() => setIsDeleteOpen(false)}>Cancelar</Button>
+                <Button 
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black h-12 shadow-lg shadow-red-500/20" 
+                  onClick={handleDelete}
+                  disabled={submitting}
+                >
+                  {submitting ? <Loader2 className="animate-spin" size={20} /> : "SÍ, ELIMINAR"}
+                </Button>
+             </div>
           </DialogContent>
         </Dialog>
 
