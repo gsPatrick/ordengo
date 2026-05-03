@@ -20,20 +20,26 @@ export default function AdvertisersPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
-  const initialForm = { name: '', email: '', phone: '', taxId: '' };
+  const initialForm = { companyName: '', contactName: '', email: '', phone: '', taxId: '' };
   const [formData, setFormData] = useState(initialForm);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/admin/advertisers');
+      setAdvertisers(res.data.data.advertisers);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await api.get('/admin/advertisers');
-        setAdvertisers(res.data.data.advertisers);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchData();
   }, []);
 
@@ -44,12 +50,59 @@ export default function AdvertisersPage() {
       await api.post('/admin/advertisers', formData);
       setIsCreateOpen(false);
       setFormData(initialForm);
-      // Refresh...
+      fetchData();
     } catch (e) {
-      alert('Erro ao criar anunciante.');
+      alert(e.response?.data?.message || 'Erro ao criar anunciante.');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      await api.put(`/admin/advertisers/${editingId}`, formData);
+      setIsEditOpen(false);
+      setFormData(initialForm);
+      setEditingId(null);
+      fetchData();
+    } catch (e) {
+      alert(e.response?.data?.message || 'Erro ao atualizar anunciante.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setSubmitting(true);
+    try {
+      await api.delete(`/admin/advertisers/${deletingId}`);
+      setIsDeleteOpen(false);
+      setDeletingId(null);
+      fetchData();
+    } catch (e) {
+      alert(e.response?.data?.message || 'Erro ao deletar anunciante.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const openEdit = (adv) => {
+    setFormData({
+      companyName: adv.companyName,
+      contactName: adv.contactName || '',
+      email: adv.email || '',
+      phone: adv.phone || '',
+      taxId: adv.taxId || ''
+    });
+    setEditingId(adv.id);
+    setIsEditOpen(true);
+  };
+
+  const openDelete = (id) => {
+    setDeletingId(id);
+    setIsDeleteOpen(true);
   };
 
   return (
@@ -113,13 +166,19 @@ export default function AdvertisersPage() {
                          <div className="size-10 rounded-xl bg-[#df0024]/10 flex items-center justify-center text-[#df0024]">
                             <Building2 size={20} />
                          </div>
-                         <span className="font-bold">{adv.name}</span>
+                         <div className="flex flex-col">
+                            <span className="font-bold">{adv.companyName}</span>
+                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{adv.campaignsCount} campañas activas</span>
+                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="py-4">
                        <div className="space-y-1">
-                          <p className="text-xs flex items-center gap-2"><Mail size={12} className="text-[#df0024]" /> {adv.email}</p>
-                          <p className="text-xs flex items-center gap-2 font-mono opacity-60"><Phone size={12} /> {adv.phone}</p>
+                          <p className="text-xs font-bold text-gray-900 dark:text-gray-100">{adv.contactName || 'Sin contacto'}</p>
+                          <div className="flex flex-col gap-0.5 opacity-60">
+                            {adv.email && <p className="text-[10px] flex items-center gap-1.5"><Mail size={10} className="text-[#df0024]" /> {adv.email}</p>}
+                            {adv.phone && <p className="text-[10px] flex items-center gap-1.5"><Phone size={10} className="text-[#df0024]" /> {adv.phone}</p>}
+                          </div>
                        </div>
                     </TableCell>
                     <TableCell className="py-4">
@@ -127,8 +186,22 @@ export default function AdvertisersPage() {
                     </TableCell>
                     <TableCell className="text-right px-6 py-4">
                        <div className="flex justify-end gap-2">
-                          <Button size="icon" variant="ghost" className="rounded-xl hover:bg-[#df0024]/10 hover:text-[#df0024] transition-all"><Edit size={16} /></Button>
-                          <Button size="icon" variant="ghost" className="rounded-xl hover:bg-red-500/10 text-red-500 transition-all"><Trash2 size={16} /></Button>
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            onClick={() => openEdit(adv)}
+                            className="rounded-xl hover:bg-[#df0024]/10 hover:text-[#df0024] transition-all"
+                          >
+                            <Edit size={16} />
+                          </Button>
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            onClick={() => openDelete(adv.id)}
+                            className="rounded-xl hover:bg-red-500/10 text-red-500 transition-all"
+                          >
+                            <Trash2 size={16} />
+                          </Button>
                        </div>
                     </TableCell>
                   </TableRow>
@@ -138,20 +211,46 @@ export default function AdvertisersPage() {
           )}
         </div>
 
-        {/* CREATE MODAL */}
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        {/* CREATE/EDIT MODAL */}
+        <Dialog open={isCreateOpen || isEditOpen} onOpenChange={(val) => {
+          if(!val) {
+            setIsCreateOpen(false);
+            setIsEditOpen(false);
+            setEditingId(null);
+            setFormData(initialForm);
+          }
+        }}>
           <DialogContent className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 max-w-md">
              <DialogHeader>
-               <DialogTitle className="text-2xl font-black">Nuevo Anunciante</DialogTitle>
+               <DialogTitle className="text-2xl font-black">{isEditOpen ? "Editar Anunciante" : "Nuevo Anunciante"}</DialogTitle>
              </DialogHeader>
-             <form onSubmit={handleCreate} className="space-y-6 mt-4">
+             <form onSubmit={isEditOpen ? handleEdit : handleCreate} className="space-y-6 mt-4">
                 <div className="space-y-2">
                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre de la Empresa</label>
-                   <Input className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+                   <Input 
+                      className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" 
+                      value={formData.companyName} 
+                      onChange={e => setFormData({...formData, companyName: e.target.value})} 
+                      required 
+                   />
+                </div>
+                <div className="space-y-2">
+                   <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre del Contacto</label>
+                   <Input 
+                      className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" 
+                      value={formData.contactName} 
+                      onChange={e => setFormData({...formData, contactName: e.target.value})} 
+                   />
                 </div>
                 <div className="space-y-2">
                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Email Comercial</label>
-                   <Input type="email" className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
+                   <Input 
+                      type="email" 
+                      className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 h-12 rounded-2xl font-bold" 
+                      value={formData.email} 
+                      onChange={e => setFormData({...formData, email: e.target.value})} 
+                      required 
+                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
@@ -164,12 +263,39 @@ export default function AdvertisersPage() {
                    </div>
                 </div>
                 <DialogFooter>
-                   <Button type="button" variant="ghost" onClick={() => setIsCreateOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
+                   <Button type="button" variant="ghost" onClick={() => {
+                      setIsCreateOpen(false);
+                      setIsEditOpen(false);
+                      setFormData(initialForm);
+                   }} className="rounded-xl font-bold">Cancelar</Button>
                    <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-8 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
-                     {submitting ? <Loader2 className="animate-spin" size={20} /> : "CREAR ANUNCIANTE"}
+                     {submitting ? <Loader2 className="animate-spin" size={20} /> : (isEditOpen ? "GUARDAR CAMBIOS" : "CREAR ANUNCIANTE")}
                    </Button>
                 </DialogFooter>
              </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* DELETE MODAL */}
+        <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+          <DialogContent className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 max-w-sm">
+             <DialogHeader className="flex flex-col items-center">
+               <div className="size-16 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-full flex items-center justify-center mb-4">
+                  <Trash2 size={32} />
+               </div>
+               <DialogTitle className="text-2xl font-black text-center">¿Eliminar Anunciante?</DialogTitle>
+               <p className="text-center text-muted-foreground mt-2">Esta acción no se pode deshacer. El anunciante será removido de la red.</p>
+             </DialogHeader>
+             <div className="flex gap-4 mt-8">
+                <Button variant="ghost" className="flex-1 rounded-xl font-bold h-12" onClick={() => setIsDeleteOpen(false)}>Cancelar</Button>
+                <Button 
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black h-12 shadow-lg shadow-red-500/20" 
+                  onClick={handleDelete}
+                  disabled={submitting}
+                >
+                  {submitting ? <Loader2 className="animate-spin" size={20} /> : "SÍ, ELIMINAR"}
+                </Button>
+             </div>
           </DialogContent>
         </Dialog>
 

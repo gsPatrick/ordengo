@@ -34,21 +34,23 @@ export default function CampaignsPage() {
   };
   const [formData, setFormData] = useState(initialForm);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [campRes, advRes] = await Promise.all([
-          api.get('/admin/campaigns'),
-          api.get('/admin/advertisers')
-        ]);
-        setCampaigns(campRes.data.data.campaigns);
-        setAdvertisers(advRes.data.data.advertisers);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [campRes, advRes] = await Promise.all([
+        api.get('/admin/campaigns'),
+        api.get('/admin/advertisers')
+      ]);
+      setCampaigns(campRes.data.data.campaigns);
+      setAdvertisers(advRes.data.data.advertisers);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -59,11 +61,21 @@ export default function CampaignsPage() {
       await api.post('/admin/campaigns', formData);
       setIsCreateOpen(false);
       setFormData(initialForm);
-      // Refresh list...
+      fetchData();
     } catch (e) {
       alert('Erro ao criar campanha.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleToggleStatus = async (camp) => {
+    try {
+      const newStatus = camp.status === 'active' ? 'paused' : 'active';
+      await api.put(`/admin/campaigns/${camp.id}`, { status: newStatus });
+      fetchData();
+    } catch (e) {
+      alert('Erro ao alterar status da campanha.');
     }
   };
 
@@ -150,7 +162,7 @@ export default function CampaignsPage() {
                         <h3 className="font-black text-lg text-foreground tracking-tight leading-tight">{camp.title}</h3>
                         <Badge variant="outline" className="text-[10px] uppercase font-black border-white/20">{camp.priority}</Badge>
                       </div>
-                      <p className="text-xs text-[#df0024] font-bold mt-1 uppercase tracking-tighter">{camp.Advertiser?.name || 'Anunciante Directo'}</p>
+                      <p className="text-xs text-[#df0024] font-bold mt-1 uppercase tracking-tighter">{camp.Advertiser?.companyName || 'Anunciante Directo'}</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -180,9 +192,9 @@ export default function CampaignsPage() {
                  <div className="p-4 bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-white/5 flex gap-2">
                     <Button variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-gray-100 dark:hover:bg-white/10"><BarChart3 size={14} className="mr-2" /> Reporte</Button>
                     {camp.status === 'active' ? (
-                      <Button variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-yellow-500/10 text-yellow-500"><Pause size={14} className="mr-2" /> Pausar</Button>
+                      <Button onClick={() => handleToggleStatus(camp)} variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-yellow-500/10 text-yellow-500"><Pause size={14} className="mr-2" /> Pausar</Button>
                     ) : (
-                      <Button variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-green-500/10 text-green-500"><Play size={14} className="mr-2" /> Activar</Button>
+                      <Button onClick={() => handleToggleStatus(camp)} variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-green-500/10 text-green-500"><Play size={14} className="mr-2" /> Activar</Button>
                     )}
                  </div>
               </div>
@@ -210,7 +222,7 @@ export default function CampaignsPage() {
                           <label className="text-xs font-bold uppercase ml-1 opacity-60">Anunciante</label>
                           <Select value={formData.advertiserId} onValueChange={v => setFormData({...formData, advertiserId: v})} required>
                              <SelectTrigger className="bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-white/10 h-12 rounded-2xl font-bold"><SelectValue placeholder="Elegir..." /></SelectTrigger>
-                             <SelectContent className="bg-white dark:bg-zinc-900">{advertisers.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}</SelectContent>
+                             <SelectContent className="bg-white dark:bg-zinc-900">{advertisers.map(a => <SelectItem key={a.id} value={a.id}>{a.companyName}</SelectItem>)}</SelectContent>
                           </Select>
                        </div>
                        <div className="grid grid-cols-2 gap-4">
