@@ -149,28 +149,39 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
     // No modo manager, priorizamos o logo do restaurante (do usuário logado)
     // No modo admin, usamos o branding global
     let logoUrl = "/logocolorida2.png";
+    let isManager = mode === "manager";
     
-    if (mode === "manager" && user?.Restaurant?.logo) {
+    if (isManager && user?.Restaurant?.logo) {
       logoUrl = formatAssetUrl(user.Restaurant.logo);
     } else if (branding?.brand_logo_url) {
       logoUrl = formatAssetUrl(branding.brand_logo_url);
     }
 
     return (
-      <div className="flex items-center justify-center w-full px-4">
-        <div className="relative w-full h-12 flex items-center justify-center">
+      <div className={cn("flex items-center w-full px-4 gap-3", !isCollapsed && "justify-start", isCollapsed && "justify-center")}>
+        <div className="relative size-10 flex items-center justify-center shrink-0">
           <img 
             src={logoUrl} 
             alt="Logo" 
-            className="max-h-12 w-auto object-contain transition-all duration-300"
+            className="max-h-10 w-auto object-contain transition-all duration-300"
             onError={(e) => {
-              // Fallback final se falhar
               if (e.target.src !== "/logocolorida2.png") {
                 e.target.src = "/logocolorida2.png";
               }
             }}
           />
         </div>
+        {!isCollapsed && (
+          <div className="flex flex-col min-w-0 animate-in fade-in duration-500">
+             <span className="text-sm font-black truncate text-foreground leading-tight">
+               {isManager ? (user?.Restaurant?.name || "Restaurante") : (branding?.brand_name || "OrdenGO")}
+             </span>
+             <div className="flex items-center gap-1 opacity-60">
+               <span className="text-[9px] uppercase tracking-tighter font-bold">by</span>
+               <img src="/logocolorida2.png" alt="OrdenGO" className="h-2.5 w-auto" />
+             </div>
+          </div>
+        )}
       </div>
     );
   };
