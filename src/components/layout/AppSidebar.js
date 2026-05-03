@@ -22,15 +22,32 @@ import Image from "next/image";
 // --- CONFIGURAÇÃO DE MENUS ---
 
 const ADMIN_MENU = [
-  { name: "Dashboard Global", icon: LayoutDashboard, path: "/admin/dashboard" },
-  { name: "Restaurantes", icon: Store, path: "/admin/tenants" },
-  { name: "Red de Publicidad", icon: Megaphone, path: "/admin/ads" },
-  { name: "Banners Globais", icon: MonitorPlay, path: "/admin/systemads" },
-  { name: "Finanzas y Contabilidad", icon: Landmark, path: "/admin/finance" },
-  { name: "Regiones y Fiscal", icon: MapPin, path: "/admin/regions" },
-  { name: "Reportes", icon: FileBarChart, path: "/admin/analytics" },
-  { name: "Planes", icon: Landmark, path: "/admin/plans" },
-  { name: "Configuración", icon: Settings, path: "/admin/settings" },
+  {
+    title: "Administración",
+    items: [
+      { name: "Dashboard Global", icon: LayoutDashboard, path: "/admin/dashboard" },
+      { name: "Restaurantes", icon: Store, path: "/admin/tenants" },
+      { name: "Red de Publicidad", icon: Megaphone, path: "/admin/ads" },
+      { name: "Banners Globais", icon: MonitorPlay, path: "/admin/systemads" },
+    ]
+  },
+  {
+    title: "Gestión SaaS",
+    items: [
+      { name: "Finanzas y Contabilidad", icon: Landmark, path: "/admin/finance" },
+      { name: "Regiones y Fiscal", icon: MapPin, path: "/admin/regions" },
+      { name: "Reportes", icon: FileBarChart, path: "/admin/analytics" },
+      { name: "Planes", icon: Landmark, path: "/admin/plans" },
+    ]
+  },
+  {
+    title: "Plataforma",
+    items: [
+      { name: "Branding Global", icon: Palette, path: "/admin/system/branding" },
+      { name: "App Branding", icon: Smartphone, path: "/admin/system/app-branding" },
+      { name: "Configuración", icon: Settings, path: "/admin/settings" },
+    ]
+  }
 ];
 
 const MANAGER_MENU = [
@@ -110,24 +127,6 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
   const NavItem = ({ item, collapsed }) => {
     const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
     
-    if (isAdmin) {
-      return (
-        <Link
-          href={item.path}
-          className={cn(
-            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group mb-1",
-            isActive 
-              ? "bg-[#df0024] text-white shadow-lg shadow-red-900/20" 
-              : "text-gray-400 hover:bg-gray-800 hover:text-white",
-            collapsed && "justify-center px-0"
-          )}
-        >
-          <item.icon size={20} className={isActive ? 'text-white' : 'text-gray-500 group-hover:text-white transition-colors'} />
-          {!collapsed && <span className="font-medium text-sm">{item.name}</span>}
-        </Link>
-      );
-    }
-
     return (
       <Link 
         href={item.path} 
@@ -157,20 +156,6 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
       logoUrl = formatAssetUrl(user.Restaurant.logo);
     } else if (branding?.brand_logo_url) {
       logoUrl = formatAssetUrl(branding.brand_logo_url);
-    }
-
-    if (isAdmin) {
-      return (
-        <div className={cn("flex items-center w-full px-6 gap-3", isCollapsed && "justify-center px-0")}>
-           <img src="/logocerta1.png" width={40} height={40} alt="OrdenGo" className="object-contain" />
-           {!isCollapsed && (
-             <div className="animate-in fade-in duration-500">
-               <span className="text-xl font-bold tracking-tighter text-white block leading-none">OrdenGo</span>
-               <span className="text-[10px] font-mono text-gray-400 tracking-widest uppercase">Super Admin</span>
-             </div>
-           )}
-        </div>
-      );
     }
 
     return (
@@ -209,23 +194,28 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
             <Menu className="size-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className={cn("w-[280px] p-0 border-r", isAdmin ? "bg-[#1f1c1d] border-gray-800" : "glass bg-white/80 dark:bg-black/80 backdrop-blur-xl border-white/10")}>
+        <SheetContent side="left" className="w-[280px] p-0 border-r border-white/10 glass bg-white/80 dark:bg-black/80 backdrop-blur-xl">
            <SheetTitle className="sr-only">Menu de Navegação</SheetTitle>
           <div className="h-full flex flex-col p-4">
             <div className="h-20 flex items-center px-2">
               <Logo />
             </div>
-            <nav className="flex-1 overflow-y-auto py-6 space-y-1">
-               {isAdmin ? (
-                 ADMIN_MENU.map((item) => <NavItem key={item.path} item={item} collapsed={false} />)
-               ) : (
-                 MANAGER_MENU.map((group) => (
-                   <div key={group.title} className="space-y-1 mb-6">
-                     <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-2">{group.title}</h3>
-                     {group.items.map((item) => <NavItem key={item.path} item={item} collapsed={false} />)}
-                   </div>
-                 ))
-               )}
+            <nav className="flex-1 overflow-y-auto py-6 space-y-6">
+              {isAdmin ? (
+                ADMIN_MENU.map((group) => (
+                  <div key={group.title} className="space-y-1 mb-6">
+                    <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-2">{group.title}</h3>
+                    {group.items.map((item) => <NavItem key={item.path} item={item} collapsed={false} />)}
+                  </div>
+                ))
+              ) : (
+                MANAGER_MENU.map((group) => (
+                  <div key={group.title} className="space-y-1 mb-6">
+                    <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-2">{group.title}</h3>
+                    {group.items.map((item) => <NavItem key={item.path} item={item} collapsed={false} />)}
+                  </div>
+                ))
+              )}
             </nav>
           </div>
         </SheetContent>
@@ -236,37 +226,33 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
   return (
     <aside 
       className={cn(
-        "fixed left-4 top-4 bottom-4 z-40 flex flex-col transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] shadow-2xl",
-        isCollapsed ? "w-20" : "w-64",
-        isAdmin 
-          ? "bg-[#1f1c1d] border-r border-gray-800 rounded-none left-0 top-0 bottom-0" 
-          : "glass rounded-2xl border-white/20 dark:border-white/10 backdrop-blur-xl bg-white/60 dark:bg-black/40"
+        "fixed left-4 top-4 bottom-4 z-40 flex flex-col glass rounded-2xl transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] border-white/20 dark:border-white/10 shadow-2xl backdrop-blur-xl bg-white/60 dark:bg-black/40",
+        isCollapsed ? "w-20" : "w-64"
       )}
     >
-      <div className={cn("h-20 flex items-center border-b relative transition-all", 
-        isAdmin ? "border-gray-800" : "border-white/5",
-        isCollapsed ? "justify-center" : "px-6 justify-start"
-      )}>
+      <div className={cn("h-20 flex items-center border-b border-white/5 relative transition-all", isCollapsed ? "justify-center" : "px-6 justify-start")}>
         <Logo showText={!isCollapsed} />
         <Button 
           variant="ghost" 
           size="icon" 
-          className={cn(
-            "absolute -right-3 top-8 size-6 rounded-full border shadow-sm z-50 hover:bg-primary hover:text-white transition-colors",
-            isAdmin ? "bg-gray-900 border-gray-700" : "bg-background"
-          )}
+          className="absolute -right-3 top-8 size-6 rounded-full bg-background border shadow-sm z-50 hover:bg-primary hover:text-white transition-colors"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
           <ChevronLeft className={cn("size-3 transition-transform duration-300", isCollapsed && "rotate-180")} />
         </Button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1 scrollbar-hide">
+      <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-6 scrollbar-hide">
         {isAdmin ? (
-          ADMIN_MENU.map((item) => <NavItem key={item.path} item={item} collapsed={isCollapsed} />)
+          ADMIN_MENU.map((group) => (
+            <div key={group.title} className="space-y-1">
+              {!isCollapsed && <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-2">{group.title}</h3>}
+              {group.items.map((item) => <NavItem key={item.path} item={item} collapsed={isCollapsed} />)}
+            </div>
+          ))
         ) : (
           MANAGER_MENU.map((group) => (
-            <div key={group.title} className="space-y-1 mb-6">
+            <div key={group.title} className="space-y-1">
               {!isCollapsed && <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-2">{group.title}</h3>}
               {group.items.map((item) => <NavItem key={item.path} item={item} collapsed={isCollapsed} />)}
             </div>
