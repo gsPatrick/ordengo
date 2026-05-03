@@ -88,13 +88,13 @@ export default function LoginPage() {
             animate={{ y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute inset-0 z-50 bg-[#df0024] flex flex-col items-center justify-center text-white"
+            className="absolute inset-0 z-50 bg-[var(--primary)] flex flex-col items-center justify-center text-white"
           >
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.3, type: "spring", stiffness: 120 }}
-              className="bg-black p-6 rounded-full text-[#df0024] mb-6 shadow-2xl"
+              className="bg-black p-6 rounded-full text-[var(--primary)] mb-6 shadow-2xl"
             >
               <Image src="/logocerta1.png" width={80} height={80} alt="OrdenGo" className="object-contain" />
             </motion.div>
@@ -159,7 +159,7 @@ export default function LoginPage() {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 border-t-4 border-r-4 border-[#df0024] rounded-full w-32 h-32 -m-4 opacity-50"
+                  className="absolute inset-0 border-t-4 border-r-4 border-[var(--primary)] rounded-full w-32 h-32 -m-4 opacity-50"
                 />
                 <motion.div
                   animate={{ rotate: -360 }}
@@ -178,7 +178,7 @@ export default function LoginPage() {
                   <motion.div
                     animate={{ top: ['-100%', '200%'] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    className="absolute left-0 right-0 h-10 bg-gradient-to-b from-transparent via-[#df0024]/20 to-transparent w-full z-0"
+                    className="absolute left-0 right-0 h-10 bg-gradient-to-b from-transparent via-[var(--primary)]/20 to-transparent w-full z-0"
                   />
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function LoginPage() {
                 transition={{ delay: 0.6 }}
                 className="text-2xl font-mono font-bold mt-12 text-gray-200 tracking-widest uppercase"
               >
-                Acceso <span className="text-[#df0024]">Admin</span> Permitido
+                Acceso <span className="text-[var(--primary)]">Admin</span> Permitido
               </motion.h2>
 
               <motion.div
@@ -199,7 +199,7 @@ export default function LoginPage() {
                 className="h-1 bg-gray-800 rounded-full mt-6 overflow-hidden"
               >
                 <motion.div
-                  className="h-full bg-[#df0024]"
+                  className="h-full bg-[var(--primary)]"
                   initial={{ width: 0 }}
                   animate={{ width: "100%" }}
                   transition={{ delay: 0.8, duration: 1.5 }}
@@ -303,7 +303,7 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full px-4 py-3 rounded-lg border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df0024] focus:border-transparent transition-all"
+                    className="block w-full px-4 py-3 rounded-lg border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all"
                     placeholder="admin@ordengo.com"
                   />
                 </div>
@@ -327,7 +327,7 @@ export default function LoginPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full px-4 py-3 rounded-lg border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df0024] focus:border-transparent transition-all pr-10"
+                    className="block w-full px-4 py-3 rounded-lg border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all pr-10"
                     placeholder="••••••••"
                   />
                   <button
@@ -352,7 +352,7 @@ export default function LoginPage() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-[#df0024] focus:ring-[#df0024] border-gray-300 rounded"
+                  className="h-4 w-4 text-[var(--primary)] focus:ring-[var(--primary)] border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                   Recordarme
@@ -360,7 +360,7 @@ export default function LoginPage() {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-[#df0024] hover:text-red-700">
+                <a href="#" className="font-medium text-[var(--primary)] hover:text-red-700">
                   ¿Olvidó la contraseña?
                 </a >
               </div>
@@ -374,7 +374,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[#df0024] hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#df0024] transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-red-200"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[var(--primary)] hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary)] transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-red-200"
               >
                 {loading && !roleAnimation ? (
                   <Loader2 className="animate-spin h-5 w-5" />

@@ -20,7 +20,7 @@ export default function BrandingPage() {
   const [settings, setSettings] = useState({
     brand_name: 'OrdenGO',
     brand_logo_url: '/logocerta1.png',
-    brand_primary_color: '#df0024',
+    brand_primary_color: 'var(--primary)',
     brand_secondary_color: '#1f1c1d',
     brand_favicon_url: '/favicon.ico'
   });
@@ -81,7 +81,7 @@ export default function BrandingPage() {
     }
   };
 
-  if (loading) return <AdminLayout><div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[#df0024]" size={32} /></div></AdminLayout>;
+  if (loading) return <AdminLayout><div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[var(--primary)]" size={32} /></div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -92,7 +92,7 @@ export default function BrandingPage() {
             <h1 className="text-3xl font-extrabold tracking-tight">Branding Global</h1>
             <p className="text-muted-foreground mt-1 text-sm italic">Personalice la identidad visual de toda la plataforma de forma centralizada.</p>
           </div>
-          <Button onClick={handleSave} disabled={submitting} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8 h-12 font-bold">
+          <Button onClick={handleSave} disabled={submitting} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8 h-12 font-bold">
             {submitting ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} GUARDAR IDENTIDAD
           </Button>
         </div>
@@ -101,7 +101,7 @@ export default function BrandingPage() {
            
            <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
               <CardHeader className="bg-white/10 px-8 pt-8">
-                 <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
+                 <div className="size-12 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center text-[var(--primary)] mb-4">
                     <Layout size={24} />
                  </div>
                  <CardTitle className="text-xl font-black">Nombres y Logotipos</CardTitle>
@@ -184,7 +184,7 @@ export default function BrandingPage() {
                           </div>
                           {/* Presets */}
                           <div className="flex flex-wrap gap-2">
-                             {['#df0024', '#0070f3', '#0070f3', '#7928ca', '#ff0080', '#f5a623'].map(c => (
+                             {['var(--primary)', '#0070f3', '#0070f3', '#7928ca', '#ff0080', '#f5a623'].map(c => (
                                <button key={c} type="button" onClick={() => setSettings({...settings, brand_primary_color: c})} className="size-6 rounded-full border border-white/10 hover:scale-110 transition-transform" style={{ backgroundColor: c }} />
                              ))}
                           </div>

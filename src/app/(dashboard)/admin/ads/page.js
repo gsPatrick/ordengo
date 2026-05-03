@@ -53,7 +53,7 @@ export default function AdsOverviewPage() {
              <Button onClick={() => router.push('/admin/campaigns')} variant="outline" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl font-bold gap-2">
                 <LayoutGrid size={18} /> Ver Campañas
              </Button>
-             <Button onClick={() => router.push('/admin/campaigns')} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 font-bold">
+             <Button onClick={() => router.push('/admin/campaigns')} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 font-bold">
                 <PlusCircle size={18} /> Nueva Campaña
              </Button>
           </div>
@@ -61,7 +61,7 @@ export default function AdsOverviewPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-           <StatCard title="Campañas Activas" value={stats.totalCampaigns} icon={<Tv className="text-[#df0024]" />} />
+           <StatCard title="Campañas Activas" value={stats.totalCampaigns} icon={<Tv className="text-[var(--primary)]" />} />
            <StatCard title="Anunciantes" value={stats.totalAdvertisers} icon={<Users className="text-blue-500" />} />
            <StatCard title="Impresiones (24h)" value={stats.totalImpressions.toLocaleString()} icon={<Eye className="text-purple-500" />} />
            <StatCard title="Clicks (CTR)" value={stats.totalClicks} icon={<MousePointer2 className="text-green-500" />} />
@@ -123,7 +123,7 @@ function QuickLinkCard({ title, desc, href, color }) {
       <div className="relative z-10 space-y-4">
          <h4 className="text-2xl font-black tracking-tight">{title}</h4>
          <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
-         <div className="flex items-center gap-2 text-[#df0024] font-black text-xs uppercase tracking-widest pt-2">
+         <div className="flex items-center gap-2 text-[var(--primary)] font-black text-xs uppercase tracking-widest pt-2">
             Gestionar <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
          </div>
       </div>

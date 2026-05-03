@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import EmptyState from '@/components/ui/EmptyState';
 
-const COLORS = ['#df0024', '#1f1c1d', '#9ca3af', '#ef4444'];
+const COLORS = ['var(--primary)', '#1f1c1d', '#9ca3af', '#ef4444'];
 
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
@@ -150,7 +150,7 @@ export default function AnalyticsPage() {
             
             {/* KPIs Operacionais */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card className="border-t-4 border-t-[#df0024]">
+              <Card className="border-t-4 border-t-[var(--primary)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-bold text-gray-500 uppercase flex justify-between">
                     MRR (Recorrente) <DollarSign size={14}/>
@@ -216,7 +216,7 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent className="h-[350px]">
                   {loading ? (
-                    <div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[#df0024]" size={32}/></div>
+                    <div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[var(--primary)]" size={32}/></div>
                   ) : revenueDistributionData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -265,7 +265,7 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   {loading ? (
-                    <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]"/></div>
+                    <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[var(--primary)]"/></div>
                   ) : adReport.length > 0 ? (
                     <Table>
                       <TableHeader>

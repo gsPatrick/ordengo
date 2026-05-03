@@ -104,14 +104,14 @@ export default function RolesPage() {
           <div>            <h1 className="text-3xl font-extrabold tracking-tight">Roles y Permisos</h1>
             <p className="text-muted-foreground mt-1 text-sm italic">Defina los niveles de acceso dinámicos para el equipo SaaS.</p>
           </div>
-          <Button onClick={() => handleEdit()} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold">
+          <Button onClick={() => handleEdit()} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold">
             <Plus size={18} /> Crear Nuevo Cargo
           </Button>
         </div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <Loader2 className="animate-spin text-[#df0024]" size={48} />
+            <Loader2 className="animate-spin text-[var(--primary)]" size={48} />
           </div>
         ) : roles.length === 0 ? (
           <EmptyState
@@ -126,7 +126,7 @@ export default function RolesPage() {
             {roles.map(role => (
               <div key={role.id} className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] p-8 flex flex-col group hover:shadow-red-500/10 transition-all duration-300">
                  <div className="flex justify-between items-start mb-6">
-                    <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024]">
+                    <div className="size-12 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center text-[var(--primary)]">
                        <ShieldCheck size={24} />
                     </div>
                     {role.isSystem && (
@@ -146,7 +146,7 @@ export default function RolesPage() {
                     )}
                  </div>
  
-                 <Button variant="ghost" className="w-full rounded-2xl font-black bg-gray-50 dark:bg-zinc-800 hover:bg-[#df0024] hover:text-white transition-all h-12" onClick={() => handleEdit(role)}>
+                 <Button variant="ghost" className="w-full rounded-2xl font-black bg-gray-50 dark:bg-zinc-800 hover:bg-[var(--primary)] hover:text-white transition-all h-12" onClick={() => handleEdit(role)}>
                     GESTIONAR ACCESO
                  </Button>
               </div>
@@ -175,7 +175,7 @@ export default function RolesPage() {
                </div>
 
                <div className="space-y-8">
-                  <h3 className="text-sm font-black flex items-center gap-2 text-[#df0024]">
+                  <h3 className="text-sm font-black flex items-center gap-2 text-[var(--primary)]">
                     <ShieldAlert size={18} />
                     MATRIZ DE PERMISOS
                   </h3>
@@ -191,13 +191,13 @@ export default function RolesPage() {
                                  className="flex items-center justify-between group/item p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-all border border-transparent hover:border-gray-100 dark:hover:border-white/10"
                                >
                                   <div className="space-y-0.5">
-                                     <p className="text-sm font-bold group-hover/item:text-[#df0024] transition-colors">{p.name}</p>
+                                     <p className="text-sm font-bold group-hover/item:text-[var(--primary)] transition-colors">{p.name}</p>
                                      <p className="text-[10px] opacity-40 uppercase font-bold tracking-tight">{p.slug}</p>
                                   </div>
                                   <Checkbox 
                                     checked={formData.permissionIds.includes(p.id)} 
                                     onCheckedChange={() => togglePermission(p.id)}
-                                    className="rounded-lg size-6 border-2 border-white/20 data-[state=checked]:bg-[#df0024] data-[state=checked]:border-[#df0024]"
+                                    className="rounded-lg size-6 border-2 border-white/20 data-[state=checked]:bg-[var(--primary)] data-[state=checked]:border-[var(--primary)]"
                                   />
                                 </label>
                              ))}
@@ -209,7 +209,7 @@ export default function RolesPage() {
 
                 <DialogFooter className="pt-8 border-t border-gray-100 dark:border-white/10">
                    <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                   <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-14 px-12 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                   <Button type="submit" className="bg-[var(--primary)] hover:bg-red-700 h-14 px-12 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                      {submitting ? <Loader2 className="animate-spin" /> : 'GUARDAR CONFIGURACIÓN'}
                    </Button>
                 </DialogFooter>

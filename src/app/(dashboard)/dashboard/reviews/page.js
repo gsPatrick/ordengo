@@ -84,7 +84,7 @@ export default function ReviewsPage() {
               onClick={() => setActiveTab('summary')}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'summary' 
-                  ? 'border-[#df0024] text-[#df0024]' 
+                  ? 'border-[var(--primary)] text-[var(--primary)]' 
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -94,7 +94,7 @@ export default function ReviewsPage() {
               onClick={() => setActiveTab('comments')}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'comments' 
-                  ? 'border-[#df0024] text-[#df0024]' 
+                  ? 'border-[var(--primary)] text-[var(--primary)]' 
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -107,7 +107,7 @@ export default function ReviewsPage() {
         <div className="min-h-[400px]">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#df0024]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--primary)]"></div>
             </div>
           ) : (
             <>
@@ -135,7 +135,7 @@ export default function ReviewsPage() {
                     {/* Mini Stats */}
                     <div className="flex gap-8 text-center">
                       <div>
-                        <p className="text-3xl font-bold text-[#df0024]">
+                        <p className="text-3xl font-bold text-[var(--primary)]">
                           {summary?.totalReviews > 0 
                             ? Math.round((summary?.averageByCategory?.food / 5) * 100) 
                             : 0}%
@@ -201,7 +201,7 @@ export default function ReviewsPage() {
                     </div>
                   ) : (
                     reviews.map((review) => (
-                      <div key={review.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:border-[#df0024]/30 transition-colors">
+                      <div key={review.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:border-[var(--primary)]/30 transition-colors">
                         
                         <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
                           {/* Cabeçalho do Card */}
@@ -241,7 +241,7 @@ export default function ReviewsPage() {
 
                         {/* Comentário Texto */}
                         {review.comment ? (
-                          <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm italic border-l-4 border-[#df0024]">
+                          <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm italic border-l-4 border-[var(--primary)]">
                             &quot;{review.comment}&quot;
                           </div>
                         ) : (

@@ -31,19 +31,6 @@ export default function BrandingProvider({ children }) {
               --secondary: ${secondary} !important;
               --sidebar-accent: ${secondary} !important;
             }
-            
-            /* Sobrescrever classes fixas do OrdenGO antigo */
-            [class*="bg-[#df0024]"], .bg-primary { background-color: ${primary} !important; }
-            [class*="text-[#df0024]"], .text-primary { color: ${primary} !important; }
-            [class*="border-[#df0024]"], .border-primary { border-color: ${primary} !important; }
-            [class*="ring-[#df0024]"], .ring-primary { --tw-ring-color: ${primary} !important; border-color: ${primary} !important; }
-            [class*="from-[#df0024]"] { --tw-gradient-from: ${primary} !important; }
-            [class*="to-[#df0024]"] { --tw-gradient-to: ${primary} !important; }
-            [class*="via-[#df0024]"] { --tw-gradient-via: ${primary} !important; }
-            
-            /* Efeitos de Hover */
-            .hover\\:bg-red-700:hover { background-color: ${primary} !important; opacity: 0.9; }
-            .hover\\:text-red-700:hover { color: ${primary} !important; opacity: 0.9; }
           `;
 
           // 2. Atualizar Título e Favicon

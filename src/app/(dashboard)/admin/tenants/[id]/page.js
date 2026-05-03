@@ -151,7 +151,7 @@ export default function TenantDetailsPage() {
     if (loading) return (
         <AdminLayout>
             <div className="flex h-screen items-center justify-center">
-                <Loader2 className="animate-spin text-[#df0024]" size={48} />
+                <Loader2 className="animate-spin text-[var(--primary)]" size={48} />
             </div>
         </AdminLayout>
     );
@@ -360,7 +360,7 @@ export default function TenantDetailsPage() {
                                             value={newNote}
                                             onChange={e => setNewNote(e.target.value)}
                                         />
-                                        <Button className="w-full bg-[#df0024] hover:bg-red-700" onClick={handleAddNote} disabled={addingNote || !newNote.trim()}>
+                                        <Button className="w-full bg-[var(--primary)] hover:bg-red-700" onClick={handleAddNote} disabled={addingNote || !newNote.trim()}>
                                             {addingNote ? <Loader2 className="animate-spin mr-2" size={16} /> : <Plus className="mr-2" size={16} />}
                                             Adicionar Nota
                                         </Button>
@@ -408,7 +408,7 @@ export default function TenantDetailsPage() {
                                     </div>
                                 </div>
                                 <Button
-                                    className="bg-[#df0024] hover:bg-red-700"
+                                    className="bg-[var(--primary)] hover:bg-red-700"
                                     onClick={async () => {
                                         try {
                                             await api.put(`/admin/tenants/${id}`, {
@@ -483,7 +483,7 @@ export default function TenantDetailsPage() {
                         </div>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setEditingDoc(null)}>Cancelar</Button>
-                            <Button onClick={handleSaveEdit} className="bg-[#df0024] hover:bg-red-700">Salvar Alterações</Button>
+                            <Button onClick={handleSaveEdit} className="bg-[var(--primary)] hover:bg-red-700">Salvar Alterações</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>

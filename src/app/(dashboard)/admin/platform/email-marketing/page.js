@@ -94,14 +94,14 @@ export default function EmailMarketingPage() {
             <h1 className="text-3xl font-extrabold tracking-tight">Email Marketing & Templates</h1>
             <p className="text-muted-foreground mt-1 text-sm italic">Gestione as comunicações automáticas e campanhas da plataforma.</p>
           </div>
-          <Button onClick={() => handleEdit()} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold">
+          <Button onClick={() => handleEdit()} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold">
             <Plus size={18} /> Crear Template
           </Button>
         </div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <Loader2 className="animate-spin text-[#df0024]" size={48} />
+            <Loader2 className="animate-spin text-[var(--primary)]" size={48} />
             <p className="text-muted-foreground font-medium">Carregando templates...</p>
           </div>
         ) : templates.length === 0 ? (
@@ -116,7 +116,7 @@ export default function EmailMarketingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {templates.map(tpl => (
               <div key={tpl.id} className="glass border-none shadow-xl rounded-[2.5rem] p-8 flex flex-col group hover:scale-[1.02] transition-all duration-300">
-                 <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-6">
+                 <div className="size-12 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center text-[var(--primary)] mb-6">
                     <Mail size={24} />
                  </div>
                  <h3 className="text-xl font-black mb-1 truncate">{tpl.name}</h3>
@@ -132,7 +132,7 @@ export default function EmailMarketingPage() {
                  </div>
 
                  <div className="pt-6 border-t border-gray-100 dark:border-white/10 flex gap-2">
-                    <Button variant="ghost" className="flex-1 rounded-xl font-bold bg-[#df0024]/10 text-[#df0024] hover:bg-[#df0024]/20" onClick={() => handleEdit(tpl)}>
+                    <Button variant="ghost" className="flex-1 rounded-xl font-bold bg-[var(--primary)]/10 text-[var(--primary)] hover:bg-[var(--primary)]/20" onClick={() => handleEdit(tpl)}>
                        EDITAR
                     </Button>
                     <Button variant="ghost" size="icon" className="rounded-xl hover:bg-gray-100 dark:hover:bg-white/10" onClick={() => { setSelectedTemplate(tpl); setPreviewMode(true); }}>
@@ -174,7 +174,7 @@ export default function EmailMarketingPage() {
                     <label className="text-[10px] font-black uppercase opacity-40 ml-1">Variáveis Disponíveis</label>
                     <div className="grid grid-cols-2 gap-2">
                        {['name', 'email', 'restaurant_name', 'login_url', 'support_email', 'order_id'].map(v => (
-                         <button key={v} onClick={() => injectVariable(v)} className="text-[10px] font-bold py-2 px-3 bg-white/5 hover:bg-[#df0024]/10 hover:text-[#df0024] rounded-lg border border-white/5 transition-colors">
+                         <button key={v} onClick={() => injectVariable(v)} className="text-[10px] font-bold py-2 px-3 bg-white/5 hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] rounded-lg border border-white/5 transition-colors">
                            {v}
                          </button>
                        ))}
@@ -182,7 +182,7 @@ export default function EmailMarketingPage() {
                     <p className="text-[10px] text-muted-foreground italic mt-2">Clique para inserir no cursor.</p>
                  </div>
 
-                 <Button onClick={handleSubmit} className="w-full bg-[#df0024] h-14 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                 <Button onClick={handleSubmit} className="w-full bg-[var(--primary)] h-14 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                     {submitting ? <Loader2 className="animate-spin" /> : 'SALVAR TEMPLATE'}
                  </Button>
               </div>
@@ -191,7 +191,7 @@ export default function EmailMarketingPage() {
               <div className="flex-1 flex flex-col bg-black/20">
                  <div className="h-14 border-b border-white/5 flex items-center justify-between px-6">
                     <div className="flex gap-4">
-                       <button className="text-xs font-black border-b-2 border-[#df0024] pb-1">HTML EDITOR</button>
+                       <button className="text-xs font-black border-b-2 border-[var(--primary)] pb-1">HTML EDITOR</button>
                        <button className="text-xs font-bold opacity-30">PREVIEW REALTIME</button>
                     </div>
                     <Variable size={16} className="opacity-20" />

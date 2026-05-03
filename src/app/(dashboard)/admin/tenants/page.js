@@ -201,15 +201,15 @@ export default function TenantsPage() {
       {isImpersonating && (
         <div className="fixed inset-0 z-[9999] bg-[#1f1c1d] flex flex-col items-center justify-center animate-in fade-in duration-500">
           <div className="z-10 flex flex-col items-center text-center space-y-6">
-            <div className="w-20 h-20 bg-[#df0024] rounded-2xl flex items-center justify-center shadow-2xl shadow-red-900/50 animate-bounce">
+            <div className="w-20 h-20 bg-[var(--primary)] rounded-2xl flex items-center justify-center shadow-2xl shadow-red-900/50 animate-bounce">
               <ShieldCheck className="text-white w-10 h-10" />
             </div>
             <div className="space-y-2">
               <h2 className="text-2xl font-bold text-white tracking-tight">Acessando Painel do Cliente</h2>
-              <p className="text-gray-400 text-sm">Autenticando como gerente de <span className="text-[#df0024] font-bold">{impersonateTarget}</span>...</p>
+              <p className="text-gray-400 text-sm">Autenticando como gerente de <span className="text-[var(--primary)] font-bold">{impersonateTarget}</span>...</p>
             </div>
             <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
-              <Loader2 className="text-[#df0024] animate-spin" size={18} />
+              <Loader2 className="text-[var(--primary)] animate-spin" size={18} />
               <span className="text-xs text-gray-300 font-mono">Redirecionando ambiente seguro...</span>
             </div>
           </div>
@@ -224,7 +224,7 @@ export default function TenantsPage() {
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Clientes</h1>
             <p className="text-muted-foreground mt-1 text-sm italic">Gestão completa de restaurantes, contratos e acessos.</p>
           </div>
-          <Button onClick={() => setIsCreateOpen(true)} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
+          <Button onClick={() => setIsCreateOpen(true)} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
             <Plus size={18} /> Nuevo Cliente
           </Button>
         </div>
@@ -232,7 +232,7 @@ export default function TenantsPage() {
         {/* Search & Stats Bar */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
            <div className="relative w-full max-w-md group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[var(--primary)] transition-colors" size={20} />
             <Input
               placeholder="Buscar por nombre, ciudad o región..."
               className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
@@ -247,10 +247,10 @@ export default function TenantsPage() {
         </div>
 
         {/* Table Container */}
-        <div className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden">
+        <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
-              <Loader2 className="animate-spin text-[#df0024]" size={48} />
+              <Loader2 className="animate-spin text-primary" size={48} />
               <p className="text-muted-foreground font-medium animate-pulse">Carregando carteira de clientes...</p>
             </div>
           ) : filteredTenants.length === 0 ? (
@@ -262,13 +262,13 @@ export default function TenantsPage() {
                 onCtaClick={() => setIsCreateOpen(true)}
               />
             ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto scrollbar-hide">
+              <Table className="min-w-[1000px] md:min-w-full">
                 <TableHeader>
                   <TableRow className="border-b border-white/10 hover:bg-transparent">
                     <TableHead className="px-6 py-4 font-bold text-foreground">Establecimiento</TableHead>
-                    <TableHead className="py-4 font-bold text-foreground">Contrato</TableHead>
-                    <TableHead className="py-4 font-bold text-foreground">Gerente</TableHead>
+                    <TableHead className="py-4 font-bold text-foreground hidden sm:table-cell">Contrato</TableHead>
+                    <TableHead className="py-4 font-bold text-foreground hidden lg:table-cell">Gerente</TableHead>
                     <TableHead className="py-4 font-bold text-foreground">Estado</TableHead>
                     <TableHead className="text-right px-6 py-4 font-bold text-foreground">Acciones</TableHead>
                   </TableRow>
@@ -279,38 +279,42 @@ export default function TenantsPage() {
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-4">
                           <div className={cn(
-                            "size-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-inner",
+                            "size-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-inner overflow-hidden",
                             tenant.isActive ? "bg-gradient-to-br from-gray-800 to-black" : "bg-gray-400"
                           )}>
-                            {tenant.name.charAt(0)}
+                            {tenant.config?.logoUrl ? (
+                              <img src={tenant.config.logoUrl} className="size-full object-cover" alt={tenant.name} />
+                            ) : (
+                              tenant.name.charAt(0)
+                            )}
                           </div>
-                          <div>
-                            <p className="font-extrabold text-foreground text-lg leading-tight group-hover:text-[#df0024] transition-colors">{tenant.name}</p>
+                          <div className="max-w-[200px] overflow-hidden">
+                            <p className="font-extrabold text-foreground text-lg leading-tight group-hover:text-primary transition-colors truncate">{tenant.name}</p>
                             <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                              <Globe size={10} className="text-[#df0024]" /> {tenant.slug}
-                              <span className="opacity-20">|</span>
-                              <span className="font-mono bg-muted/50 px-1.5 rounded uppercase">{tenant.taxId || 'S/NIF'}</span>
+                              <Globe size={10} className="text-primary" /> {tenant.slug}
+                              <span className="opacity-20 hidden sm:inline">|</span>
+                              <span className="font-mono bg-muted/50 px-1.5 rounded uppercase hidden sm:inline">{tenant.taxId || 'S/NIF'}</span>
                             </div>
                           </div>
                         </div>
                       </TableCell>
 
-                      <TableCell className="py-4">
+                      <TableCell className="py-4 hidden sm:table-cell">
                         <div className="space-y-1.5">
                           <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-none flex w-fit items-center gap-1.5 font-bold">
                             <CreditCard size={12} /> {tenant.Plan?.name || 'Sin Plan'}
                           </Badge>
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
-                            <MapPin size={12} className="text-[#df0024]" /> {tenant.Region?.name || 'Global'}
+                            <MapPin size={12} className="text-primary" /> {tenant.Region?.name || 'Global'}
                           </div>
                         </div>
                       </TableCell>
 
-                      <TableCell className="py-4">
+                      <TableCell className="py-4 hidden lg:table-cell">
                         <div className="space-y-1">
                           <p className="font-bold text-foreground/80">{tenant.Users?.[0]?.name || '---'}</p>
                           <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                            <Mail size={12} className="text-[#df0024]" /> {tenant.Users?.[0]?.email || '---'}
+                            <Mail size={12} className="text-primary" /> {tenant.Users?.[0]?.email || '---'}
                           </p>
                         </div>
                       </TableCell>
@@ -319,12 +323,12 @@ export default function TenantsPage() {
                         {tenant.isActive ? (
                           <div className="flex items-center gap-2 text-green-500">
                              <div className="size-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
-                             <span className="text-xs font-black uppercase">Activo</span>
+                             <span className="text-xs font-black uppercase hidden sm:inline">Activo</span>
                           </div>
                         ) : (
                           <div className="flex items-center gap-2 text-red-500">
                              <div className="size-2 bg-red-500 rounded-full"></div>
-                             <span className="text-xs font-black uppercase">Bloqueado</span>
+                             <span className="text-xs font-black uppercase hidden sm:inline">Bloqueado</span>
                           </div>
                         )}
                       </TableCell>
@@ -334,7 +338,7 @@ export default function TenantsPage() {
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-10 w-10 rounded-xl hover:bg-[#df0024]/10 hover:text-[#df0024] transition-all"
+                            className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all hidden md:flex"
                             onClick={() => router.push(`/admin/tenants/${tenant.id}`)}
                             title="Ver Detalhes"
                           >
@@ -343,8 +347,7 @@ export default function TenantsPage() {
 
                           <Button
                              size="sm"
-                             variant="outline"
-                             className="h-10 gap-2 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 font-bold rounded-xl hover:bg-[#df0024] hover:text-white transition-all shadow-sm active:scale-95"
+                             className="h-10 gap-2 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-all shadow-sm active:scale-95"
                              onClick={() => handleImpersonate(tenant.id, tenant.name)}
                            >
                              <LogIn size={16} /> <span className="hidden xl:inline">Acceder</span>
@@ -356,13 +359,13 @@ export default function TenantsPage() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 shadow-xl rounded-2xl p-2 min-w-[180px]">
                               <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => router.push(`/admin/tenants/${tenant.id}`)}>
-                                <ExternalLink size={16} className="mr-3 text-[#df0024]" /> Detalles y Docs
+                                <ExternalLink size={16} className="mr-3 text-primary" /> Detalles y Docs
                               </DropdownMenuItem>
                               <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => handleEditOpen(tenant)}>
-                                <Edit size={16} className="mr-3 text-[#df0024]" /> Editar Datos
+                                <Edit size={16} className="mr-3 text-primary" /> Editar Datos
                               </DropdownMenuItem>
                                <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => { setCurrentTenant(tenant); setIsPasswordOpen(true); }}>
-                                <KeyRound size={16} className="mr-3 text-[#df0024]" /> Alterar Senha
+                                <KeyRound size={16} className="mr-3 text-primary" /> Alterar Senha
                               </DropdownMenuItem>
                               <DropdownMenuItem className="rounded-xl font-bold cursor-pointer" onClick={() => handleToggleStatus(tenant.id, tenant.isActive)}>
                                 {tenant.isActive ? <><XCircle size={16} className="mr-3 text-red-500" /> Bloquear</> : <><CheckCircle size={16} className="mr-3 text-green-500" /> Reactivar</>}
@@ -395,7 +398,7 @@ export default function TenantsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Lado A: Establecimiento */}
                 <div className="space-y-6">
-                   <div className="flex items-center gap-3 text-[#df0024]">
+                   <div className="flex items-center gap-3 text-[var(--primary)]">
                       <Store size={20} />
                       <h4 className="font-black uppercase tracking-tighter text-sm">Información Comercial</h4>
                    </div>
@@ -423,7 +426,7 @@ export default function TenantsPage() {
 
                 {/* Lado B: Contrato y Acceso */}
                 <div className="space-y-6">
-                   <div className="flex items-center gap-3 text-[#df0024]">
+                   <div className="flex items-center gap-3 text-[var(--primary)]">
                       <ShieldCheck size={20} />
                       <h4 className="font-black uppercase tracking-tighter text-sm">Contrato y Acceso</h4>
                    </div>
@@ -458,7 +461,7 @@ export default function TenantsPage() {
 
               <DialogFooter className="pt-6 border-t border-gray-100 dark:border-zinc-800">
                 <Button type="button" variant="ghost" onClick={() => setIsCreateOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                <Button type="submit" className="bg-[var(--primary)] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "CREAR CLIENTE"}
                 </Button>
               </DialogFooter>
@@ -475,7 +478,7 @@ export default function TenantsPage() {
             <form onSubmit={handleUpdate} className="space-y-8 mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="space-y-6">
-                    <div className="flex items-center gap-3 text-[#df0024]"><Store size={20} /><h4 className="font-black uppercase tracking-tighter text-sm">Información Comercial</h4></div>
+                    <div className="flex items-center gap-3 text-[var(--primary)]"><Store size={20} /><h4 className="font-black uppercase tracking-tighter text-sm">Información Comercial</h4></div>
                     <div className="space-y-4">
                        <div className="space-y-2">
                          <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre Comercial</label>
@@ -499,7 +502,7 @@ export default function TenantsPage() {
                  </div>
 
                  <div className="space-y-6">
-                    <div className="flex items-center gap-3 text-[#df0024]"><ShieldCheck size={20} /><h4 className="font-black uppercase tracking-tighter text-sm">Configuración Técnica</h4></div>
+                    <div className="flex items-center gap-3 text-[var(--primary)]"><ShieldCheck size={20} /><h4 className="font-black uppercase tracking-tighter text-sm">Configuración Técnica</h4></div>
                     <div className="space-y-4">
                        <div className="grid grid-cols-2 gap-4">
                          <div className="space-y-2">
@@ -534,7 +537,7 @@ export default function TenantsPage() {
 
               <DialogFooter className="pt-6 border-t border-gray-100 dark:border-zinc-800">
                 <Button type="button" variant="ghost" onClick={() => setIsEditOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                <Button type="submit" className="bg-[var(--primary)] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "GUARDAR CAMBIOS"}
                 </Button>
               </DialogFooter>
@@ -546,7 +549,7 @@ export default function TenantsPage() {
         <Dialog open={isPasswordOpen} onOpenChange={setIsPasswordOpen}>
           <DialogContent className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 shadow-2xl rounded-[2rem] p-8 max-w-md">
             <DialogHeader>
-              <div className="size-14 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
+              <div className="size-14 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center text-[var(--primary)] mb-4">
                  <KeyRound size={28} />
               </div>
               <DialogTitle className="text-2xl font-black">Alterar Senha</DialogTitle>
@@ -567,7 +570,7 @@ export default function TenantsPage() {
               </div>
               <DialogFooter>
                 <Button type="button" variant="ghost" onClick={() => setIsPasswordOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-8 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                <Button type="submit" className="bg-[var(--primary)] hover:bg-red-700 h-12 px-8 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "ATUALIZAR SENHA"}
                 </Button>
               </DialogFooter>

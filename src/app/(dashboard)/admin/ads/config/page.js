@@ -65,7 +65,7 @@ export default function AdsConfigPage() {
     return (
       <AdminLayout>
         <div className="h-full flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#df0024]" size={32} />
+          <Loader2 className="animate-spin text-[var(--primary)]" size={32} />
         </div>
       </AdminLayout>
     );
@@ -84,7 +84,7 @@ export default function AdsConfigPage() {
           <Button 
             onClick={handleSave} 
             disabled={submitting}
-            className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8"
+            className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8"
           >
             {submitting ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
             Guardar Cambios
@@ -102,7 +102,7 @@ export default function AdsConfigPage() {
           
           <Card className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2rem] overflow-hidden">
             <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
-              <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
+              <div className="size-12 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center text-[var(--primary)] mb-4">
                 <LayoutGrid size={24} />
               </div>
               <CardTitle className="text-xl font-black">Lotes de Exibição (Batch)</CardTitle>

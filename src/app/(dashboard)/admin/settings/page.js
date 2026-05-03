@@ -113,7 +113,7 @@ export default function SettingsPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button onClick={handleSaveConfigs} className="bg-[#df0024] hover:bg-red-700 w-40">
+              <Button onClick={handleSaveConfigs} className="bg-[var(--primary)] hover:bg-red-700 w-40">
                 {saving ? <Loader2 className="animate-spin mr-2"/> : <Save className="mr-2" size={18}/>} Salvar Tudo
               </Button>
             </div>

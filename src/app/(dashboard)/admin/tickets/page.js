@@ -116,7 +116,7 @@ export default function TicketsPage() {
           {/* List */}
           <div className="w-1/3 flex flex-col gap-4 overflow-y-auto pr-2">
              <div className="relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={18} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[var(--primary)] transition-colors" size={18} />
                 <Input 
                   placeholder="Buscar ticket o restaurante..." 
                   className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
@@ -127,7 +127,7 @@ export default function TicketsPage() {
 
              {loading ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-3 opacity-50">
-                   <Loader2 className="animate-spin text-[#df0024]" size={32} />
+                   <Loader2 className="animate-spin text-[var(--primary)]" size={32} />
                 </div>
              ) : filteredTickets.length === 0 ? (
                 <div className="py-8">
@@ -151,8 +151,8 @@ export default function TicketsPage() {
                        <Badge className={cn("text-[8px] font-black uppercase px-2 py-0", getPriorityColor(t.priority))}>{t.priority}</Badge>
                        <span className="text-[10px] font-medium opacity-40">{new Date(t.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <h4 className="font-bold text-sm line-clamp-1 mb-1 group-hover:text-[#df0024] transition-colors">{t.subject}</h4>
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-[#df0024]/80 uppercase">
+                    <h4 className="font-bold text-sm line-clamp-1 mb-1 group-hover:text-[var(--primary)] transition-colors">{t.subject}</h4>
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--primary)]/80 uppercase">
                        <Store size={10} /> {t.Restaurant?.name}
                     </div>
                   </div>
@@ -171,7 +171,7 @@ export default function TicketsPage() {
                            <h2 className="text-2xl font-black tracking-tight">{selectedTicket.subject}</h2>
                         </div>
                         <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                           <div className="flex items-center gap-2"><Store size={14} className="text-[#df0024]" /> <span className="font-bold">{selectedTicket.Restaurant?.name}</span></div>
+                           <div className="flex items-center gap-2"><Store size={14} className="text-[var(--primary)]" /> <span className="font-bold">{selectedTicket.Restaurant?.name}</span></div>
                            <div className="flex items-center gap-2"><UserIcon size={14} /> <span>{selectedTicket.creator?.name}</span></div>
                         </div>
                      </div>
@@ -194,13 +194,13 @@ export default function TicketsPage() {
                      {/* Thread de Mensagens */}
                      {selectedTicket.messages?.map(msg => (
                         <div key={msg.id} className={cn("flex gap-4", msg.isAdminReply ? "flex-row-reverse" : "")}>
-                           <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg", msg.isAdminReply ? "bg-[#df0024] text-white" : "bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-white/10")}>
+                           <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg", msg.isAdminReply ? "bg-[var(--primary)] text-white" : "bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-white/10")}>
                               {msg.isAdminReply ? <Store size={20} /> : <UserIcon size={20} />}
                            </div>
                            <div className={cn("space-y-2 max-w-[80%]", msg.isAdminReply ? "text-right" : "")}>
                               <div className={cn(
                                 "p-5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
-                                msg.isAdminReply ? "bg-[#df0024]/10 rounded-tr-none border border-[#df0024]/20" : "bg-gray-50 dark:bg-zinc-800 rounded-tl-none border border-gray-100 dark:border-white/10"
+                                msg.isAdminReply ? "bg-[var(--primary)]/10 rounded-tr-none border border-[var(--primary)]/20" : "bg-gray-50 dark:bg-zinc-800 rounded-tl-none border border-gray-100 dark:border-white/10"
                               )}>
                                  {msg.content}
                                  
@@ -235,7 +235,7 @@ export default function TicketsPage() {
                      
                      <form onSubmit={handleReply} className="relative">
                         <textarea 
-                           className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-3xl p-6 pr-20 text-sm focus:ring-2 focus:ring-[#df0024]/50 min-h-[100px] resize-none"
+                           className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-3xl p-6 pr-20 text-sm focus:ring-2 focus:ring-[var(--primary)]/50 min-h-[100px] resize-none"
                            placeholder="Escriba su resposta..."
                            value={reply}
                            onChange={(e) => setReply(e.target.value)}
@@ -245,7 +245,7 @@ export default function TicketsPage() {
                                <Paperclip size={20} className="text-muted-foreground" />
                                <input type="file" multiple className="hidden" onChange={handleFileChange} accept="image/*" />
                             </label>
-                            <Button type="submit" disabled={submitting || (!reply.trim() && attachments.length === 0)} className="bg-[#df0024] hover:bg-red-700 text-white rounded-2xl size-12 shadow-lg shadow-red-500/20 p-0">
+                            <Button type="submit" disabled={submitting || (!reply.trim() && attachments.length === 0)} className="bg-[var(--primary)] hover:bg-red-700 text-white rounded-2xl size-12 shadow-lg shadow-red-500/20 p-0">
                                {submitting ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
                             </Button>
                          </div>

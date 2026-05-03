@@ -34,7 +34,7 @@ export default function ReportsPage() {
             <Card key={rpt.id} className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
-                  <div className="bg-red-50 p-3 rounded-xl text-[#df0024]">
+                  <div className="bg-red-50 p-3 rounded-xl text-[var(--primary)]">
                     <FileText size={24} />
                   </div>
                   <Button variant="outline" className="gap-2">

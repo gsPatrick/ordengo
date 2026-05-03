@@ -50,7 +50,7 @@ export default function AppearancePage() {
     // Marca
     logoUrl: '',
     logoFile: null,
-    primaryColor: '#df0024',
+    primaryColor: 'var(--primary)',
     backgroundColor: '#1f1c1d',
 
     // Conteúdo de Texto
@@ -110,7 +110,7 @@ export default function AppearancePage() {
           setConfig(prev => ({
             ...prev,
             logoUrl: data.logoUrl,
-            primaryColor: data.primaryColor || '#df0024',
+            primaryColor: data.primaryColor || 'var(--primary)',
             backgroundColor: data.backgroundColor || '#1f1c1d',
 
             // Agora mantemos o objeto completo para edição multilíngue
@@ -355,7 +355,7 @@ export default function AppearancePage() {
           </div>
         ))}
         {(!max || (currentImages.length + newFiles.length) < max) && (
-          <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-[#df0024] hover:bg-red-50 flex flex-col items-center justify-center cursor-pointer transition-colors text-gray-400 hover:text-[#df0024]">
+          <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-[var(--primary)] hover:bg-red-50 flex flex-col items-center justify-center cursor-pointer transition-colors text-gray-400 hover:text-[var(--primary)]">
             <Plus size={24} />
             <span className="text-[10px] font-medium mt-1">Adicionar</span>
             <input type="file" multiple={!max || max > 1} accept="image/*" className="hidden" onChange={(e) => handleFileAdd(e, fieldKey)} />
@@ -398,7 +398,7 @@ export default function AppearancePage() {
                   <h4 className="text-white font-bold text-lg line-clamp-1">{getText(bannerToShow.title)}</h4>
                   <p className="text-white/80 text-xs line-clamp-2 mt-1">{getText(bannerToShow.description)}</p>
                   {bannerToShow.linkedProduct && (
-                    <span className="inline-flex items-center gap-1 mt-2 bg-[#df0024] text-white text-[10px] font-bold px-2 py-1 rounded-full w-fit">
+                    <span className="inline-flex items-center gap-1 mt-2 bg-[var(--primary)] text-white text-[10px] font-bold px-2 py-1 rounded-full w-fit">
                       <ShoppingBag size={10} /> Comprar Agora
                     </span>
                   )}
@@ -445,7 +445,7 @@ export default function AppearancePage() {
             <button
               onClick={() => setShowConfirmModal(true)}
               disabled={loading || saving}
-              className="flex items-center gap-2 bg-[#df0024] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100 disabled:opacity-70"
+              className="flex items-center gap-2 bg-[var(--primary)] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100 disabled:opacity-70"
             >
               {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
               Salvar Alterações
@@ -455,7 +455,7 @@ export default function AppearancePage() {
           {activeTab === 'banners' && (
             <button
               onClick={() => setIsBannerModalOpen(true)}
-              className="flex items-center gap-2 bg-[#df0024] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100"
+              className="flex items-center gap-2 bg-[var(--primary)] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100"
             >
               <Plus size={20} /> Novo Banner
             </button>
@@ -467,9 +467,9 @@ export default function AppearancePage() {
 
             {/* --- LOGO PERSISTENTE (FORA DAS TABS) --- */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><ImageIcon size={20} className="text-[#df0024]" /> Logotipo</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><ImageIcon size={20} className="text-[var(--primary)]" /> Logotipo</h3>
               <div className="flex flex-col md:flex-row gap-6 items-center">
-                <div className="w-40 h-40 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center relative overflow-hidden group cursor-pointer hover:border-[#df0024] transition-colors">
+                <div className="w-40 h-40 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center relative overflow-hidden group cursor-pointer hover:border-[var(--primary)] transition-colors">
                   <input type="file" accept="image/*" onChange={handleLogoChange} className="absolute inset-0 opacity-0 z-10 cursor-pointer" />
                   {logoPreview ? <img src={logoPreview} className="w-full h-full object-contain p-2" /> : <UploadCloud size={32} className="text-gray-400" />}
                 </div>
@@ -490,7 +490,7 @@ export default function AppearancePage() {
               </button>
             </div>
 
-            {loading ? <div className="h-64 flex items-center justify-center"><Loader2 className="animate-spin text-[#df0024]" size={40} /></div> : (
+            {loading ? <div className="h-64 flex items-center justify-center"><Loader2 className="animate-spin text-[var(--primary)]" size={40} /></div> : (
               <div className="space-y-6">
 
                 {/* --- ABA 1: MARCA --- */}
@@ -498,7 +498,7 @@ export default function AppearancePage() {
                   <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {/* Cores */}
                     <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Palette size={20} className="text-[#df0024]" /> Cores</h3>
+                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Palette size={20} className="text-[var(--primary)]" /> Cores</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Cor Principal</label>
@@ -526,7 +526,7 @@ export default function AppearancePage() {
                     {/* Textos Multilíngues */}
                     <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                       <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Type size={20} className="text-[#df0024]" /> Conteúdo de Texto</h3>
+                        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Type size={20} className="text-[var(--primary)]" /> Conteúdo de Texto</h3>
 
                         {/* Seletor de Idioma (Abas) */}
                         <div className="flex bg-gray-100 p-1 rounded-lg">
@@ -555,7 +555,7 @@ export default function AppearancePage() {
                         <div>
                           <label className="block text-sm font-medium mb-1">Resumo (Quem somos)</label>
                           <textarea
-                            className="w-full px-4 py-2 border rounded-lg h-24 focus:ring-2 focus:ring-[#df0024] outline-none"
+                            className="w-full px-4 py-2 border rounded-lg h-24 focus:ring-2 focus:ring-[var(--primary)] outline-none"
                             value={config.aboutText[editLang] || ''}
                             onChange={e => updateTransText('aboutText', e.target.value)}
                             placeholder={`Digite o resumo em ${currentLangLabel}...`}
@@ -565,7 +565,7 @@ export default function AppearancePage() {
                         <div>
                           <label className="block text-sm font-medium mb-1">Nossa História (Completa)</label>
                           <textarea
-                            className="w-full px-4 py-2 border rounded-lg h-40 focus:ring-2 focus:ring-[#df0024] outline-none"
+                            className="w-full px-4 py-2 border rounded-lg h-40 focus:ring-2 focus:ring-[var(--primary)] outline-none"
                             value={config.ourHistory[editLang] || ''}
                             onChange={e => updateTransText('ourHistory', e.target.value)}
                             placeholder={`Conte a história do restaurante em ${currentLangLabel}...`}
@@ -583,7 +583,7 @@ export default function AppearancePage() {
                     </div>
                     {/* Wifi */}
                     <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Wifi size={20} className="text-[#df0024]" /> Wi-Fi</h3>
+                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Wifi size={20} className="text-[var(--primary)]" /> Wi-Fi</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <input className="w-full px-4 py-2 border rounded-lg" placeholder="SSID" value={config.wifiSsid} onChange={e => setConfig({ ...config, wifiSsid: e.target.value })} />
                         <input className="w-full px-4 py-2 border rounded-lg" placeholder="Senha" value={config.wifiPassword} onChange={e => setConfig({ ...config, wifiPassword: e.target.value })} />
@@ -638,7 +638,7 @@ export default function AppearancePage() {
 
                             <div className="mt-3 pt-3 border-t border-gray-100">
                               {banner.linkedProduct ? (
-                                <div className="flex items-center gap-2 text-xs font-medium text-[#df0024] bg-red-50 px-2 py-1.5 rounded">
+                                <div className="flex items-center gap-2 text-xs font-medium text-[var(--primary)] bg-red-50 px-2 py-1.5 rounded">
                                   <LinkIcon size={14} />
                                   <span className="truncate max-w-[150px]">{getText(banner.linkedProduct.name)}</span>
                                 </div>
@@ -676,7 +676,7 @@ export default function AppearancePage() {
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 transform transition-all scale-100">
             <div className="flex flex-col items-center text-center">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <Save className="text-[#df0024]" size={24} />
+                <Save className="text-[var(--primary)]" size={24} />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Salvar Alterações?</h3>
               <p className="text-sm text-gray-500 mb-6">
@@ -694,7 +694,7 @@ export default function AppearancePage() {
                     setShowConfirmModal(false);
                     handleSaveConfig();
                   }}
-                  className="flex-1 py-2.5 text-sm font-bold text-white bg-[#df0024] rounded-lg hover:bg-red-700 transition-colors shadow-md shadow-red-100"
+                  className="flex-1 py-2.5 text-sm font-bold text-white bg-[var(--primary)] rounded-lg hover:bg-red-700 transition-colors shadow-md shadow-red-100"
                 >
                   Confirmar
                 </button>
@@ -720,7 +720,7 @@ export default function AppearancePage() {
             <form onSubmit={handleCreateBanner} className="p-6 space-y-5">
 
               {/* Upload Area */}
-              <div className="relative h-40 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:border-[#df0024] transition-colors group cursor-pointer flex flex-col items-center justify-center overflow-hidden">
+              <div className="relative h-40 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:border-[var(--primary)] transition-colors group cursor-pointer flex flex-col items-center justify-center overflow-hidden">
                 <input
                   type="file"
                   onChange={handleBannerImageChange}
@@ -730,7 +730,7 @@ export default function AppearancePage() {
                 {bannerPreview ? (
                   <img src={bannerPreview} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="text-center text-gray-400 group-hover:text-[#df0024]">
+                  <div className="text-center text-gray-400 group-hover:text-[var(--primary)]">
                     <ImageIcon size={32} className="mx-auto mb-2" />
                     <span className="text-xs font-bold">CLIQUE PARA ENVIAR IMAGEM</span>
                     <p className="text-[10px] mt-1">Recomendado: 1920x1080px (Landscape)</p>
@@ -748,7 +748,7 @@ export default function AppearancePage() {
                     type="text"
                     required
                     placeholder="Ex: Festival de Hambúrguer"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#df0024] focus:border-[#df0024] outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[var(--primary)] focus:border-[var(--primary)] outline-none"
                     value={bannerFormData.title}
                     onChange={e => setBannerFormData({ ...bannerFormData, title: e.target.value })}
                   />
@@ -760,7 +760,7 @@ export default function AppearancePage() {
                   </label>
                   <textarea
                     placeholder="Ex: Aproveite 30% de desconto..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#df0024] focus:border-[#df0024] outline-none h-20 resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[var(--primary)] focus:border-[var(--primary)] outline-none h-20 resize-none"
                     value={bannerFormData.description}
                     onChange={e => setBannerFormData({ ...bannerFormData, description: e.target.value })}
                   />
@@ -774,7 +774,7 @@ export default function AppearancePage() {
                   <div className="relative">
                     <ShoppingBag size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <select
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#df0024] focus:border-[#df0024] outline-none bg-white"
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[var(--primary)] focus:border-[var(--primary)] outline-none bg-white"
                       value={bannerFormData.linkedProductId}
                       onChange={e => setBannerFormData({ ...bannerFormData, linkedProductId: e.target.value })}
                     >
@@ -801,7 +801,7 @@ export default function AppearancePage() {
                 <button
                   type="submit"
                   disabled={uploadingBanner}
-                  className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white bg-[#df0024] rounded-lg hover:bg-red-700 disabled:opacity-70"
+                  className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white bg-[var(--primary)] rounded-lg hover:bg-red-700 disabled:opacity-70"
                 >
                   {uploadingBanner ? <Loader2 className="animate-spin" size={18} /> : <Plus size={18} />}
                   Salvar Banner

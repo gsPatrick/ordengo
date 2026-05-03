@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-const COLORS = ['#df0024', '#7c3aed', '#3b82f6', '#10b981', '#f59e0b'];
+const COLORS = ['var(--primary)', '#7c3aed', '#3b82f6', '#10b981', '#f59e0b'];
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -78,7 +78,7 @@ export default function Dashboard() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl font-bold">Exportar PDF</Button>
-            <Button size="sm" className="bg-[#df0024] hover:bg-red-700 text-white rounded-xl font-bold px-6 shadow-lg shadow-red-500/20">Novo Cliente</Button>
+            <Button size="sm" className="bg-[var(--primary)] hover:bg-red-700 text-white rounded-xl font-bold px-6 shadow-lg shadow-red-500/20">Novo Cliente</Button>
           </div>
         </div>
 
@@ -137,8 +137,8 @@ export default function Dashboard() {
                   <AreaChart data={mrrTrend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorMrr" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#df0024" stopOpacity={0.1}/>
-                        <stop offset="95%" stopColor="#df0024" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.1}/>
+                        <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
@@ -148,7 +148,7 @@ export default function Dashboard() {
                       contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: '12px', color: '#fff' }}
                       itemStyle={{ color: '#fff' }}
                     />
-                    <Area type="monotone" dataKey="value" stroke="#df0024" strokeWidth={3} fillOpacity={1} fill="url(#colorMrr)" />
+                    <Area type="monotone" dataKey="value" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorMrr)" />
                   </AreaChart>
                 </ResponsiveContainer>
                 ) : (
@@ -227,7 +227,7 @@ export default function Dashboard() {
                 </div>
                 <h4 className="text-xl font-bold">{stats?.tenants.inactive || 0} Clientes</h4>
                 <p className="text-sm text-muted-foreground mt-1">Inativos por impago ou suspensão manual.</p>
-                <Button variant="link" className="text-[#df0024] mt-4 font-bold">Ver lista completa</Button>
+                <Button variant="link" className="text-[var(--primary)] mt-4 font-bold">Ver lista completa</Button>
               </div>
             </CardContent>
           </Card>

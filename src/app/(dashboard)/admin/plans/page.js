@@ -133,14 +133,14 @@ export default function PlansPage() {
             <h1 className="text-3xl font-extrabold tracking-tight">Planes de Suscripción</h1>
             <p className="text-muted-foreground mt-1 text-sm italic">Defina as regras de monetização e limites de serviço.</p>
           </div>
-          <Button onClick={() => handleEdit()} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
+          <Button onClick={() => handleEdit()} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
             <Plus size={18} /> Crear Nuevo Plan
           </Button>
         </div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <Loader2 className="animate-spin text-[#df0024]" size={48} />
+            <Loader2 className="animate-spin text-[var(--primary)]" size={48} />
             <p className="text-muted-foreground font-medium animate-pulse">Carregando catálogo de planos...</p>
           </div>
         ) : plans.length === 0 ? (
@@ -152,7 +152,7 @@ export default function PlansPage() {
                 <h3 className="text-2xl font-black">Sin Planes Configuradores</h3>
                 <p className="text-muted-foreground max-w-md mt-2">Empiece a monetizar su SaaS criando su primer plan de suscripción.</p>
              </div>
-             <Button onClick={() => handleEdit()} className="bg-[#df0024] px-10 h-14 rounded-2xl font-black">CREAR PRIMER PLAN</Button>
+             <Button onClick={() => handleEdit()} className="bg-[var(--primary)] px-10 h-14 rounded-2xl font-black">CREAR PRIMER PLAN</Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -162,7 +162,7 @@ export default function PlansPage() {
                 !plan.isActive && "opacity-40 grayscale"
               )}>
                 <div className="flex justify-between items-start mb-6">
-                   <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024]">
+                   <div className="size-12 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center text-[var(--primary)]">
                       <Package size={24} />
                    </div>
                    <Badge className={cn("border-none font-bold uppercase text-[10px]", plan.isActive ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500")}>
@@ -179,7 +179,7 @@ export default function PlansPage() {
 
                 <div className="space-y-3 mb-8 flex-1">
                    <div className="flex items-center gap-3 text-sm font-medium">
-                      <Tablet size={16} className="text-[#df0024]" />
+                      <Tablet size={16} className="text-[var(--primary)]" />
                       <span>{plan.maxTablets === 0 ? 'Tablets Ilimitados' : `${plan.maxTablets} Tablets Máx.`}</span>
                    </div>
                    {Object.entries(plan.features || {}).map(([key, val]) => val && (
@@ -191,7 +191,7 @@ export default function PlansPage() {
                 </div>
 
                 <div className="pt-6 border-t border-gray-100 dark:border-white/10 flex gap-2">
-                   <Button variant="ghost" size="icon" className="rounded-xl hover:bg-[#df0024]/10 hover:text-[#df0024]" onClick={() => handleEdit(plan)}>
+                   <Button variant="ghost" size="icon" className="rounded-xl hover:bg-[var(--primary)]/10 hover:text-[var(--primary)]" onClick={() => handleEdit(plan)}>
                       <Edit2 size={16} />
                    </Button>
                    <Button variant="ghost" size="icon" className={cn("rounded-xl", plan.isActive ? "hover:bg-yellow-500/10 text-yellow-500" : "hover:bg-green-500/10 text-green-500")} onClick={() => toggleStatus(plan.id)}>
@@ -258,7 +258,7 @@ export default function PlansPage() {
 
               <DialogFooter className="pt-6 border-t border-gray-100 dark:border-white/10">
                 <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-14 px-12 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                <Button type="submit" className="bg-[var(--primary)] hover:bg-red-700 h-14 px-12 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "GUARDAR PLAN"}
                 </Button>
               </DialogFooter>
@@ -275,7 +275,7 @@ function FeatureToggle({ label, checked, onChange }) {
   return (
     <div className={cn(
       "flex items-center justify-between p-4 rounded-2xl border transition-all",
-      checked ? "bg-[#df0024]/5 border-[#df0024]/30" : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10"
+      checked ? "bg-[var(--primary)]/5 border-[var(--primary)]/30" : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10"
     )}>
       <span className="text-sm font-bold">{label}</span>
       <Switch checked={checked} onCheckedChange={onChange} />

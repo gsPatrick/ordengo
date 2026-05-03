@@ -127,7 +127,7 @@ export default function MarketingPage() {
               onClick={() => setActiveTab('promotions')}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'promotions' 
-                  ? 'border-[#df0024] text-[#df0024]' 
+                  ? 'border-[var(--primary)] text-[var(--primary)]' 
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -137,7 +137,7 @@ export default function MarketingPage() {
               onClick={() => setActiveTab('screensavers')}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'screensavers' 
-                  ? 'border-[#df0024] text-[#df0024]' 
+                  ? 'border-[var(--primary)] text-[var(--primary)]' 
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -150,7 +150,7 @@ export default function MarketingPage() {
         <div className="min-h-[400px]">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <Loader2 className="animate-spin text-[#df0024]" size={40} />
+              <Loader2 className="animate-spin text-[var(--primary)]" size={40} />
             </div>
           ) : (
             <>
@@ -162,7 +162,7 @@ export default function MarketingPage() {
                   <div className="flex justify-end">
                     <button 
                       onClick={() => setIsPromoModalOpen(true)}
-                      className="flex items-center gap-2 bg-[#df0024] text-white px-4 py-2 rounded-xl font-bold hover:bg-red-700 transition-shadow shadow-md shadow-red-100"
+                      className="flex items-center gap-2 bg-[var(--primary)] text-white px-4 py-2 rounded-xl font-bold hover:bg-red-700 transition-shadow shadow-md shadow-red-100"
                     >
                       <Plus size={20} /> Criar Nova Oferta
                     </button>
@@ -194,7 +194,7 @@ export default function MarketingPage() {
                             )}
                             
                             {/* Badge de Desconto */}
-                            <div className="absolute top-3 right-3 bg-[#df0024] text-white text-xs font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
+                            <div className="absolute top-3 right-3 bg-[var(--primary)] text-white text-xs font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
                               {promo.discountType === 'percentage' ? <Percent size={12} /> : <DollarSign size={12} />}
                               {promo.discountType === 'percentage' ? `${promo.discountValue}% OFF` : `- R$ ${promo.discountValue}`}
                             </div>
@@ -214,11 +214,11 @@ export default function MarketingPage() {
 
                             <div className="space-y-3 mt-2">
                               <div className="flex items-start gap-2 text-sm text-gray-600">
-                                <Calendar size={16} className="text-[#df0024] mt-0.5" />
+                                <Calendar size={16} className="text-[var(--primary)] mt-0.5" />
                                 <span className="line-clamp-2 leading-tight">{formatDays(promo.activeDays)}</span>
                               </div>
                               <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <Clock size={16} className="text-[#df0024]" />
+                                <Clock size={16} className="text-[var(--primary)]" />
                                 <span>{promo.startTime.slice(0,5)} às {promo.endTime.slice(0,5)}</span>
                               </div>
                             </div>
@@ -242,7 +242,7 @@ export default function MarketingPage() {
                 <div className="space-y-6">
                   
                   {/* Upload Area */}
-                  <div className="bg-white p-6 rounded-xl border border-dashed border-gray-300 hover:border-[#df0024] transition-colors group cursor-pointer relative">
+                  <div className="bg-white p-6 rounded-xl border border-dashed border-gray-300 hover:border-[var(--primary)] transition-colors group cursor-pointer relative">
                     <input 
                       type="file" 
                       accept="image/*" 
@@ -252,9 +252,9 @@ export default function MarketingPage() {
                     />
                     <div className="flex flex-col items-center justify-center text-center">
                       {uploading ? (
-                        <Loader2 className="animate-spin text-[#df0024] mb-2" size={32} />
+                        <Loader2 className="animate-spin text-[var(--primary)] mb-2" size={32} />
                       ) : (
-                        <UploadCloud className="text-gray-400 group-hover:text-[#df0024] mb-2 transition-colors" size={32} />
+                        <UploadCloud className="text-gray-400 group-hover:text-[var(--primary)] mb-2 transition-colors" size={32} />
                       )}
                       <h3 className="text-sm font-bold text-gray-900">Clique para adicionar um Banner</h3>
                       <p className="text-xs text-gray-500 mt-1">Recomendado: 1920x1080px (Landscape)</p>
@@ -284,7 +284,7 @@ export default function MarketingPage() {
 
                         {/* Badge Interno vs Ad */}
                         <div className="absolute top-2 left-2">
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${banner.isAd ? 'bg-blue-500 text-white' : 'bg-[#df0024] text-white'}`}>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${banner.isAd ? 'bg-blue-500 text-white' : 'bg-[var(--primary)] text-white'}`}>
                             {banner.isAd ? 'AD (Sistema)' : 'Restaurante'}
                           </span>
                         </div>

@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import EmptyState from '@/components/ui/EmptyState';
 
-const COLORS = ['#df0024', '#1f1c1d', '#9ca3af', '#f97316'];
+const COLORS = ['var(--primary)', '#1f1c1d', '#9ca3af', '#f97316'];
 
 export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
@@ -131,15 +131,15 @@ export default function ReportsPage() {
                 <AreaChart data={mrrTrend}>
                   <defs>
                     <linearGradient id="colorMrr" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#df0024" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#df0024" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} tickFormatter={v => `€${v}`} />
                   <Tooltip formatter={v => formatCurrency(v)} />
-                  <Area type="monotone" dataKey="value" stroke="#df0024" strokeWidth={3} fillOpacity={1} fill="url(#colorMrr)" />
+                  <Area type="monotone" dataKey="value" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorMrr)" />
                 </AreaChart>
               </ResponsiveContainer>
               ) : (

@@ -267,7 +267,7 @@ export default function MenuPage() {
           <div className="p-4 border-b border-gray-100 bg-gray-50">
             <button
               onClick={() => handleOpenModal('category')}
-              className="w-full flex items-center justify-center gap-2 bg-[#df0024] text-white py-3 rounded-lg text-sm font-bold hover:bg-red-700 transition-colors shadow-sm"
+              className="w-full flex items-center justify-center gap-2 bg-[var(--primary)] text-white py-3 rounded-lg text-sm font-bold hover:bg-red-700 transition-colors shadow-sm"
             >
               <Plus size={18} />
               Criar Categoria Principal
@@ -296,8 +296,8 @@ export default function MenuPage() {
                           onClick={() => setSelectedCategoryId(cat.id)}
                         >
                           <div className="flex items-center gap-3 overflow-hidden">
-                            {selectedCategoryId === cat.id ? <FolderOpen size={18} className="text-[#df0024]" /> : <Folder size={18} className="text-gray-400" />}
-                            <span className={`font-bold text-sm truncate ${selectedCategoryId === cat.id ? 'text-[#df0024]' : 'text-gray-700'}`}>
+                            {selectedCategoryId === cat.id ? <FolderOpen size={18} className="text-[var(--primary)]" /> : <Folder size={18} className="text-gray-400" />}
+                            <span className={`font-bold text-sm truncate ${selectedCategoryId === cat.id ? 'text-[var(--primary)]' : 'text-gray-700'}`}>
                               {getText(cat.name)}
                             </span>
                           </div>
@@ -313,12 +313,12 @@ export default function MenuPage() {
                             {cat.subcategories.map(sub => (
                               <div
                                 key={sub.id}
-                                className={`group/sub flex items-center justify-between pl-8 pr-3 py-2 cursor-pointer transition-colors border-l-2 ${selectedCategoryId === sub.id ? 'border-[#df0024] bg-red-50/50' : 'border-transparent hover:bg-gray-100'}`}
+                                className={`group/sub flex items-center justify-between pl-8 pr-3 py-2 cursor-pointer transition-colors border-l-2 ${selectedCategoryId === sub.id ? 'border-[var(--primary)] bg-red-50/50' : 'border-transparent hover:bg-gray-100'}`}
                                 onClick={() => setSelectedCategoryId(sub.id)}
                               >
                                 <div className="flex items-center gap-2 text-xs">
                                   <CornerDownRight size={12} className="opacity-30" />
-                                  <span className={`font-medium truncate max-w-[100px] ${selectedCategoryId === sub.id ? 'text-[#df0024]' : 'text-gray-600'}`}>
+                                  <span className={`font-medium truncate max-w-[100px] ${selectedCategoryId === sub.id ? 'text-[var(--primary)]' : 'text-gray-600'}`}>
                                     {getText(sub.name)}
                                   </span>
                                 </div>
@@ -350,15 +350,15 @@ export default function MenuPage() {
           <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
             <div className="relative w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-              <input type="text" placeholder="Buscar produto..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#df0024] focus:border-transparent outline-none" />
+              <input type="text" placeholder="Buscar produto..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent outline-none" />
             </div>
-            <button onClick={() => handleOpenModal('product')} className="flex items-center gap-2 bg-[#df0024] text-white px-5 py-2.5 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-100 font-medium">
+            <button onClick={() => handleOpenModal('product')} className="flex items-center gap-2 bg-[var(--primary)] text-white px-5 py-2.5 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-100 font-medium">
               <Plus size={20} /> Novo Produto
             </button>
           </div>
 
           {loading ? (
-            <div className="flex-1 flex items-center justify-center"><Loader2 className="animate-spin text-[#df0024]" size={40} /></div>
+            <div className="flex-1 flex items-center justify-center"><Loader2 className="animate-spin text-[var(--primary)]" size={40} /></div>
           ) : (
             <div className="flex-1 overflow-y-auto pr-2 pb-10">
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndProduct}>
@@ -398,7 +398,7 @@ export default function MenuPage() {
                             <div className="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between">
                               <div className="flex flex-col">
                                 {product.hasVariants && <span className="text-[10px] text-gray-400 font-medium">A partir de</span>}
-                                <span className="text-xl font-extrabold text-[#df0024]">{new Intl.NumberFormat(currency === 'BRL' ? 'pt-BR' : 'es-ES', { style: 'currency', currency: currency || 'EUR' }).format(product.price)}</span>
+                                <span className="text-xl font-extrabold text-[var(--primary)]">{new Intl.NumberFormat(currency === 'BRL' ? 'pt-BR' : 'es-ES', { style: 'currency', currency: currency || 'EUR' }).format(product.price)}</span>
                               </div>
                               <div className="flex gap-1">
                                 <button onClick={() => handleOpenModal('product', product)} className="p-2 bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"><Edit size={18} /></button>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Smartphone, Save, Loader2, Type, Layout, 
-  Store, Info, Sparkles, MessageSquare
+  Store, Info, Sparkles, MessageSquare, Upload
 } from 'lucide-react';
 import api from '@/lib/api';
 import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
@@ -77,7 +77,7 @@ export default function AppBrandingPage() {
     }
   };
 
-  if (loading) return <AdminLayout><div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[#df0024]" size={32} /></div></AdminLayout>;
+  if (loading) return <AdminLayout><div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[var(--primary)]" size={32} /></div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -88,7 +88,7 @@ export default function AppBrandingPage() {
             <h1 className="text-3xl font-extrabold tracking-tight">Branding APP (Tablet)</h1>
             <p className="text-muted-foreground mt-1 text-sm italic">Personalice la interfaz del menú lateral y la sección "Sobre" del Tablet.</p>
           </div>
-          <Button onClick={handleSave} disabled={submitting} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8 h-12 font-bold transition-all hover:scale-105 active:scale-95">
+          <Button onClick={handleSave} disabled={submitting} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8 h-12 font-bold transition-all hover:scale-105 active:scale-95">
             {submitting ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} GUARDAR CAMBIOS
           </Button>
         </div>
@@ -98,7 +98,7 @@ export default function AppBrandingPage() {
            {/* Seção Sobre / Journey */}
            <Card className="xl:col-span-2 glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
               <CardHeader className="bg-white/10 px-8 pt-8">
-                 <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
+                 <div className="size-12 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center text-[var(--primary)] mb-4">
                     <Sparkles size={24} />
                  </div>
                  <CardTitle className="text-xl font-black">Sección "Nuestra Historia"</CardTitle>

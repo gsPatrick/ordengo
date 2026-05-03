@@ -260,7 +260,7 @@ export default function FinancePage() {
               <Button 
                 onClick={handleGenerateInvoices} 
                 disabled={generating}
-                className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-md shadow-red-100 flex-1 xl:flex-none"
+                className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-md shadow-red-100 flex-1 xl:flex-none"
               >
                 {generating ? <Loader2 className="animate-spin h-4 w-4" /> : <FileText size={16} />}
                 Gerar Faturas
@@ -347,7 +347,7 @@ export default function FinancePage() {
             </CardHeader>
             <CardContent className="h-[300px]">
               {loading ? (
-                <div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[#df0024]" size={32}/></div>
+                <div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[var(--primary)]" size={32}/></div>
               ) : chartData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} margin={{top: 20, right: 30, left: 20, bottom: 5}}>
@@ -438,7 +438,7 @@ export default function FinancePage() {
               </CardHeader>
               <CardContent>
                 {loading ? (
-                  <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]"/></div>
+                  <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[var(--primary)]"/></div>
                 ) : filteredInvoices.length === 0 ? (
                   <EmptyState icon={Search} title="Nenhum registro encontrado" subtitle="Tente ajustar os filtros de busca." />
                 ) : (

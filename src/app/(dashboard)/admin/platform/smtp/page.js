@@ -32,7 +32,7 @@ export default function SMTPPage() {
     smtp_password: '',
     smtp_from_email: '',
     smtp_from_name: 'OrdenGO',
-    email_template_html: '<html>\n  <body style="font-family: sans-serif; background: #f4f4f4; padding: 20px;">\n    <div style="max-width: 600px; margin: auto; background: #fff; padding: 40px; border-radius: 10px;">\n      <h1 style="color: #df0024;">Hola, {{name}}!</h1>\n      <p>Bienvenido a OrdenGO.</p>\n      <hr/>\n      <p style="font-size: 12px; color: #888;">OrdenGO SaaS - Todos los derechos reservados.</p>\n    </div>\n  </body>\n</html>'
+    email_template_html: '<html>\n  <body style="font-family: sans-serif; background: #f4f4f4; padding: 20px;">\n    <div style="max-width: 600px; margin: auto; background: #fff; padding: 40px; border-radius: 10px;">\n      <h1 style="color: var(--primary);">Hola, {{name}}!</h1>\n      <p>Bienvenido a OrdenGO.</p>\n      <hr/>\n      <p style="font-size: 12px; color: #888;">OrdenGO SaaS - Todos los derechos reservados.</p>\n    </div>\n  </body>\n</html>'
   });
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function SMTPPage() {
     }
   };
 
-  if (loading) return <AdminLayout><div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[#df0024]" size={32} /></div></AdminLayout>;
+  if (loading) return <AdminLayout><div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-[var(--primary)]" size={32} /></div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -92,7 +92,7 @@ export default function SMTPPage() {
           </div>
           <div className="flex gap-3">
              <Button onClick={handleTest} variant="ghost" className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 gap-2 rounded-xl h-12 px-6 font-bold"><Send size={18} /> Probar Envío</Button>
-             <Button onClick={handleSave} disabled={submitting} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8 h-12 font-bold">
+             <Button onClick={handleSave} disabled={submitting} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8 h-12 font-bold">
                 {submitting ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} Guardar Cambios
              </Button>
           </div>
@@ -100,10 +100,10 @@ export default function SMTPPage() {
 
         <Tabs defaultValue="server" className="space-y-8">
           <TabsList className="bg-gray-100 dark:bg-zinc-800 p-1 rounded-2xl h-14 w-full max-w-md border-gray-200 dark:border-white/10">
-            <TabsTrigger value="server" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-[#df0024] data-[state=active]:text-white">
+            <TabsTrigger value="server" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-[var(--primary)] data-[state=active]:text-white">
               <Server size={18} className="mr-2" /> Servidor
             </TabsTrigger>
-            <TabsTrigger value="templates" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-[#df0024] data-[state=active]:text-white">
+            <TabsTrigger value="templates" className="flex-1 rounded-xl font-bold h-12 data-[state=active]:bg-[var(--primary)] data-[state=active]:text-white">
               <Code size={18} className="mr-2" /> Editor HTML
             </TabsTrigger>
           </TabsList>
@@ -112,7 +112,7 @@ export default function SMTPPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                <Card className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden">
                   <CardHeader className="bg-gray-50 dark:bg-white/5 px-8 pt-8">
-                     <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
+                     <div className="size-12 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center text-[var(--primary)] mb-4">
                         <Server size={24} />
                      </div>
                      <CardTitle className="text-xl font-black">Servidor de Salida (Outgoing)</CardTitle>

@@ -119,7 +119,7 @@ export default function CampaignsPage() {
             <h1 className="text-3xl font-extrabold tracking-tight">Campañas Publicitarias</h1>
             <p className="text-muted-foreground mt-1 text-sm italic">Gestione o inventário de anúncios da rede OrdenGO.</p>
           </div>
-          <Button onClick={() => setIsCreateOpen(true)} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
+          <Button onClick={() => setIsCreateOpen(true)} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
             <Plus size={18} /> Nueva Campaña
           </Button>
         </div>
@@ -127,7 +127,7 @@ export default function CampaignsPage() {
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
            <div className="relative w-full max-w-md group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[var(--primary)] transition-colors" size={20} />
             <Input
               placeholder="Buscar campaña o anunciante..."
               className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
@@ -143,7 +143,7 @@ export default function CampaignsPage() {
         {/* Campaign Cards Grid */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <Loader2 className="animate-spin text-[#df0024]" size={48} />
+            <Loader2 className="animate-spin text-[var(--primary)]" size={48} />
             <p className="text-muted-foreground font-medium animate-pulse">Sincronizando ad network...</p>
           </div>
         ) : campaigns.length === 0 ? (
@@ -194,7 +194,7 @@ export default function CampaignsPage() {
                         <h3 className="font-black text-lg text-foreground tracking-tight leading-tight">{camp.title}</h3>
                         <Badge variant="outline" className="text-[10px] uppercase font-black border-white/20">{camp.priority}</Badge>
                       </div>
-                      <p className="text-xs text-[#df0024] font-bold mt-1 uppercase tracking-tighter">{camp.Advertiser?.companyName || 'Anunciante Directo'}</p>
+                      <p className="text-xs text-[var(--primary)] font-bold mt-1 uppercase tracking-tighter">{camp.Advertiser?.companyName || 'Anunciante Directo'}</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -210,11 +210,11 @@ export default function CampaignsPage() {
 
                     <div className="space-y-2 mt-auto">
                        <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
-                          <Calendar size={12} className="text-[#df0024]" />
+                          <Calendar size={12} className="text-[var(--primary)]" />
                           <span>{new Date(camp.startDate).toLocaleDateString()} - {new Date(camp.endDate).toLocaleDateString()}</span>
                        </div>
                        <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
-                          <Clock size={12} className="text-[#df0024]" />
+                          <Clock size={12} className="text-[var(--primary)]" />
                           <span>Frecuencia: Cada {camp.frequency} min</span>
                        </div>
                     </div>
@@ -308,7 +308,7 @@ export default function CampaignsPage() {
 
               <DialogFooter className="pt-6 border-t border-gray-200 dark:border-white/10">
                 <Button type="button" variant="ghost" onClick={() => setIsCreateOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                <Button type="submit" className="bg-[var(--primary)] hover:bg-red-700 h-12 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : "CREAR CAMPAÑA"}
                 </Button>
               </DialogFooter>
@@ -323,7 +323,7 @@ export default function CampaignsPage() {
                <div className="flex justify-between items-center pr-8">
                   <div>
                     <DialogTitle className="text-3xl font-black">{selectedCampaign?.title}</DialogTitle>
-                    <p className="text-[#df0024] font-bold text-sm uppercase tracking-tighter mt-1">{selectedCampaign?.Advertiser?.companyName}</p>
+                    <p className="text-[var(--primary)] font-bold text-sm uppercase tracking-tighter mt-1">{selectedCampaign?.Advertiser?.companyName}</p>
                   </div>
                   {selectedCampaign && getStatusBadge(selectedCampaign.status)}
                </div>

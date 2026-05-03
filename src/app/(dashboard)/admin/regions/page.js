@@ -154,7 +154,7 @@ export default function RegionsPage() {
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Regiões & Fiscal</h1>
             <p className="text-gray-500">Gerencie zonas de atuação, impostos locais e fusos horários.</p>
           </div>
-          <Button onClick={() => { setNewRegion({ id: null, name: '', country: 'ES', taxName: 'IVA', taxRule: '21', description: '' }); setIsModalOpen(true); }} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-md shadow-red-100">
+          <Button onClick={() => { setNewRegion({ id: null, name: '', country: 'ES', taxName: 'IVA', taxRule: '21', description: '' }); setIsModalOpen(true); }} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-md shadow-red-100">
             <Plus size={18} /> Nova Zona Fiscal
           </Button>
         </div>
@@ -174,7 +174,7 @@ export default function RegionsPage() {
 
         {/* Grid de Regiões */}
         {loading ? (
-          <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#df0024]" size={32} /></div>
+          <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[var(--primary)]" size={32} /></div>
         ) : regions.length === 0 ? (
           <EmptyStateComponent
             icon={Globe}
@@ -190,7 +190,7 @@ export default function RegionsPage() {
               .map(reg => {
                 const countryInfo = COUNTRIES.find(c => c.code === reg.country) || { flag: '🌍', name: reg.country };
                 return (
-                  <Card key={reg.id} className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden hover:shadow-2xl transition-all duration-300 group border-l-4 border-l-transparent hover:border-l-[#df0024]">
+                  <Card key={reg.id} className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-xl rounded-[2.5rem] overflow-hidden hover:shadow-2xl transition-all duration-300 group border-l-4 border-l-transparent hover:border-l-[var(--primary)]">
                     <CardContent className="p-6">
 
                       <div className="flex justify-between items-start mb-4">
@@ -255,7 +255,7 @@ export default function RegionsPage() {
           <DialogContent className="max-w-2xl bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black flex items-center gap-2">
-                <MapPin className="text-[#df0024]" /> {newRegion.id ? 'Editar Zona Fiscal' : 'Nova Zona Fiscal'}
+                <MapPin className="text-[var(--primary)]" /> {newRegion.id ? 'Editar Zona Fiscal' : 'Nova Zona Fiscal'}
               </DialogTitle>
               <DialogDescription className="font-medium text-muted-foreground">
                 Defina uma região geográfica para aplicar impostos e segmentar publicidade.
@@ -305,14 +305,14 @@ export default function RegionsPage() {
                     />
                      <ScrollArea className="h-28 w-full rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-zinc-900 p-2">
                       {loadingCities ? (
-                        <div className="flex justify-center py-6"><Loader2 className="animate-spin h-5 w-5 text-[#df0024]" /></div>
+                        <div className="flex justify-center py-6"><Loader2 className="animate-spin h-5 w-5 text-[var(--primary)]" /></div>
                       ) : (
                         <div className="flex flex-wrap gap-1.5">
                           {filteredCities.map((city, idx) => (
                             <Badge
                               key={idx}
                               variant="secondary"
-                              className="cursor-pointer hover:bg-[#df0024]/10 hover:text-[#df0024] font-bold text-[10px] bg-gray-50 dark:bg-white/5 border-none"
+                              className="cursor-pointer hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] font-bold text-[10px] bg-gray-50 dark:bg-white/5 border-none"
                               onClick={() => setNewRegion({ ...newRegion, name: city })}
                             >
                               {city}
@@ -362,7 +362,7 @@ export default function RegionsPage() {
                     <span>€ {Number((100 * (newRegion.taxRule || 0)) / 100).toFixed(2)}</span>
                   </div>
                   <div className="border-t border-gray-200 dark:border-white/10 my-2"></div>
-                  <div className="flex justify-between text-lg font-black text-[#df0024]">
+                  <div className="flex justify-between text-lg font-black text-[var(--primary)]">
                     <span>Total Cliente</span>
                     <span>€ {Number(100 + (100 * (newRegion.taxRule || 0)) / 100).toFixed(2)}</span>
                   </div>
@@ -377,7 +377,7 @@ export default function RegionsPage() {
 
             <DialogFooter className="pt-6 border-t border-gray-100 dark:border-white/10">
               <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-              <Button type="submit" form="region-form" className="bg-[#df0024] hover:bg-red-700 h-14 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+              <Button type="submit" form="region-form" className="bg-[var(--primary)] hover:bg-red-700 h-14 px-10 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                 {submitting ? <Loader2 className="animate-spin mr-2" /> : <CheckCircle2 className="mr-2" size={20} />}
                 GUARDAR REGIÃO
               </Button>

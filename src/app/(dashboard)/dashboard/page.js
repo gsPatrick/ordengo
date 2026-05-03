@@ -136,7 +136,7 @@ export default function DashboardPage() {
         </div>
 
         {loading ? (
-          <div className="h-96 flex flex-col items-center justify-center text-[#df0024]">
+          <div className="h-96 flex flex-col items-center justify-center text-[var(--primary)]">
             <Loader2 className="animate-spin mb-2" size={40} />
             <p className="text-sm font-medium text-gray-500">Atualizando indicadores...</p>
           </div>
@@ -205,8 +205,8 @@ export default function DashboardPage() {
                       <AreaChart data={chartData}>
                         <defs>
                           <linearGradient id="colorVendas" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#df0024" stopOpacity={0.1} />
-                            <stop offset="95%" stopColor="#df0024" stopOpacity={0} />
+                            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
@@ -230,7 +230,7 @@ export default function DashboardPage() {
                         <Area
                           type="monotone"
                           dataKey="vendas"
-                          stroke="#df0024"
+                          stroke="var(--primary)"
                           strokeWidth={3}
                           fillOpacity={1}
                           fill="url(#colorVendas)"

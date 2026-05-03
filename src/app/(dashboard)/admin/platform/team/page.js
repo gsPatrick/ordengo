@@ -85,7 +85,7 @@ export default function TeamPage() {
             <h1 className="text-3xl font-extrabold tracking-tight">Equipo SaaS</h1>
             <p className="text-muted-foreground mt-1 text-sm italic">Gestione el acceso de los administradores y soporte de la plataforma.</p>
           </div>
-          <Button onClick={() => setIsCreateOpen(true)} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
+          <Button onClick={() => setIsCreateOpen(true)} className="bg-[var(--primary)] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
             <Plus size={18} /> Nuevo Miembro
           </Button>
         </div>
@@ -93,7 +93,7 @@ export default function TeamPage() {
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
            <div className="relative w-full max-w-md group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[#df0024] transition-colors" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-[var(--primary)] transition-colors" size={20} />
             <Input
               placeholder="Buscar por nombre o email..."
               className="pl-12 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 h-12 rounded-2xl shadow-lg"
@@ -107,7 +107,7 @@ export default function TeamPage() {
         <div className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
-              <Loader2 className="animate-spin text-[#df0024]" size={48} />
+              <Loader2 className="animate-spin text-[var(--primary)]" size={48} />
               <p className="text-muted-foreground font-medium animate-pulse">Cargando equipo...</p>
             </div>
           ) : team.length === 0 ? (
@@ -141,7 +141,7 @@ export default function TeamPage() {
                       </div>
                     </TableCell>
                     <TableCell className="py-4">
-                       <span className="text-xs flex items-center gap-2"><Mail size={12} className="text-[#df0024]" /> {member.email}</span>
+                       <span className="text-xs flex items-center gap-2"><Mail size={12} className="text-[var(--primary)]" /> {member.email}</span>
                     </TableCell>
                     <TableCell className="py-4">
                         <Badge variant="outline" className="text-[10px] uppercase font-black border-gray-100 dark:border-white/20 bg-gray-50 dark:bg-white/5">
@@ -157,7 +157,7 @@ export default function TeamPage() {
                     </TableCell>
                     <TableCell className="text-right px-6 py-4">
                        <div className="flex justify-end gap-2">
-                          <Button size="icon" variant="ghost" className="rounded-xl hover:bg-[#df0024]/10 hover:text-[#df0024] transition-all"><Edit size={16} /></Button>
+                          <Button size="icon" variant="ghost" className="rounded-xl hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] transition-all"><Edit size={16} /></Button>
                           <Button size="icon" variant="ghost" className="rounded-xl hover:bg-red-500/10 text-red-500 transition-all" onClick={() => handleDelete(member.id)}><Trash2 size={16} /></Button>
                        </div>
                     </TableCell>
@@ -200,7 +200,7 @@ export default function TeamPage() {
                 </div>
                 <DialogFooter>
                    <Button type="button" variant="ghost" onClick={() => setIsCreateOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                   <Button type="submit" className="bg-[#df0024] hover:bg-red-700 h-12 px-8 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
+                   <Button type="submit" className="bg-[var(--primary)] hover:bg-red-700 h-12 px-8 rounded-2xl font-black shadow-lg shadow-red-500/20" disabled={submitting}>
                      {submitting ? <Loader2 className="animate-spin" size={20} /> : "CREAR MIEMBRO"}
                    </Button>
                 </DialogFooter>

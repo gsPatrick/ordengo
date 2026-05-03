@@ -109,13 +109,13 @@ export default function SystemAdsPage() {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                            <MonitorPlay className="text-[#df0024]" /> Banners Globais (Screensaver)
+                            <MonitorPlay className="text-[var(--primary)]" /> Banners Globais (Screensaver)
                         </h1>
                         <p className="text-gray-500">
                             Anúncios institucionais exibidos nos tablets de todos os restaurantes.
                         </p>
                     </div>
-                    <Button className="bg-[#df0024] hover:bg-red-700 text-white" onClick={() => { setFormData({ id: null, title: '', targetState: '', file: null }); setImagePreview(null); setIsModalOpen(true); }}>
+                    <Button className="bg-[var(--primary)] hover:bg-red-700 text-white" onClick={() => { setFormData({ id: null, title: '', targetState: '', file: null }); setImagePreview(null); setIsModalOpen(true); }}>
                         <Plus className="mr-2 h-4 w-4" /> Novo Banner
                     </Button>
                 </div>
@@ -123,7 +123,7 @@ export default function SystemAdsPage() {
                 {/* Lista de Ads */}
                 {loading ? (
                     <div className="flex justify-center py-12">
-                        <Loader2 className="animate-spin text-[#df0024]" size={32} />
+                        <Loader2 className="animate-spin text-[var(--primary)]" size={32} />
                     </div>
                 ) : ads.length === 0 ? (
                     <div className="text-center py-16 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
@@ -201,7 +201,7 @@ export default function SystemAdsPage() {
 
                         <form onSubmit={handleCreate} className="space-y-5 mt-4">
                             {/* Upload */}
-                            <div className="relative h-40 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:border-[#df0024] transition-colors group cursor-pointer flex items-center justify-center overflow-hidden">
+                            <div className="relative h-40 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:border-[var(--primary)] transition-colors group cursor-pointer flex items-center justify-center overflow-hidden">
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -212,7 +212,7 @@ export default function SystemAdsPage() {
                                 {imagePreview ? (
                                     <img src={imagePreview} className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="text-center text-gray-400 group-hover:text-[#df0024]">
+                                    <div className="text-center text-gray-400 group-hover:text-[var(--primary)]">
                                         <ImageIcon size={32} className="mx-auto mb-2" />
                                         <span className="text-sm font-medium">Clique para enviar imagem</span>
                                         <p className="text-[10px] mt-1">Recomendado: 1920x1080px</p>
@@ -249,7 +249,7 @@ export default function SystemAdsPage() {
                             {/* Actions */}
                             <div className="flex justify-end gap-3 pt-4 border-t">
                                 <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-                                <Button type="submit" className="bg-[#df0024] hover:bg-red-700 text-white" disabled={submitting}>
+                                <Button type="submit" className="bg-[var(--primary)] hover:bg-red-700 text-white" disabled={submitting}>
                                     {submitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
                                     Publicar Banner
                                 </Button>

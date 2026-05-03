@@ -89,7 +89,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab('general')}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
-                activeTab === 'general' ? 'border-[#df0024] text-[#df0024]' : 'border-transparent text-gray-500 hover:text-gray-700'
+                activeTab === 'general' ? 'border-[var(--primary)] text-[var(--primary)]' : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               <Settings size={18} /> Geral
@@ -97,7 +97,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab('tables')}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
-                activeTab === 'tables' ? 'border-[#df0024] text-[#df0024]' : 'border-transparent text-gray-500 hover:text-gray-700'
+                activeTab === 'tables' ? 'border-[var(--primary)] text-[var(--primary)]' : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               <QrCode size={18} /> Mesas e QR
@@ -105,7 +105,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab('team')}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
-                activeTab === 'team' ? 'border-[#df0024] text-[#df0024]' : 'border-transparent text-gray-500 hover:text-gray-700'
+                activeTab === 'team' ? 'border-[var(--primary)] text-[var(--primary)]' : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               <Users size={18} /> Equipe
@@ -113,7 +113,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab('integrations')}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
-                activeTab === 'integrations' ? 'border-[#df0024] text-[#df0024]' : 'border-transparent text-gray-500 hover:text-gray-700'
+                activeTab === 'integrations' ? 'border-[var(--primary)] text-[var(--primary)]' : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               <Plug size={18} /> Integrações
@@ -129,7 +129,7 @@ export default function SettingsPage() {
             <div className="max-w-2xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
               
               {dataLoading ? (
-                <div className="flex justify-center py-10"><Loader2 className="animate-spin text-[#df0024]" /></div>
+                <div className="flex justify-center py-10"><Loader2 className="animate-spin text-[var(--primary)]" /></div>
               ) : (
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
                   
@@ -146,7 +146,7 @@ export default function SettingsPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Nome do Restaurante</label>
                       <input 
                         type="text"
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#df0024] focus:border-transparent outline-none"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent outline-none"
                         value={generalData.name}
                         onChange={(e) => setGeneralData({...generalData, name: e.target.value})}
                         placeholder="Ex: Pizzaria do Luigi"
@@ -157,7 +157,7 @@ export default function SettingsPage() {
                         <Coins size={16} /> Moeda do Sistema
                       </label>
                       <select 
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#df0024] focus:border-transparent outline-none bg-white"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent outline-none bg-white"
                         value={generalData.currency}
                         onChange={(e) => setGeneralData({...generalData, currency: e.target.value})}
                       >
@@ -172,7 +172,7 @@ export default function SettingsPage() {
                     <button 
                       onClick={handleSaveGeneral}
                       disabled={loading}
-                      className="flex items-center gap-2 bg-[#df0024] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100 disabled:opacity-70"
+                      className="flex items-center gap-2 bg-[var(--primary)] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100 disabled:opacity-70"
                     >
                       {loading ? <Loader2 className="animate-spin" /> : <Save size={20} />}
                       Salvar Alterações

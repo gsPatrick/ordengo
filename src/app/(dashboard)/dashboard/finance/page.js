@@ -142,7 +142,7 @@ export default function FinancePage() {
                <Button variant="outline" className="glass rounded-xl font-bold border-rose-500/30 text-rose-500" onClick={() => setShowWithdrawalModal(true)}>
                  <ArrowRightLeft size={18} className="mr-2" /> Sangría
                </Button>
-               <Button className="bg-[#df0024] text-white rounded-xl font-bold shadow-lg shadow-[#df0024]/20 hover:bg-[#df0024]/90" onClick={handleCloseCash}>
+               <Button className="bg-[var(--primary)] text-white rounded-xl font-bold shadow-lg shadow-[var(--primary)]/20 hover:bg-[var(--primary)]/90" onClick={handleCloseCash}>
                  <Lock size={18} className="mr-2" /> Cerrar Caja (Z)
                </Button>
              </>
