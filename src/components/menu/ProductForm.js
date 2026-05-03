@@ -12,6 +12,23 @@ const LANGUAGES = [
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
 ];
 
+const ALLERGENS = [
+  { id: 'gluten', label: 'Gluten', icon: '🌾' },
+  { id: 'crustaceans', label: 'Crustáceos', icon: '🦀' },
+  { id: 'eggs', label: 'Huevos', icon: '🥚' },
+  { id: 'fish', label: 'Pescado', icon: '🐟' },
+  { id: 'peanuts', label: 'Cacahuetes', icon: '🥜' },
+  { id: 'soybeans', label: 'Soja', icon: '🫘' },
+  { id: 'milk', label: 'Lácteos', icon: '🥛' },
+  { id: 'nuts', label: 'Frutos de cáscara', icon: '🌰' },
+  { id: 'celery', label: 'Apio', icon: '🌿' },
+  { id: 'mustard', label: 'Mostaza', icon: '🍯' },
+  { id: 'sesame', label: 'Sésamo', icon: '🥯' },
+  { id: 'sulphites', label: 'Sulfitos', icon: '🍷' },
+  { id: 'lupin', label: 'Altramuces', icon: '🌼' },
+  { id: 'molluscs', label: 'Moluscos', icon: '🐚' },
+];
+
 // URL base para exibir imagens vindas da API
 const BASE_IMG_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
 
@@ -35,7 +52,13 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
     isHighlight: false,
     hasVariants: false,
     variants: [],
-    modifierGroupIds: []
+    modifierGroupIds: [],
+    allergens: [],
+    isPizza: false,
+    pizzaConfig: {
+      allowHalf: false,
+      priceCalc: 'most_expensive' // or 'average'
+    }
   });
 
   useEffect(() => {
@@ -58,7 +81,10 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
           ...v,
           name: { pt: v.name?.pt || '', en: v.name?.en || '', es: v.name?.es || '', de: v.name?.de || '', it: v.name?.it || '', fr: v.name?.fr || '' }
         })) || [],
-        modifierGroupIds: product.modifierGroups?.map(g => g.id) || []
+        modifierGroupIds: product.modifierGroups?.map(g => g.id) || [],
+        allergens: product.details?.allergens || [],
+        isPizza: product.details?.isPizza || false,
+        pizzaConfig: product.details?.pizzaConfig || { allowHalf: false, priceCalc: 'most_expensive' }
       });
 
       // Setup Galeria Existente
@@ -192,6 +218,14 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
     });
   };
 
+  const toggleAllergen = (allergenId) => {
+    const current = formData.allergens;
+    setFormData({
+      ...formData,
+      allergens: current.includes(allergenId) ? current.filter(id => id !== allergenId) : [...current, allergenId]
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -203,7 +237,12 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
 
       payload.append('price', formData.price);
       payload.append('categoryId', formData.categoryId);
-      payload.append('details', JSON.stringify({ interfaceType: formData.interfaceType }));
+      payload.append('details', JSON.stringify({ 
+        interfaceType: formData.interfaceType,
+        allergens: formData.allergens,
+        isPizza: formData.isPizza,
+        pizzaConfig: formData.pizzaConfig
+      }));
       payload.append('isOffer', formData.isOffer);
       payload.append('isHighlight', formData.isHighlight);
 
@@ -256,13 +295,18 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
 
         {/* Tabs de Navegação */}
         <div className="flex border-b border-gray-200 px-6 bg-gray-50">
-          {['general', 'variants', 'modifiers'].map(tab => (
+          {[
+            { id: 'general', label: 'Geral & Tradução' },
+            { id: 'variants', label: 'Tamanhos/Variações' },
+            { id: 'modifiers', label: 'Complementos' },
+            { id: 'advanced', label: 'Pizzas & Alérgenos' }
+          ].map(tab => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`py-3 px-4 text-sm font-medium border-b-2 capitalize ${activeTab === tab ? 'border-[#df0024] text-[#df0024]' : 'border-transparent text-gray-500'}`}
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`py-3 px-4 text-sm font-medium border-b-2 ${activeTab === tab.id ? 'border-[#df0024] text-[#df0024]' : 'border-transparent text-gray-500'}`}
             >
-              {tab === 'general' ? 'Geral & Tradução' : (tab === 'variants' ? 'Tamanhos/Variações' : 'Complementos')}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -443,6 +487,86 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {activeTab === 'advanced' && (
+            <div className="space-y-8 pb-4">
+              {/* Lógica de Pizzas */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                  🍕 Lógica de Pizzas (Meio a Meio)
+                </h3>
+                <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-6">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={formData.isPizza} 
+                      onChange={e => setFormData({ ...formData, isPizza: e.target.checked })}
+                      className="size-5 rounded border-gray-300 text-[#df0024] focus:ring-[#df0024]" 
+                    />
+                    <div>
+                      <span className="font-bold text-gray-900">Este producto es una Pizza</span>
+                      <p className="text-xs text-gray-500">Habilita la selección de múltiples sabores en un solo producto.</p>
+                    </div>
+                  </label>
+
+                  {formData.isPizza && (
+                    <div className="pl-8 space-y-4 animate-in slide-in-from-top-2">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-500 uppercase">Cálculo de Precio</label>
+                        <div className="flex gap-4">
+                          <button 
+                            type="button"
+                            onClick={() => setFormData({...formData, pizzaConfig: {...formData.pizzaConfig, priceCalc: 'most_expensive'}})}
+                            className={`flex-1 py-3 px-4 rounded-xl border-2 transition-all font-bold text-sm ${formData.pizzaConfig.priceCalc === 'most_expensive' ? 'border-[#df0024] bg-red-50 text-[#df0024]' : 'bg-white border-gray-200 text-gray-500'}`}
+                          >
+                            Precio de la más cara
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={() => setFormData({...formData, pizzaConfig: {...formData.pizzaConfig, priceCalc: 'average'}})}
+                            className={`flex-1 py-3 px-4 rounded-xl border-2 transition-all font-bold text-sm ${formData.pizzaConfig.priceCalc === 'average' ? 'border-[#df0024] bg-red-50 text-[#df0024]' : 'bg-white border-gray-200 text-gray-500'}`}
+                          >
+                            Precio Medio
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Alérgenos */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                  ⚠️ Alérgenos Europeos (Obligatorios)
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {ALLERGENS.map((allergen) => (
+                    <div 
+                      key={allergen.id} 
+                      onClick={() => toggleAllergen(allergen.id)}
+                      className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col items-center justify-center gap-2 text-center ${
+                        formData.allergens.includes(allergen.id) 
+                        ? 'border-amber-400 bg-amber-50 text-amber-900' 
+                        : 'border-gray-100 bg-white text-gray-400 hover:border-gray-200'
+                      }`}
+                    >
+                      <span className="text-2xl">{allergen.icon}</span>
+                      <span className="text-[10px] font-black uppercase tracking-tighter">{allergen.label}</span>
+                      {formData.allergens.includes(allergen.id) && (
+                        <div className="absolute top-2 right-2 size-4 bg-amber-400 rounded-full flex items-center justify-center">
+                          <Check size={10} className="text-white" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-gray-400 italic text-center mt-4">
+                  * Estos iconos aparecerán en el menú del cliente para garantizar su seguridad alimentaria.
+                </p>
+              </div>
             </div>
           )}
 

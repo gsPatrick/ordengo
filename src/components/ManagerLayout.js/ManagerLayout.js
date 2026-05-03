@@ -118,12 +118,54 @@ function ManagerLayoutContent({ children }) {
   };
 
   const menuItems = [
-    { name: 'Visión General', sub: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { name: 'Analytics', sub: 'Inteligencia', icon: BarChart3, path: '/dashboard/analytics' },
-    { name: 'Marketing', sub: 'Promociones y Ads', icon: Megaphone, path: '/dashboard/marketing' },
-    { name: 'Personalización', sub: 'Apariencia', icon: Palette, path: '/dashboard/appearance' },
-    { name: 'Valoraciones', sub: 'Feedback Clientes', icon: Star, path: '/dashboard/reviews' },
-    { name: 'Configuración', sub: 'General y Equipo', icon: Settings, path: '/dashboard/settings' },
+    {
+      name: 'Visión General',
+      sub: 'Dashboard',
+      icon: LayoutDashboard,
+      path: '/dashboard'
+    },
+    {
+      name: 'Menu (Cardápio)',
+      sub: 'Pizzas y Alérgenos',
+      icon: UtensilsCrossed,
+      path: '/dashboard/menu'
+    },
+    {
+      name: 'Reservas',
+      sub: 'Lista y Calendario',
+      icon: FileText,
+      path: '/dashboard/reservations'
+    },
+    {
+      name: 'Ofertas',
+      sub: 'Promociones y Ads',
+      icon: Megaphone,
+      path: '/dashboard/marketing'
+    },
+    {
+      name: 'Financiero',
+      sub: 'Historial de Caja',
+      icon: CreditCard,
+      path: '/dashboard/finance'
+    },
+    {
+      name: 'Tickets',
+      sub: 'Soporte OrdenGO',
+      icon: ShieldCheck,
+      path: '/dashboard/tickets'
+    },
+    {
+      name: 'Personalización',
+      sub: 'Apariencia App',
+      icon: Palette,
+      path: '/dashboard/appearance'
+    },
+    {
+      name: 'Configuración',
+      sub: 'Equipo y Ticket',
+      icon: Settings,
+      path: '/dashboard/settings'
+    },
   ];
 
   if (!isClient || !user) return null;
