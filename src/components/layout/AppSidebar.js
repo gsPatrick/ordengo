@@ -130,11 +130,26 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
     router.push("/login");
   };
 
+  const [branding, setBranding] = useState(null);
+
+  useEffect(() => {
+    const loadBranding = () => {
+      const saved = localStorage.getItem('global_branding');
+      if (saved) {
+        try { setBranding(JSON.parse(saved)); } catch (e) {}
+      }
+    };
+
+    loadBranding();
+    window.addEventListener('branding_updated', loadBranding);
+    return () => window.removeEventListener('branding_updated', loadBranding);
+  }, []);
+
   const Logo = () => (
     <div className="flex items-center justify-center w-full px-4">
       <div className="relative w-full h-12 transition-transform hover:scale-105 duration-300">
         <Image 
-          src="/logocolorida2.png" 
+          src={branding?.brand_logo_url || "/logocolorida2.png"} 
           alt="OrdenGO Logo" 
           fill
           className="object-contain"

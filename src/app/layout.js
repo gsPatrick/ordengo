@@ -18,11 +18,15 @@ export const metadata = {
   description: "OrdenGO",
 };
 
+import BrandingProvider from "@/components/BrandingProvider";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ToastProvider>{children}</ToastProvider>
+        <BrandingProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </BrandingProvider>
       </body>
     </html>
   );

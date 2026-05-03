@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 export default function BrandingPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [uploading, setUploading] = useState({ logo: false, favicon: false });
   
   const [settings, setSettings] = useState({
     brand_name: 'OrdenGO',
@@ -42,6 +43,27 @@ export default function BrandingPage() {
     fetchSettings();
   }, []);
 
+  const handleFileUpload = async (e, key) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(prev => ({ ...prev, [key]: true }));
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await api.post('/admin/settings/upload', formData);
+      setSettings(prev => ({ 
+        ...prev, 
+        [key === 'logo' ? 'brand_logo_url' : 'brand_favicon_url']: response.data.data.url 
+      }));
+    } catch (error) {
+      alert('Erro ao fazer upload do arquivo.');
+    } finally {
+      setUploading(prev => ({ ...prev, [key]: false }));
+    }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -49,7 +71,9 @@ export default function BrandingPage() {
       await api.post('/admin/settings/batch', {
         settings: Object.entries(settings).map(([key, value]) => ({ key, value, group: 'branding' }))
       });
-      alert('Identidade visual atualizada!');
+      alert('¡Identidad visual actualizada!');
+      // Recarregar para aplicar mudanças se necessário
+      window.location.reload();
     } catch (error) {
       alert('Erro ao salvar branding.');
     } finally {
@@ -66,10 +90,10 @@ export default function BrandingPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">Branding Global</h1>
-            <p className="text-muted-foreground mt-1 text-sm italic">Personalize a identidade visual de toda a plataforma OrdenGO.</p>
+            <p className="text-muted-foreground mt-1 text-sm italic">Personalice la identidad visual de toda la plataforma de forma centralizada.</p>
           </div>
           <Button onClick={handleSave} disabled={submitting} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-8 h-12 font-bold">
-            {submitting ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} Guardar Identidad
+            {submitting ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} GUARDAR IDENTIDAD
           </Button>
         </div>
 
@@ -78,28 +102,58 @@ export default function BrandingPage() {
            <Card className="glass border-none shadow-xl rounded-[2.5rem] overflow-hidden">
               <CardHeader className="bg-white/10 px-8 pt-8">
                  <div className="size-12 bg-[#df0024]/10 rounded-2xl flex items-center justify-center text-[#df0024] mb-4">
-                    <Type size={24} />
+                    <Layout size={24} />
                  </div>
                  <CardTitle className="text-xl font-black">Nombres y Logotipos</CardTitle>
-                 <CardDescription>Como sua marca é apresentada.</CardDescription>
+                 <CardDescription>Cómo se presenta su marca en los sistemas.</CardDescription>
               </CardHeader>
-              <CardContent className="p-8 space-y-6">
+              <CardContent className="p-8 space-y-8">
                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre del SaaS</label>
+                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Nombre del SaaS / Marca</label>
                     <Input className="glass h-12 rounded-2xl font-bold" value={settings.brand_name} onChange={e => setSettings({...settings, brand_name: e.target.value})} />
                  </div>
+                 
                  <div className="space-y-4">
-                    <label className="text-xs font-bold uppercase ml-1 opacity-60">URL del Logotipo (PNG/SVG)</label>
-                    <div className="flex gap-4">
-                       <Input className="glass h-12 rounded-2xl font-bold flex-1" value={settings.brand_logo_url} onChange={e => setSettings({...settings, brand_logo_url: e.target.value})} />
-                       <div className="size-12 glass rounded-xl flex items-center justify-center border border-white/10 shrink-0">
-                          <img src={settings.brand_logo_url} className="max-w-[80%] max-h-[80%] object-contain" alt="Logo" />
+                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Logotipo Principal</label>
+                    <div className="flex flex-col gap-4">
+                       <div className="h-32 w-full glass rounded-3xl border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden group relative">
+                          {settings.brand_logo_url ? (
+                             <img src={settings.brand_logo_url} className="max-w-[80%] max-h-[80%] object-contain" alt="Logo Preview" />
+                          ) : (
+                             <ImageIcon className="opacity-20" size={48} />
+                          )}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                             <label className="cursor-pointer bg-white text-black px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
+                                <Upload size={14} /> {uploading.logo ? 'Subiendo...' : 'Cambiar Logo'}
+                                <input type="file" className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'logo')} />
+                             </label>
+                          </div>
                        </div>
+                       <Input className="glass h-10 rounded-xl text-xs opacity-50" value={settings.brand_logo_url} readOnly />
                     </div>
                  </div>
-                 <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Favicon URL</label>
-                    <Input className="glass h-12 rounded-2xl font-bold" value={settings.brand_favicon_url} onChange={e => setSettings({...settings, brand_favicon_url: e.target.value})} />
+
+                 <div className="space-y-4 pt-4 border-t border-white/5">
+                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Favicon (Ícono del Navegador)</label>
+                    <div className="flex items-center gap-6">
+                       <div className="size-16 glass rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden group relative shrink-0">
+                          {settings.brand_favicon_url ? (
+                             <img src={settings.brand_favicon_url} className="size-8 object-contain" alt="Favicon Preview" />
+                          ) : (
+                             <ImageIcon className="opacity-20" size={24} />
+                          )}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                             <label className="cursor-pointer p-2 bg-white text-black rounded-lg">
+                                <Upload size={14} />
+                                <input type="file" className="hidden" accept="image/x-icon,image/png" onChange={e => handleFileUpload(e, 'favicon')} />
+                             </label>
+                          </div>
+                       </div>
+                       <div className="flex-1 space-y-1">
+                          <p className="text-xs font-bold">Icono del Navegador</p>
+                          <p className="text-[10px] opacity-40">Recomendado: 32x32px (.ico ou .png)</p>
+                       </div>
+                    </div>
                  </div>
               </CardContent>
            </Card>
@@ -110,32 +164,47 @@ export default function BrandingPage() {
                     <Palette size={24} />
                  </div>
                  <CardTitle className="text-xl font-black">Sistema de Colores</CardTitle>
-                 <CardDescription>Cores primárias e secundárias do sistema.</CardDescription>
+                 <CardDescription>Colores que se aplicarán a todos los botones y acentos.</CardDescription>
               </CardHeader>
-              <CardContent className="p-8 space-y-6">
-                 <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
+              <CardContent className="p-8 space-y-8">
+                 <div className="grid grid-cols-2 gap-8">
+                    <div className="space-y-3">
                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Color Primario</label>
-                       <div className="flex gap-3">
-                          <Input className="glass h-12 rounded-2xl font-bold" value={settings.brand_primary_color} onChange={e => setSettings({...settings, brand_primary_color: e.target.value})} />
-                          <div className="size-12 rounded-xl border border-white/20 shadow-lg shrink-0" style={{ backgroundColor: settings.brand_primary_color }}></div>
+                       <div className="flex items-center gap-4">
+                          <div className="size-14 rounded-2xl border-2 border-white/20 shadow-xl" style={{ backgroundColor: settings.brand_primary_color }}></div>
+                          <div className="flex-1 space-y-2">
+                             <Input className="glass h-10 rounded-xl font-mono text-xs" value={settings.brand_primary_color} onChange={e => setSettings({...settings, brand_primary_color: e.target.value})} />
+                             <input type="color" className="w-full h-2 rounded-full cursor-pointer" value={settings.brand_primary_color} onChange={e => setSettings({...settings, brand_primary_color: e.target.value})} />
+                          </div>
                        </div>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Color Secundario</label>
-                       <div className="flex gap-3">
-                          <Input className="glass h-12 rounded-2xl font-bold" value={settings.brand_secondary_color} onChange={e => setSettings({...settings, brand_secondary_color: e.target.value})} />
-                          <div className="size-12 rounded-xl border border-white/20 shadow-lg shrink-0" style={{ backgroundColor: settings.brand_secondary_color }}></div>
+                       <div className="flex items-center gap-4">
+                          <div className="size-14 rounded-2xl border-2 border-white/20 shadow-xl" style={{ backgroundColor: settings.brand_secondary_color }}></div>
+                          <div className="flex-1 space-y-2">
+                             <Input className="glass h-10 rounded-xl font-mono text-xs" value={settings.brand_secondary_color} onChange={e => setSettings({...settings, brand_secondary_color: e.target.value})} />
+                             <input type="color" className="w-full h-2 rounded-full cursor-pointer" value={settings.brand_secondary_color} onChange={e => setSettings({...settings, brand_secondary_color: e.target.value})} />
+                          </div>
                        </div>
                     </div>
                  </div>
                  
                  {/* Preview Section */}
-                 <div className="mt-8 p-6 glass rounded-3xl border-white/5 space-y-4">
-                    <p className="text-[10px] font-black uppercase opacity-40">Vista Previa de Componentes</p>
-                    <div className="flex gap-2">
-                       <Button style={{ backgroundColor: settings.brand_primary_color }} className="text-white rounded-xl text-xs font-bold px-6">Boton Primario</Button>
-                       <Button style={{ backgroundColor: settings.brand_secondary_color }} className="text-white rounded-xl text-xs font-bold px-6">Boton Secundario</Button>
+                 <div className="mt-8 p-8 glass rounded-[2rem] border-white/5 space-y-6">
+                    <p className="text-[10px] font-black uppercase opacity-40 tracking-widest text-center">Vista Previa de Componentes</p>
+                    <div className="flex flex-col gap-4">
+                       <Button style={{ backgroundColor: settings.brand_primary_color }} className="text-white rounded-2xl h-14 font-black shadow-lg shadow-red-500/20">
+                          BOTÓN PRIMARIO
+                       </Button>
+                       <Button style={{ backgroundColor: settings.brand_secondary_color }} className="text-white rounded-2xl h-12 font-bold opacity-80">
+                          Botón Secundario
+                       </Button>
+                    </div>
+                    <div className="flex justify-center gap-4">
+                       <div className="size-3 rounded-full animate-pulse" style={{ backgroundColor: settings.brand_primary_color }}></div>
+                       <div className="size-3 rounded-full animate-pulse delay-75" style={{ backgroundColor: settings.brand_primary_color }}></div>
+                       <div className="size-3 rounded-full animate-pulse delay-150" style={{ backgroundColor: settings.brand_primary_color }}></div>
                     </div>
                  </div>
               </CardContent>
