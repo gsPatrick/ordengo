@@ -146,8 +146,6 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
   }, []);
 
   const Logo = () => {
-    // No modo manager, priorizamos o logo do restaurante (do usuário logado)
-    // No modo admin, usamos o branding global
     let logoUrl = "/logocolorida2.png";
     let isManager = mode === "manager";
     
@@ -176,10 +174,9 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
              <span className="text-sm font-black truncate text-foreground leading-tight">
                {isManager ? (user?.Restaurant?.name || "Restaurante") : (branding?.brand_name || "OrdenGO")}
              </span>
-             <div className="flex items-center gap-1 opacity-60">
-               <span className="text-[9px] uppercase tracking-tighter font-bold">by</span>
-               <img src="/logocolorida2.png" alt="OrdenGO" className="h-2.5 w-auto" />
-             </div>
+             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-0.5 opacity-60">
+               {isManager ? "Panel de Gestión" : "Super Administrador"}
+             </span>
           </div>
         )}
       </div>
@@ -268,7 +265,7 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
         ))}
       </nav>
 
-      <div className="p-3 mt-auto">
+      <div className="p-3 mt-auto space-y-4">
         <div className={cn(
           "flex items-center gap-3 p-2 rounded-xl transition-all duration-300", 
           isCollapsed ? "justify-center bg-transparent" : "bg-white/40 dark:bg-white/5 border border-white/10"
@@ -290,6 +287,14 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
             </>
           )}
         </div>
+
+        {/* Logo OrdenGO no Rodapé */}
+        {!isCollapsed && (
+          <div className="flex flex-col items-center justify-center pt-2 pb-1 animate-in fade-in slide-in-from-bottom-2 duration-700">
+            <p className="text-[8px] uppercase font-black tracking-[0.2em] text-muted-foreground/40 mb-2">Powered by</p>
+            <img src="/logocolorida2.png" alt="OrdenGO" className="h-6 w-auto opacity-40 hover:opacity-100 transition-opacity duration-500 grayscale hover:grayscale-0" />
+          </div>
+        )}
       </div>
     </aside>
   );
