@@ -34,6 +34,7 @@ export default function FinancePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
+  const [error, setError] = useState(null);
 
   // --- FETCH DATA ---
   const fetchData = async () => {
@@ -53,9 +54,11 @@ export default function FinancePage() {
 
       setInvoices(invRes.data.data.invoices || []);
       setLedgerBalance(ledRes.data.data || { totalRevenue: 0, totalExpenses: 0, balance: 0 });
+      setError(null);
 
     } catch (error) {
       console.error("Erro ao carregar finanças:", error);
+      setError("Não foi possível carregar os dados financeiros. Verifique sua conexão ou permissões.");
     } finally {
       setLoading(false);
     }
@@ -360,11 +363,17 @@ export default function FinancePage() {
                     <Bar dataKey="pending" name="Pendente" fill="#9ca3af" radius={[4, 4, 0, 0]} barSize={40} />
                   </BarChart>
                 </ResponsiveContainer>
+              ) : error ? (
+                <div className="h-full flex flex-col items-center justify-center text-red-500 gap-2">
+                  <AlertCircle size={32} />
+                  <p className="font-bold">{error}</p>
+                  <Button variant="outline" size="sm" onClick={fetchData}>Tentar novamente</Button>
+                </div>
               ) : (
                 <EmptyState 
                   icon={Ban}
-                  title="Sem dados no período" 
-                  subtitle="Gere faturas ou ajuste o filtro de datas para visualizar o gráfico." 
+                  title={invoices.length > 0 ? "Sem dados para este filtro" : "Sem histórico de faturamento"} 
+                  subtitle={invoices.length > 0 ? "Tente ajustar as datas no topo da página." : "Clique em 'Gerar Faturas' para iniciar o ciclo de cobrança deste mês."} 
                 />
               )}
             </CardContent>
