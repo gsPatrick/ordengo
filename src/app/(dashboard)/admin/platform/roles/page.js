@@ -187,15 +187,21 @@ export default function RolesPage() {
                           <h4 className="text-xs font-black uppercase text-muted-foreground border-b border-white/10 pb-2">{group}</h4>
                           <div className="space-y-3">
                              {perms.map(p => (
-                               <div key={p.id} className="flex items-center justify-between group/item">
+                               <div 
+                                 key={p.id} 
+                                 className="flex items-center justify-between group/item p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-all border border-transparent hover:border-gray-100 dark:hover:border-white/10"
+                                 onClick={() => togglePermission(p.id)}
+                               >
                                   <div className="space-y-0.5">
-                                     <p className="text-sm font-bold">{p.name}</p>
+                                     <p className="text-sm font-bold group-hover/item:text-[#df0024] transition-colors">{p.name}</p>
                                      <p className="text-[10px] opacity-40 uppercase font-bold tracking-tight">{p.slug}</p>
                                   </div>
                                   <Checkbox 
                                     checked={formData.permissionIds.includes(p.id)} 
                                     onCheckedChange={() => togglePermission(p.id)}
                                     className="rounded-lg size-6 border-2 border-white/20 data-[state=checked]:bg-[#df0024] data-[state=checked]:border-[#df0024]"
+                                    // Prevenir duplo clique se o checkbox for clicado diretamente
+                                    onClick={(e) => e.stopPropagation()}
                                   />
                                </div>
                              ))}
