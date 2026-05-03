@@ -374,6 +374,7 @@ export default function FinancePage() {
                   icon={Ban}
                   title={invoices.length > 0 ? "Sem dados para este filtro" : "Sem histórico de faturamento"} 
                   subtitle={invoices.length > 0 ? "Tente ajustar as datas no topo da página." : "Clique em 'Gerar Faturas' para iniciar o ciclo de cobrança deste mês."} 
+                  className="py-6 h-full shadow-none bg-transparent border-none"
                 />
               )}
             </CardContent>

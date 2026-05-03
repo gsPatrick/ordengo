@@ -242,6 +242,7 @@ export default function AnalyticsPage() {
                       icon={Ban} 
                       title="Sem dados financeiros" 
                       subtitle="Não há faturas pagas registradas neste período para gerar o gráfico."
+                      className="py-6 h-full shadow-none bg-transparent border-none"
                     />
                   )}
                 </CardContent>
