@@ -26,7 +26,7 @@ export default function EmptyState({
 }) {
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center py-20 px-8 text-center rounded-[2.5rem] glass border-none shadow-xl relative overflow-hidden group",
+      "flex flex-col items-center justify-center py-12 px-8 text-center relative overflow-hidden group",
       className
     )}>
       {/* Decorative Background Blobs */}

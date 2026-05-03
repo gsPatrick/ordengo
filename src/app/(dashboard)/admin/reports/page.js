@@ -143,7 +143,12 @@ export default function ReportsPage() {
                 </AreaChart>
               </ResponsiveContainer>
               ) : (
-                <EmptyState icon={BarChart3} title="Sin datos históricos" subtitle="Los datos de tendencia MRR aparecerán aquí cuando haya histórico de facturación." />
+                <EmptyState 
+                  icon={BarChart3} 
+                  title="Sin datos históricos" 
+                  subtitle="Los datos de tendencia MRR aparecerán aquí cuando haya histórico de facturación." 
+                  className="py-6 h-full shadow-none bg-transparent border-none"
+                />
               )}
             </CardContent>
           </Card>
