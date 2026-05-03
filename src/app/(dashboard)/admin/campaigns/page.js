@@ -24,6 +24,8 @@ export default function CampaignsPage() {
   
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
 
   const FILE_BASE_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
   
@@ -220,7 +222,13 @@ export default function CampaignsPage() {
 
                  {/* Footer Actions */}
                  <div className="p-4 bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-white/5 flex gap-2">
-                    <Button variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-gray-100 dark:hover:bg-white/10"><BarChart3 size={14} className="mr-2" /> Reporte</Button>
+                    <Button 
+                      onClick={() => { setSelectedCampaign(camp); setIsReportOpen(true); }}
+                      variant="ghost" 
+                      className="flex-1 rounded-xl text-xs font-bold hover:bg-gray-100 dark:hover:bg-white/10"
+                    >
+                      <BarChart3 size={14} className="mr-2" /> Reporte
+                    </Button>
                     {camp.status === 'active' ? (
                       <Button onClick={() => handleToggleStatus(camp)} variant="ghost" className="flex-1 rounded-xl text-xs font-bold hover:bg-yellow-500/10 text-yellow-500"><Pause size={14} className="mr-2" /> Pausar</Button>
                     ) : (
@@ -308,6 +316,108 @@ export default function CampaignsPage() {
           </DialogContent>
         </Dialog>
 
+        {/* REPORT MODAL */}
+        <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
+          <DialogContent className="max-w-2xl bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 overflow-y-auto max-h-[90vh]">
+             <DialogHeader>
+               <div className="flex justify-between items-center pr-8">
+                  <div>
+                    <DialogTitle className="text-3xl font-black">{selectedCampaign?.title}</DialogTitle>
+                    <p className="text-[#df0024] font-bold text-sm uppercase tracking-tighter mt-1">{selectedCampaign?.Advertiser?.companyName}</p>
+                  </div>
+                  {selectedCampaign && getStatusBadge(selectedCampaign.status)}
+               </div>
+             </DialogHeader>
+
+             {selectedCampaign && (
+               <div className="space-y-8 mt-8">
+                  {/* METRICS GRID */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-3xl border border-gray-100 dark:border-white/5 text-center">
+                      <p className="text-[10px] uppercase font-black opacity-40 mb-1">Impresiones</p>
+                      <p className="text-2xl font-black">{selectedCampaign.creatives?.reduce((acc, c) => acc + (c.viewsCount || 0), 0) || 0}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-3xl border border-gray-100 dark:border-white/5 text-center">
+                      <p className="text-[10px] uppercase font-black opacity-40 mb-1">Clicks</p>
+                      <p className="text-2xl font-black">{selectedCampaign.creatives?.reduce((acc, c) => acc + (c.clicksCount || 0), 0) || 0}</p>
+                    </div>
+                    <div className="bg-primary/10 p-4 rounded-3xl border border-primary/10 text-center">
+                      <p className="text-[10px] uppercase font-black text-primary mb-1">CTR (%)</p>
+                      <p className="text-2xl font-black text-primary">
+                        {(() => {
+                          const views = selectedCampaign.creatives?.reduce((acc, c) => acc + (c.viewsCount || 0), 0) || 0;
+                          const clicks = selectedCampaign.creatives?.reduce((acc, c) => acc + (c.clicksCount || 0), 0) || 0;
+                          return views > 0 ? ((clicks / views) * 100).toFixed(2) : '0.00';
+                        })()}%
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-8">
+                    {/* DETAILS */}
+                    <div className="space-y-6">
+                       <div className="space-y-4">
+                          <h4 className="text-xs font-black uppercase tracking-widest opacity-30 flex items-center gap-2">
+                             <Sliders size={14} /> Configuración Técnica
+                          </h4>
+                          <div className="space-y-3">
+                             <div className="flex justify-between text-sm">
+                                <span className="opacity-60">Prioridad:</span>
+                                <span className="font-bold uppercase">{selectedCampaign.priority}</span>
+                             </div>
+                             <div className="flex justify-between text-sm">
+                                <span className="opacity-60">Frecuencia:</span>
+                                <span className="font-bold">Cada {selectedCampaign.frequency} min</span>
+                             </div>
+                             <div className="flex justify-between text-sm">
+                                <span className="opacity-60">Duración:</span>
+                                <span className="font-bold">{selectedCampaign.duration} seg</span>
+                             </div>
+                          </div>
+                       </div>
+
+                       <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-white/5">
+                          <h4 className="text-xs font-black uppercase tracking-widest opacity-30 flex items-center gap-2">
+                             <Globe size={14} /> Segmentación
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                             {selectedCampaign.Regions?.length > 0 ? (
+                               selectedCampaign.Regions.map(r => (
+                                 <Badge key={r.id} variant="secondary" className="rounded-lg">{r.name}</Badge>
+                               ))
+                             ) : (
+                               <span className="text-xs italic opacity-50">Global (Todas las regiones)</span>
+                             )}
+                          </div>
+                       </div>
+                    </div>
+
+                    {/* CREATIVE PREVIEW */}
+                    <div className="space-y-4">
+                       <h4 className="text-xs font-black uppercase tracking-widest opacity-30">Creatividad Principal</h4>
+                       <div className="aspect-[9/16] bg-gray-100 dark:bg-zinc-800 rounded-3xl overflow-hidden border-2 border-gray-100 dark:border-white/5">
+                          {selectedCampaign.creatives?.[0]?.mediaUrl ? (
+                            selectedCampaign.creatives[0].type === 'video' ? (
+                              <video src={`${FILE_BASE_URL}${selectedCampaign.creatives[0].mediaUrl}`} className="w-full h-full object-cover" controls />
+                            ) : (
+                              <img src={`${FILE_BASE_URL}${selectedCampaign.creatives[0].mediaUrl}`} className="w-full h-full object-cover" />
+                            )
+                          ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center opacity-20"><ImageIcon size={48} /></div>
+                          )}
+                       </div>
+                    </div>
+                  </div>
+               </div>
+             )}
+
+             <DialogFooter className="mt-8 pt-6 border-t border-gray-100 dark:border-white/5">
+                <Button onClick={() => setIsReportOpen(false)} className="w-full bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-foreground font-black h-12 rounded-2xl">
+                  CERRAR REPORTE
+                </Button>
+             </DialogFooter>
+          </DialogContent>
+        </Dialog>
         {/* DELETE MODAL */}
         <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
           <DialogContent className="bg-white dark:bg-zinc-900 border-gray-200 dark:border-white/10 shadow-2xl rounded-[2.5rem] p-8 max-w-sm">
