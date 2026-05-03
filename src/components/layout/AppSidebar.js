@@ -146,10 +146,15 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
   }, []);
 
   const Logo = () => {
-    // Debug para ver se o branding está chegando
-    console.log('Sidebar Branding Logo:', branding?.brand_logo_url);
-    const logoUrl = branding?.brand_logo_url ? formatAssetUrl(branding.brand_logo_url) : "/logocolorida2.png";
-    console.log('Final Logo URL:', logoUrl);
+    // No modo manager, priorizamos o logo do restaurante (do usuário logado)
+    // No modo admin, usamos o branding global
+    let logoUrl = "/logocolorida2.png";
+    
+    if (mode === "manager" && user?.Restaurant?.logo) {
+      logoUrl = formatAssetUrl(user.Restaurant.logo);
+    } else if (branding?.brand_logo_url) {
+      logoUrl = formatAssetUrl(branding.brand_logo_url);
+    }
 
     return (
       <div className="flex items-center justify-center w-full px-4">
@@ -157,10 +162,12 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
           <img 
             src={logoUrl} 
             alt="Logo" 
-            className="max-h-12 w-auto object-contain transition-transform hover:scale-105 duration-300"
+            className="max-h-12 w-auto object-contain transition-all duration-300"
             onError={(e) => {
-              console.error('Erro ao carregar logo da sidebar:', logoUrl);
-              e.target.src = "/logocolorida2.png"; // Fallback se falhar
+              // Fallback final se falhar
+              if (e.target.src !== "/logocolorida2.png") {
+                e.target.src = "/logocolorida2.png";
+              }
             }}
           />
         </div>
