@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { 
   Plus, Search, Calendar, Play, Pause, BarChart3, 
   Image as ImageIcon, MoreVertical, Trash2, Edit,
-  Loader2, Filter, CheckCircle2, AlertCircle, Clock
+  Loader2, Filter, CheckCircle2, AlertCircle, Clock, Sliders, Globe
 } from 'lucide-react';
 import api from '@/lib/api';
 import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
