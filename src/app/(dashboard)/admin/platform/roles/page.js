@@ -186,10 +186,9 @@ export default function RolesPage() {
                           <h4 className="text-xs font-black uppercase text-muted-foreground border-b border-white/10 pb-2">{group}</h4>
                           <div className="space-y-3">
                              {perms.map(p => (
-                               <div 
+                               <label 
                                  key={p.id} 
                                  className="flex items-center justify-between group/item p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-all border border-transparent hover:border-gray-100 dark:hover:border-white/10"
-                                 onClick={() => togglePermission(p.id)}
                                >
                                   <div className="space-y-0.5">
                                      <p className="text-sm font-bold group-hover/item:text-[#df0024] transition-colors">{p.name}</p>
@@ -197,10 +196,10 @@ export default function RolesPage() {
                                   </div>
                                   <Checkbox 
                                     checked={formData.permissionIds.includes(p.id)} 
-                                    className="rounded-lg size-6 border-2 border-white/20 data-[state=checked]:bg-[#df0024] data-[state=checked]:border-[#df0024] pointer-events-none"
-                                    // Eliminado onCheckedChange para evitar loop infinito com o onClick da div pai
+                                    onCheckedChange={() => togglePermission(p.id)}
+                                    className="rounded-lg size-6 border-2 border-white/20 data-[state=checked]:bg-[#df0024] data-[state=checked]:border-[#df0024]"
                                   />
-                               </div>
+                                </label>
                              ))}
                           </div>
                        </div>
