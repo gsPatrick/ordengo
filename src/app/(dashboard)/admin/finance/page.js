@@ -71,25 +71,28 @@ export default function FinancePage() {
     if (invoices.length === 0) return [];
 
     const grouped = {};
-    // Ordena cronologicamente para o gráfico fazer sentido
+    // Ordena cronologicamente
     const sorted = [...invoices].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
     sorted.forEach(inv => {
       const date = new Date(inv.createdAt);
-      const key = date.toLocaleDateString('pt-PT', { month: 'short', year: '2-digit' }); // ex: "nov/24"
+      // Usamos um formato fixo YYYY-MM para agrupamento interno e exibição formatada
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const label = date.toLocaleDateString('pt-PT', { month: 'short', year: '2-digit' });
       
-      if (!grouped[key]) grouped[key] = { name: key, paid: 0, pending: 0 };
+      if (!grouped[monthKey]) grouped[monthKey] = { name: label, paid: 0, pending: 0 };
       
       const amount = Number(inv.total);
       
       if (inv.status === 'paid') {
-        grouped[key].paid += amount;
+        grouped[monthKey].paid += amount;
       } else if (inv.status !== 'cancelled') {
-        grouped[key].pending += amount;
+        grouped[monthKey].pending += amount;
       }
     });
 
-    return Object.values(grouped);
+    // Retornamos os valores ordenados pela chave YYYY-MM
+    return Object.keys(grouped).sort().map(key => grouped[key]);
   }, [invoices]);
 
   // 2. Filtro de Texto (Client-side para rapidez na UX)
@@ -151,6 +154,38 @@ export default function FinancePage() {
     setStatusFilter('all');
     setDateRange({ start: '', end: '' });
     setSearchTerm('');
+  };
+
+  const clearDates = () => {
+    setDateRange({ start: '', end: '' });
+  };
+
+  const handleExportReport = () => {
+    if (invoices.length === 0) return alert("Não há dados para exportar.");
+    
+    const headers = ["ID", "Cliente", "Tipo", "Emissão", "Vencimento", "Total", "Moeda", "Status"];
+    const rows = filteredInvoices.map(inv => [
+      inv.id,
+      inv.Restaurant?.name || inv.Advertiser?.companyName || 'N/A',
+      inv.type === 'saas_subscription' ? 'SaaS' : 'Ads',
+      new Date(inv.createdAt).toLocaleDateString(),
+      new Date(inv.dueDate).toLocaleDateString(),
+      inv.total,
+      inv.currency,
+      inv.status
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `relatorio_financeiro_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const formatCurrency = (val, currency = 'EUR') => {
@@ -216,7 +251,7 @@ export default function FinancePage() {
             <div className="h-8 w-px bg-gray-200 mx-2 hidden xl:block"></div>
 
             <div className="flex gap-2 w-full sm:w-auto">
-              <Button variant="outline" className="gap-2 flex-1 xl:flex-none">
+              <Button variant="outline" className="gap-2 flex-1 xl:flex-none" onClick={handleExportReport}>
                 <Download size={16} /> Relatório
               </Button>
               <Button 
