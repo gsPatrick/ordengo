@@ -10,7 +10,7 @@ import {
   Plug, Palette, Smartphone, Search, Activity, 
   Sliders, LogOut, ChevronLeft, Menu, Box,
   UtensilsCrossed, Star, ChefHat, BarChart3,
-  FileText
+  FileText, MonitorPlay, MapPin
 } from "lucide-react";
 import { cn, formatAssetUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,51 +23,31 @@ import Image from "next/image";
 
 const ADMIN_MENU = [
   {
-    title: "Visión General",
+    title: "Administración",
     items: [
-      { name: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
-      { name: "Clientes", icon: Users, path: "/admin/tenants" },
+      { name: "Dashboard Global", icon: LayoutDashboard, path: "/admin/dashboard" },
+      { name: "Clientes (Tenants)", icon: Users, path: "/admin/tenants" },
+      { name: "Red de Publicidad", icon: Megaphone, path: "/admin/ads" },
+      { name: "Banners Globales", icon: MonitorPlay, path: "/admin/systemads" },
     ]
   },
   {
-    title: "Publicidad",
+    title: "Gestión SaaS",
     items: [
-      { name: "Visión General", icon: Megaphone, path: "/admin/ads" },
-      { name: "Anunciantes", icon: UserCircle, path: "/admin/advertisers" },
-      { name: "Campañas", icon: Layers, path: "/admin/campaigns" },
-      { name: "Configuración", icon: Settings, path: "/admin/ads/config" },
-    ]
-  },
-  {
-    title: "Financiero",
-    items: [
-      { name: "Finanzas y contabilidade", icon: Landmark, path: "/admin/finance" },
-      { name: "Regiones y Fiscal", icon: Globe, path: "/admin/regions" },
-      { name: "Reportes", icon: FileBarChart, path: "/admin/reports" },
-      { name: "Planes", icon: CreditCard, path: "/admin/plans" },
-      { name: "Gateways", icon: Wallet, path: "/admin/gateways" },
+      { name: "Finanzas y Contabilidad", icon: Landmark, path: "/admin/finance" },
+      { name: "Regiones y Fiscal", icon: MapPin, path: "/admin/regions" },
+      { name: "Reportes", icon: FileBarChart, path: "/admin/analytics" },
+      { name: "Planes", icon: Landmark, path: "/admin/plans" },
     ]
   },
   {
     title: "Plataforma",
     items: [
-      { name: "Tickets", icon: Ticket, path: "/admin/tickets" },
-      { name: "SMTP EMAIL", icon: Mail, path: "/admin/platform/smtp" },
-      { name: "Equipo SaaS", icon: Users, path: "/admin/platform/team" },
-      { name: "Roles y Permisos", icon: ShieldCheck, path: "/admin/platform/roles" },
-      { name: "Integrações", icon: Plug, path: "/admin/platform/integrations" },
+      { name: "Branding Global", icon: Palette, path: "/admin/system/branding" },
+      { name: "App Branding", icon: Smartphone, path: "/admin/system/app-branding" },
+      { name: "Configuración", icon: Settings, path: "/admin/settings" },
     ]
   },
-  {
-    title: "Sistema",
-    items: [
-      { name: "Branding Global", icon: Palette, path: "/admin/system/branding" },
-      { name: "Branding APP", icon: Smartphone, path: "/admin/system/app-branding" },
-      { name: "SEO", icon: Search, path: "/admin/system/seo" },
-      { name: "Logs", icon: Activity, path: "/admin/system/logs" },
-      { name: "Configuración", icon: Sliders, path: "/admin/system/settings" },
-    ]
-  }
 ];
 
 const MANAGER_MENU = [
