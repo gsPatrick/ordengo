@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, formatAssetUrl } from "@/lib/utils";
 
 export default function AppBrandingPage() {
   const [loading, setLoading] = useState(true);
@@ -130,7 +130,7 @@ export default function AppBrandingPage() {
                        <label className="text-xs font-bold uppercase ml-1 opacity-60">Logo Lateral (App)</label>
                        <div className="h-32 w-full glass rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden group relative">
                           {settings.app_sidebar_logo ? (
-                             <img src={settings.app_sidebar_logo} className="max-w-[80%] max-h-[80%] object-contain" alt="App Logo" />
+                             <img src={formatAssetUrl(settings.app_sidebar_logo)} className="max-w-[80%] max-h-[80%] object-contain" alt="App Logo" />
                           ) : (
                              <Store className="opacity-20" size={48} />
                           )}

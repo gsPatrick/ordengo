@@ -10,7 +10,7 @@ import AdminLayout from '@/components/AdminLayout.js/AdminLayout';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, formatAssetUrl } from "@/lib/utils";
 
 export default function BrandingPage() {
   const [loading, setLoading] = useState(true);
@@ -118,7 +118,7 @@ export default function BrandingPage() {
                     <div className="flex flex-col gap-4">
                        <div className="h-32 w-full glass rounded-3xl border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden group relative">
                           {settings.brand_logo_url ? (
-                             <img src={settings.brand_logo_url} className="max-w-[80%] max-h-[80%] object-contain" alt="Logo Preview" />
+                             <img src={formatAssetUrl(settings.brand_logo_url)} className="max-w-full max-h-full object-contain" alt="Logo Preview" />
                           ) : (
                              <ImageIcon className="opacity-20" size={48} />
                           )}
