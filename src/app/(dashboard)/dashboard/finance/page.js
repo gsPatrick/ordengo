@@ -5,12 +5,13 @@ import {
   Landmark, TrendingUp, TrendingDown, Clock, 
   ChevronRight, Calendar, Filter, ArrowUpRight, 
   ArrowDownRight, DollarSign, CreditCard, Receipt,
-  Plus, Search, Download
+  Plus, Search, Download, Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import api from '@/lib/api';
 import ManagerLayout from '@/components/ManagerLayout.js/ManagerLayout';
 
@@ -22,6 +23,8 @@ export default function FinanceHistoryPage() {
     totalWithdrawals: 0,
     currentBalance: 0
   });
+  const [isClosingModalOpen, setIsClosingModalOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     fetchFinanceData();
@@ -51,6 +54,21 @@ export default function FinanceHistoryPage() {
     }
   };
 
+  const handleCloseCashier = async () => {
+    setIsClosing(true);
+    try {
+      await api.post('/finance/close-session');
+      alert('¡Caja cerrada con éxito!');
+      setIsClosingModalOpen(false);
+      fetchFinanceData();
+    } catch (error) {
+      console.error(error);
+      alert('Error al cerrar caja. Verifique si hay una sesión abierta.');
+    } finally {
+      setIsClosing(false);
+    }
+  };
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
@@ -69,10 +87,41 @@ export default function FinanceHistoryPage() {
             <Download size={14} className="mr-2" />
             Exportar XLS
           </Button>
-          <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-10 px-6 text-[10px] font-black uppercase shadow-lg shadow-emerald-50">
-            <TrendingUp size={14} className="mr-2" />
-            Cierre de Caja
-          </Button>
+          <Dialog open={isClosingModalOpen} onOpenChange={setIsClosingModalOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-10 px-6 text-[10px] font-black uppercase shadow-lg shadow-emerald-50">
+                <TrendingUp size={14} className="mr-2" />
+                Cierre de Caja
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[400px] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
+              <div className="bg-emerald-600 p-6 text-white text-center">
+                <div className="size-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Clock size={32} className="text-white" />
+                </div>
+                <DialogTitle className="text-xl font-black">¿Cerrar Caja Ahora?</DialogTitle>
+                <p className="text-xs text-emerald-100 mt-1">Esta acción consolidará todas las ventas y retiradas del periodo actual.</p>
+              </div>
+              <div className="p-8 space-y-4 bg-white">
+                <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
+                  <span className="text-[10px] font-black text-gray-400 uppercase">Saldo a Consolidar</span>
+                  <span className="text-xl font-black text-gray-900">{formatCurrency(stats.currentBalance)}</span>
+                </div>
+                <div className="flex gap-3">
+                  <Button variant="outline" onClick={() => setIsClosingModalOpen(false)} className="flex-1 rounded-xl h-12 font-bold border-gray-200">
+                    Cancelar
+                  </Button>
+                  <Button 
+                    onClick={handleCloseCashier} 
+                    disabled={isClosing}
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-12 font-black shadow-lg shadow-emerald-50"
+                  >
+                    {isClosing ? <Loader2 className="animate-spin size-4 mr-2" /> : 'Confirmar Cierre'}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
