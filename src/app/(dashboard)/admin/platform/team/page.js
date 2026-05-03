@@ -79,12 +79,11 @@ export default function TeamPage() {
   return (
     <AdminLayout>
       <div className="space-y-8 pb-12 animate-in fade-in duration-500">
-        
-        {/* Header */}
+                {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">Equipo SaaS</h1>
-            <p className="text-muted-foreground mt-1 text-sm italic">Gestione o acesso dos administradores e suporte da plataforma.</p>
+            <p className="text-muted-foreground mt-1 text-sm italic">Gestione el acceso de los administradores y soporte de la plataforma.</p>
           </div>
           <Button onClick={() => setIsCreateOpen(true)} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold transition-all hover:scale-105 active:scale-95">
             <Plus size={18} /> Nuevo Miembro
@@ -109,7 +108,7 @@ export default function TeamPage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <Loader2 className="animate-spin text-[#df0024]" size={48} />
-              <p className="text-muted-foreground font-medium animate-pulse">Carregando equipe...</p>
+              <p className="text-muted-foreground font-medium animate-pulse">Cargando equipo...</p>
             </div>
           ) : team.length === 0 ? (
             <EmptyState
@@ -125,7 +124,7 @@ export default function TeamPage() {
                 <TableRow className="border-b border-white/10 hover:bg-transparent">
                   <TableHead className="px-6 py-4 font-bold text-foreground">Nombre</TableHead>
                   <TableHead className="py-4 font-bold text-foreground">Email</TableHead>
-                  <TableHead className="py-4 font-bold text-foreground">Rol</TableHead>
+                  <TableHead className="py-4 font-bold text-foreground">Cargo</TableHead>
                   <TableHead className="py-4 font-bold text-foreground">Estado</TableHead>
                   <TableHead className="text-right px-6 py-4 font-bold text-foreground">Acciones</TableHead>
                 </TableRow>
@@ -189,7 +188,7 @@ export default function TeamPage() {
                     <Input type="password" className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} required />
                  </div>
                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Rol / Permisos</label>
+                    <label className="text-xs font-bold uppercase ml-1 opacity-60">Cargo / Permisos</label>
                     <Select value={formData.role} onValueChange={v => setFormData({...formData, role: v})}>
                        <SelectTrigger className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
                       <SelectContent className="bg-white dark:bg-zinc-900">

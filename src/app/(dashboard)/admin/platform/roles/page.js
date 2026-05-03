@@ -101,9 +101,8 @@ export default function RolesPage() {
     <AdminLayout>
       <div className="space-y-8 pb-12 animate-in fade-in duration-500">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Roles y Permisos</h1>
-            <p className="text-muted-foreground mt-1 text-sm italic">Defina os níveis de acesso dinâmicos para a equipe SaaS.</p>
+          <div>            <h1 className="text-3xl font-extrabold tracking-tight">Roles y Permisos</h1>
+            <p className="text-muted-foreground mt-1 text-sm italic">Defina los niveles de acceso dinámicos para el equipo SaaS.</p>
           </div>
           <Button onClick={() => handleEdit()} className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-lg shadow-red-500/20 rounded-xl px-6 h-12 font-bold">
             <Plus size={18} /> Crear Nuevo Cargo
@@ -136,14 +135,14 @@ export default function RolesPage() {
                  </div>
                  
                  <h3 className="text-xl font-black mb-1">{role.name}</h3>
-                 <p className="text-sm font-medium opacity-50 mb-6 line-clamp-2">{role.description || 'Sem descrição.'}</p>
+                 <p className="text-sm font-medium opacity-50 mb-6 line-clamp-2">{role.description || 'Sin descripción.'}</p>
                  
                  <div className="flex flex-wrap gap-2 mb-8 flex-1">
                     {role.Permissions?.slice(0, 5).map(p => (
-                      <Badge key={p.id} className="bg-gray-50 dark:bg-white/5 border-none text-[10px] uppercase text-foreground/70">{p.name}</Badge>
+                       <Badge key={p.id} className="bg-gray-50 dark:bg-white/5 border-none text-[10px] uppercase text-foreground/70">{p.name}</Badge>
                     ))}
                     {role.Permissions?.length > 5 && (
-                      <Badge className="bg-gray-50 dark:bg-white/5 border-none text-[10px] uppercase text-foreground/70">+{role.Permissions.length - 5} mais</Badge>
+                       <Badge className="bg-gray-50 dark:bg-white/5 border-none text-[10px] uppercase text-foreground/70">+{role.Permissions.length - 5} más</Badge>
                     )}
                  </div>
  
@@ -167,18 +166,18 @@ export default function RolesPage() {
                <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-2">
                      <label className="text-xs font-bold uppercase ml-1 opacity-60 tracking-widest">Nombre del Cargo</label>
-                     <Input placeholder="Ex: Suporte Nível 1" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" />
+                     <Input placeholder="Ex: Soporte Nivel 1" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" />
                   </div>
                   <div className="space-y-2">
-                     <label className="text-xs font-bold uppercase ml-1 opacity-60 tracking-widest">Descrição</label>
-                     <Input placeholder="Breve descrição das responsabilidades" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" />
+                     <label className="text-xs font-bold uppercase ml-1 opacity-60 tracking-widest">Descripción</label>
+                     <Input placeholder="Breve descripción de las responsabilidades" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold" />
                   </div>
                </div>
 
                <div className="space-y-8">
                   <h3 className="text-sm font-black flex items-center gap-2 text-[#df0024]">
                     <ShieldAlert size={18} />
-                    MATRIZ DE PERMISSÕES
+                    MATRIZ DE PERMISOS
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
@@ -198,10 +197,8 @@ export default function RolesPage() {
                                   </div>
                                   <Checkbox 
                                     checked={formData.permissionIds.includes(p.id)} 
-                                    onCheckedChange={() => togglePermission(p.id)}
-                                    className="rounded-lg size-6 border-2 border-white/20 data-[state=checked]:bg-[#df0024] data-[state=checked]:border-[#df0024]"
-                                    // Prevenir duplo clique se o checkbox for clicado diretamente
-                                    onClick={(e) => e.stopPropagation()}
+                                    className="rounded-lg size-6 border-2 border-white/20 data-[state=checked]:bg-[#df0024] data-[state=checked]:border-[#df0024] pointer-events-none"
+                                    // Eliminado onCheckedChange para evitar loop infinito com o onClick da div pai
                                   />
                                </div>
                              ))}
