@@ -18,25 +18,37 @@ import EmptyState from '@/components/ui/EmptyState';
 export default function TeamPage() {
   const [loading, setLoading] = useState(true);
   const [team, setTeam] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
-  const initialForm = { name: '', email: '', password: '', role: 'admin_support' };
+  const initialForm = { name: '', email: '', password: '', role: '' };
   const [formData, setFormData] = useState(initialForm);
 
-  useEffect(() => {
-    async function fetchTeam() {
-      try {
-        const res = await api.get('/admin/settings/team');
-        setTeam(res.data.data.team);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [teamRes, rolesRes] = await Promise.all([
+        api.get('/admin/settings/team'),
+        api.get('/admin/roles')
+      ]);
+      setTeam(teamRes.data.data.team);
+      setRoles(rolesRes.data.data.roles);
+      
+      // Set default role for form if roles exist
+      if (rolesRes.data.data.roles.length > 0) {
+        setFormData(prev => ({ ...prev, role: rolesRes.data.data.roles[0].name }));
       }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
-    fetchTeam();
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const handleCreate = async (e) => {
@@ -181,9 +193,9 @@ export default function TeamPage() {
                     <Select value={formData.role} onValueChange={v => setFormData({...formData, role: v})}>
                        <SelectTrigger className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 h-12 rounded-2xl font-bold"><SelectValue /></SelectTrigger>
                       <SelectContent className="bg-white dark:bg-zinc-900">
-                         <SelectItem value="superadmin">Super Admin (Total)</SelectItem>
-                         <SelectItem value="admin_support">Soporte Técnico</SelectItem>
-                         <SelectItem value="admin_finance">Financiero</SelectItem>
+                        {roles.map(role => (
+                          <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
+                        ))}
                       </SelectContent>
                    </Select>
                 </div>
