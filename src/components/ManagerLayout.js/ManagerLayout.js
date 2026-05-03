@@ -21,8 +21,8 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-import OnboardingWizard from './Onboarding/OnboardingWizard';
-import { RestaurantProvider } from '../context/RestaurantContext';
+import OnboardingWizard from '../Onboarding/OnboardingWizard';
+import { RestaurantProvider } from '../../context/RestaurantContext';
 import { formatAssetUrl } from '@/lib/utils';
 
 const BASE_IMG_URL = 'https://geral-ordengoapi.r954jc.easypanel.host';
