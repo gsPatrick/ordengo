@@ -145,7 +145,9 @@ export function AppSidebar({ mode = "admin", isCollapsed: externalCollapsed, onC
   );
 
   const NavItem = ({ item, collapsed }) => {
-    const isActive = pathname === item.path || pathname.startsWith(item.path + "/");
+    const hasExactMatch = menuGroups.some(group => group.items.some(i => i.path === pathname));
+    const isActive = hasExactMatch ? pathname === item.path : pathname.startsWith(item.path);
+
     return (
       <Link 
         href={item.path} 
