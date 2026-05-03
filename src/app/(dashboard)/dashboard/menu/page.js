@@ -352,9 +352,20 @@ export default function MenuPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
               <input type="text" placeholder="Buscar produto..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent outline-none" />
             </div>
-            <button onClick={() => handleOpenModal('product')} className="flex items-center gap-2 bg-[var(--primary)] text-white px-5 py-2.5 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-100 font-medium">
-              <Plus size={20} /> Novo Produto
-            </button>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => handleOpenModal('product', { isPizza: true })} 
+                className="flex items-center gap-2 bg-orange-600 text-white px-5 py-2.5 rounded-lg hover:bg-orange-700 transition-all shadow-md shadow-orange-100 font-medium"
+              >
+                🍕 Nueva Pizza
+              </button>
+              <button 
+                onClick={() => handleOpenModal('product')} 
+                className="flex items-center gap-2 bg-[var(--primary)] text-white px-5 py-2.5 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-100 font-medium"
+              >
+                <Plus size={20} /> Novo Produto
+              </button>
+            </div>
           </div>
 
           {loading ? (

@@ -66,26 +66,33 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
       const pName = product.name || {};
       const pDesc = product.description || {};
 
-      setFormData({
+      setFormData(prev => ({
+        ...prev,
         id: product.id,
-        name: { pt: pName.pt || '', en: pName.en || '', es: pName.es || '', de: pName.de || '', it: pName.it || '', fr: pName.fr || '' },
-        description: { pt: pDesc.pt || '', en: pDesc.en || '', es: pDesc.es || '', de: pDesc.de || '', it: pDesc.it || '', fr: pDesc.fr || '' },
-        price: product.price,
-        categoryId: product.categoryId,
+        name: { 
+          pt: pName.pt || '', en: pName.en || '', es: pName.es || '', 
+          de: pName.de || '', it: pName.it || '', fr: pName.fr || '' 
+        },
+        description: { 
+          pt: pDesc.pt || '', en: pDesc.en || '', es: pDesc.es || '', 
+          de: pDesc.de || '', it: pDesc.it || '', fr: pDesc.fr || '' 
+        },
+        price: product.price || '',
+        categoryId: product.categoryId || '',
         interfaceType: product.details?.interfaceType || 'standard',
         previewUrl: product.imageUrl ? `${BASE_IMG_URL}${product.imageUrl}` : null,
         isOffer: product.isOffer || false,
         isHighlight: product.isHighlight || false,
-        hasVariants: product.hasVariants || false,
+        hasVariants: product.hasVariants || (product.variants?.length > 0) || false,
         variants: product.variants?.map(v => ({
           ...v,
           name: { pt: v.name?.pt || '', en: v.name?.en || '', es: v.name?.es || '', de: v.name?.de || '', it: v.name?.it || '', fr: v.name?.fr || '' }
         })) || [],
         modifierGroupIds: product.modifierGroups?.map(g => g.id) || [],
         allergens: product.details?.allergens || [],
-        isPizza: product.details?.isPizza || false,
-        pizzaConfig: product.details?.pizzaConfig || { allowHalf: false, priceCalc: 'most_expensive' }
-      });
+        isPizza: product.isPizza !== undefined ? product.isPizza : (product.details?.isPizza || false),
+        pizzaConfig: product.details?.pizzaConfig || product.pizzaConfig || { allowHalf: false, priceCalc: 'most_expensive' }
+      }));
 
       // Setup Galeria Existente
       if (product.gallery && Array.isArray(product.gallery)) {
@@ -95,7 +102,7 @@ export default function ProductForm({ product, categories, modifierGroups, onClo
             url: `${BASE_IMG_URL}${url}`,
             type: url.endsWith('.mp4') || url.endsWith('.webm') ? 'video' : (url.endsWith('.gif') ? 'gif' : 'image'),
             isNew: false,
-            originalUrl: url // Para enviar de volta o que foi mantido
+            originalUrl: url
           }))
         }));
       }

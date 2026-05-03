@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import api from '@/lib/api';
+import ManagerLayout from '@/components/ManagerLayout.js/ManagerLayout';
 
 export default function TicketsPage() {
   const [tickets, setTickets] = useState([]);
@@ -78,7 +79,8 @@ export default function TicketsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto h-[calc(100vh-140px)] flex gap-4 animate-in fade-in duration-700">
+    <ManagerLayout>
+      <div className="max-w-7xl mx-auto h-[calc(100vh-140px)] flex gap-4 animate-in fade-in duration-700">
       
       {/* Sidebar de Tickets Compacta */}
       <div className="w-[320px] flex flex-col gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-4">
@@ -265,5 +267,6 @@ export default function TicketsPage() {
         )}
       </div>
     </div>
+    </ManagerLayout>
   );
 }

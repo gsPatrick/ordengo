@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import api from '@/lib/api';
+import ManagerLayout from '@/components/ManagerLayout.js/ManagerLayout';
 
 export default function ReservationsPage() {
   const [reservations, setReservations] = useState([]);
@@ -61,7 +62,8 @@ export default function ReservationsPage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
+    <ManagerLayout>
+      <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
       {/* Header Compacto */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
@@ -263,5 +265,6 @@ export default function ReservationsPage() {
         </div>
       </div>
     </div>
+    </ManagerLayout>
   );
 }

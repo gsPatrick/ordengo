@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import api from '@/lib/api';
+import ManagerLayout from '@/components/ManagerLayout.js/ManagerLayout';
 
 export default function FinanceHistoryPage() {
   const [sessions, setSessions] = useState([]);
@@ -55,7 +56,8 @@ export default function FinanceHistoryPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
+    <ManagerLayout>
+      <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
       {/* Header Compacto */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
@@ -193,5 +195,6 @@ export default function FinanceHistoryPage() {
         </div>
       </div>
     </div>
+    </ManagerLayout>
   );
 }

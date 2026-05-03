@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import ManagerLayout from '@/components/ManagerLayout.js/ManagerLayout';
 import api from '@/lib/api';
 
 export default function TeamManagementPage() {
@@ -43,7 +44,8 @@ export default function TeamManagementPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
+    <ManagerLayout>
+      <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
       {/* Header Compacto */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
@@ -213,5 +215,6 @@ export default function TeamManagementPage() {
         </div>
       </div>
     </div>
+    </ManagerLayout>
   );
 }
