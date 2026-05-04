@@ -30,6 +30,9 @@ export default function ReservationsPage() {
     status: 'confirmed'
   });
 
+  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
   useEffect(() => {
     fetchReservations();
     fetchTables();
@@ -70,10 +73,24 @@ export default function ReservationsPage() {
       
       setIsModalOpen(false);
       fetchReservations();
+      fetchTables(); // Recarregar mesas para ver o novo status
       setFormData({ customerName: '', date: '', time: '', people: 2, tableId: '', observations: '', status: 'confirmed' });
     } catch (error) {
       console.error(error);
       alert("Error al guardar reserva.");
+    }
+  };
+
+  const handleTableClick = (table) => {
+    if (table.status === 'free') {
+      setFormData({...formData, tableId: table.uuid});
+      setIsModalOpen(true);
+    } else if (table.status === 'reserved') {
+      const res = reservations.find(r => r.tableId === table.uuid && r.status !== 'cancelled');
+      if (res) {
+        setSelectedReservation(res);
+        setIsDetailModalOpen(true);
+      }
     }
   };
 
@@ -107,28 +124,33 @@ export default function ReservationsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-4xl font-black tracking-tight text-gray-900">Control de Salón</h1>
-          <p className="text-sm text-gray-500 font-medium">Gestiona tus mesas y reservas en tiempo real</p>
+          <p className="text-sm text-gray-500 font-medium">Pulsa sobre una mesa libre para iniciar una reserva</p>
         </div>
         
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-xl shadow-red-100 h-12 px-8 rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 uppercase tracking-wider text-xs">
-              <Plus size={18} />
-              Nueva Reserva Manual
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-4">
+           <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3">
+              <div className="size-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center font-black text-xs">
+                {tables.filter(t => t.status === 'free').length}
+              </div>
+              <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Mesas Libres</span>
+           </div>
+        </div>
+      </div>
+
+      {/* MODAL DE CREACIÓN (PASO A PASO) */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="sm:max-w-[450px] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
             <div className="bg-[#df0024] p-6 text-white">
               <DialogTitle className="text-xl font-black flex items-center gap-2 uppercase tracking-tight">
                 <Calendar className="text-white" size={20} />
-                Agendar Reserva
+                Nueva Reserva
               </DialogTitle>
-              <p className="text-xs text-red-100 mt-1 font-medium opacity-80">Completa los datos para bloquear la mesa seleccionada.</p>
+              <p className="text-xs text-red-100 mt-1 font-medium opacity-80">Mesa #{tables.find(t => t.uuid === formData.tableId)?.number} seleccionada</p>
             </div>
             
             <form onSubmit={handleSubmit} className="p-8 space-y-5 bg-white">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nombre del Cliente</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">¿A nombre de quién?</label>
                 <Input 
                   required
                   placeholder="Ej: Alessandro Volpi" 
@@ -161,9 +183,8 @@ export default function ReservationsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Personas</label>
+              <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Cantidad de Personas</label>
                   <Input 
                     type="number" 
                     min="1"
@@ -171,42 +192,92 @@ export default function ReservationsPage() {
                     onChange={e => setFormData({...formData, people: e.target.value})}
                     className="rounded-xl border-gray-100 h-11 bg-gray-50/50 font-bold"
                   />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mesa Asignada</label>
-                  <select 
-                    required
-                    value={formData.tableId}
-                    onChange={e => setFormData({...formData, tableId: e.target.value})}
-                    className="w-full h-11 rounded-xl border border-gray-100 bg-gray-50/50 px-4 text-xs font-bold outline-none focus:ring-2 ring-red-50 cursor-pointer"
-                  >
-                    <option value="">Seleccionar mesa...</option>
-                    {tables.map(table => (
-                      <option key={table.uuid} value={table.uuid}>
-                        Mesa {table.number} ({getStatusLabel(table.status)})
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Notas Especiales</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Observaciones</label>
                 <textarea 
                   className="w-full min-h-[80px] rounded-xl border border-gray-100 p-4 text-xs bg-gray-50/50 outline-none focus:ring-2 ring-red-50 font-medium"
-                  placeholder="Ej: Cumpleaños, terraza, alergias..."
+                  placeholder="Ej: Alergias, cumpleaños, etc..."
                   value={formData.observations}
                   onChange={e => setFormData({...formData, observations: e.target.value})}
                 />
               </div>
 
               <Button type="submit" className="w-full bg-[#df0024] hover:bg-black text-white rounded-xl h-14 font-black shadow-lg mt-2 uppercase tracking-widest text-xs transition-all">
-                Confirmar y Bloquear Mesa
+                Finalizar Reserva
               </Button>
             </form>
           </DialogContent>
-        </Dialog>
-      </div>
+      </Dialog>
+
+      {/* MODAL DE DETALLES (MESA RESERVADA) */}
+      <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
+          <DialogContent className="sm:max-w-[400px] rounded-[2.5rem] border-none shadow-2xl p-0 overflow-hidden">
+            {selectedReservation && (
+              <div className="bg-white">
+                <div className="bg-amber-500 p-8 text-white flex flex-col items-center text-center">
+                  <div className="size-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
+                    <Calendar size={32} />
+                  </div>
+                  <h3 className="text-2xl font-black uppercase tracking-tight">Mesa #{selectedReservation.Table?.number}</h3>
+                  <p className="text-xs font-bold text-amber-100 uppercase tracking-widest mt-1 opacity-80">Reserva Confirmada</p>
+                </div>
+
+                <div className="p-8 space-y-6">
+                  <div className="flex items-center gap-4 border-b border-gray-50 pb-6">
+                    <div className="size-12 rounded-2xl bg-gray-900 flex items-center justify-center text-white font-black text-xl">
+                      {selectedReservation.customerName?.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Huésped</p>
+                      <h4 className="text-lg font-black text-gray-900 leading-tight">{selectedReservation.customerName}</h4>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Horario</p>
+                      <div className="flex items-center gap-2 text-gray-900 font-black">
+                        <Clock size={16} className="text-amber-500" />
+                        {selectedReservation.time} hs
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Personas</p>
+                      <div className="flex items-center gap-2 text-gray-900 font-black">
+                        <Users size={16} className="text-amber-500" />
+                        {selectedReservation.people} pax
+                      </div>
+                    </div>
+                  </div>
+
+                  {selectedReservation.observations && (
+                    <div className="bg-gray-50 p-4 rounded-2xl">
+                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Notas</p>
+                      <p className="text-xs text-gray-600 font-medium italic">"{selectedReservation.observations}"</p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3">
+                    <Button 
+                      onClick={() => setIsDetailModalOpen(false)}
+                      className="flex-1 bg-gray-900 hover:bg-black text-white rounded-2xl h-12 font-black text-xs uppercase tracking-widest shadow-lg"
+                    >
+                      Cerrar
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="size-12 rounded-2xl border-red-100 text-[#df0024] hover:bg-red-50 flex items-center justify-center p-0"
+                    >
+                      <Trash2 size={18} />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+      </Dialog>
 
       {/* --- SECCIÓN 1: MAPA DE MESAS --- */}
       <div className="space-y-4">
@@ -234,16 +305,11 @@ export default function ReservationsPage() {
             return (
               <div 
                 key={table.id}
-                onClick={() => {
-                  if (table.status === 'free') {
-                    setFormData({...formData, tableId: table.uuid});
-                    setIsModalOpen(true);
-                  }
-                }}
+                onClick={() => handleTableClick(table)}
                 className={`relative group p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer overflow-hidden
                   ${table.status === 'free' ? 'bg-white border-gray-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5' : 
                     table.status === 'occupied' ? 'bg-red-50/30 border-red-100 shadow-sm' : 
-                    'bg-amber-50/30 border-amber-100 shadow-sm'}`}
+                    'bg-amber-50/30 border-amber-100 shadow-lg shadow-amber-900/5 hover:scale-105 active:scale-95'}`}
               >
                 {/* Indicador de Status */}
                 <div className={`absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 rounded-full opacity-10 transition-transform group-hover:scale-150 ${getStatusColor(table.status)}`} />
@@ -252,7 +318,7 @@ export default function ReservationsPage() {
                   <div className={`size-12 rounded-2xl flex items-center justify-center transition-transform group-hover:-translate-y-1 ${
                     table.status === 'free' ? 'bg-emerald-50 text-emerald-600' : 
                     table.status === 'occupied' ? 'bg-red-100 text-red-600' : 
-                    'bg-amber-100 text-amber-600'
+                    'bg-amber-500 text-white shadow-lg'
                   }`}>
                     <Users size={20} />
                   </div>
@@ -269,9 +335,9 @@ export default function ReservationsPage() {
                   </div>
 
                   {table.status === 'reserved' && tableReservations.length > 0 && (
-                    <div className="pt-2 border-t border-amber-100 w-full">
-                      <p className="text-[10px] font-bold text-amber-900 truncate">{tableReservations[0].customerName}</p>
-                      <p className="text-[9px] text-amber-700 font-medium">{tableReservations[0].time} hs</p>
+                    <div className="pt-2 border-t border-amber-200/50 w-full">
+                      <p className="text-[10px] font-black text-amber-900 truncate">{tableReservations[0].customerName}</p>
+                      <p className="text-[9px] text-amber-700 font-bold">{tableReservations[0].time} hs</p>
                     </div>
                   )}
 
