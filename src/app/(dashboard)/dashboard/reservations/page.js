@@ -30,8 +30,9 @@ export default function ReservationsPage() {
     status: 'confirmed'
   });
 
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [activeTab, setActiveTab] = useState('panorama');
+  const [isTableDetailOpen, setIsTableDetailOpen] = useState(false);
 
   useEffect(() => {
     fetchReservations();
@@ -62,18 +63,16 @@ export default function ReservationsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Formatar data/hora para o backend
       const combinedDateTime = new Date(`${formData.date}T${formData.time}`);
-      
       await api.post('/reservations', {
         ...formData,
         dateTime: combinedDateTime,
         paxCount: parseInt(formData.people)
       });
-      
       setIsModalOpen(false);
+      setIsTableDetailOpen(false);
       fetchReservations();
-      fetchTables(); // Recarregar mesas para ver o novo status
+      fetchTables();
       setFormData({ customerName: '', date: '', time: '', people: 2, tableId: '', observations: '', status: 'confirmed' });
     } catch (error) {
       console.error(error);
@@ -82,16 +81,9 @@ export default function ReservationsPage() {
   };
 
   const handleTableClick = (table) => {
-    if (table.status === 'free') {
-      setFormData({...formData, tableId: table.uuid});
-      setIsModalOpen(true);
-    } else if (table.status === 'reserved') {
-      const res = reservations.find(r => r.tableId === table.uuid && r.status !== 'cancelled');
-      if (res) {
-        setSelectedReservation(res);
-        setIsDetailModalOpen(true);
-      }
-    }
+    setSelectedTable(table);
+    setActiveTab('panorama');
+    setIsTableDetailOpen(true);
   };
 
   const filteredReservations = reservations.filter(r => 
@@ -117,6 +109,35 @@ export default function ReservationsPage() {
     }
   };
 
+  // Lógica de Calendário para a Mesa
+  const getTableCalendarDays = () => {
+    const days = [];
+    const today = new Date();
+    for (let i = -3; i <= 10; i++) {
+      const date = new Date();
+      date.setDate(today.getDate() + i);
+      days.push(date);
+    }
+    return days;
+  };
+
+  const getDayStatus = (date, tableUuid) => {
+    const dateStr = date.toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().split('T')[0];
+    
+    const tableRes = reservations.filter(r => 
+      r.tableId === tableUuid && 
+      new Date(r.date).toISOString().split('T')[0] === dateStr &&
+      r.status !== 'cancelled'
+    );
+
+    if (tableRes.length > 0) {
+      if (dateStr < todayStr) return 'past';
+      return 'reserved';
+    }
+    return 'free';
+  };
+
   return (
     <ManagerLayout>
       <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700 pb-12">
@@ -124,7 +145,7 @@ export default function ReservationsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-4xl font-black tracking-tight text-gray-900">Control de Salón</h1>
-          <p className="text-sm text-gray-500 font-medium">Pulsa sobre una mesa libre para iniciar una reserva</p>
+          <p className="text-sm text-gray-500 font-medium">Gestiona tu restaurante con inteligencia visual</p>
         </div>
         
         <div className="flex gap-4">
@@ -132,20 +153,157 @@ export default function ReservationsPage() {
               <div className="size-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center font-black text-xs">
                 {tables.filter(t => t.status === 'free').length}
               </div>
-              <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Mesas Libres</span>
+              <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Mesas Disponibles</span>
            </div>
         </div>
       </div>
 
+      {/* MODAL DETALLE DE MESA (TABS) */}
+      <Dialog open={isTableDetailOpen} onOpenChange={setIsTableDetailOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden">
+          {selectedTable && (
+            <div className="bg-white">
+              <div className={`p-8 text-white flex flex-col items-center relative overflow-hidden ${getStatusColor(selectedTable.status)}`}>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
+                <div className="size-20 bg-white/20 rounded-[2rem] flex items-center justify-center mb-4 backdrop-blur-md shadow-xl border border-white/20">
+                  <Users size={38} className="text-white" />
+                </div>
+                <h3 className="text-3xl font-black uppercase tracking-tighter">Mesa #{selectedTable.number}</h3>
+                <div className="mt-2 bg-white/20 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
+                  {getStatusLabel(selectedTable.status)}
+                </div>
+              </div>
+
+              {/* TABS SELECTOR */}
+              <div className="flex bg-gray-50 p-1 mx-8 -mt-6 rounded-2xl shadow-lg relative z-20">
+                <button 
+                  onClick={() => setActiveTab('panorama')}
+                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'panorama' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'}`}
+                >
+                  Panorama
+                </button>
+                <button 
+                  onClick={() => setActiveTab('calendar')}
+                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'calendar' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'}`}
+                >
+                  Agenda
+                </button>
+              </div>
+
+              <div className="p-8">
+                {activeTab === 'panorama' ? (
+                  <div className="space-y-6">
+                    {selectedTable.status === 'free' ? (
+                      <div className="text-center py-6 space-y-4">
+                        <div className="bg-emerald-50 p-6 rounded-[2rem] border border-emerald-100">
+                          <CheckCircle2 size={40} className="mx-auto text-emerald-500 mb-2" />
+                          <p className="text-xs font-bold text-gray-600">Esta mesa está lista para recibir comensales.</p>
+                        </div>
+                        <Button 
+                          onClick={() => {
+                            setFormData({...formData, tableId: selectedTable.uuid});
+                            setIsModalOpen(true);
+                          }}
+                          className="w-full bg-[#df0024] hover:bg-black text-white h-14 rounded-2xl font-black text-xs uppercase tracking-widest"
+                        >
+                          Reservar Mesa Ahora
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {reservations.find(r => r.tableId === selectedTable.uuid && r.status !== 'cancelled') ? (
+                          <div className="bg-gray-50 p-6 rounded-[2.5rem] border border-gray-100 relative">
+                             <div className="flex items-center gap-4 mb-4">
+                                <div className="size-12 rounded-2xl bg-gray-900 flex items-center justify-center text-white font-black text-lg">
+                                   {reservations.find(r => r.tableId === selectedTable.uuid)?.customerName?.charAt(0)}
+                                </div>
+                                <div>
+                                   <p className="text-[10px] font-black text-gray-400 uppercase">Cliente Actual</p>
+                                   <h4 className="font-black text-gray-900 text-lg leading-none">
+                                      {reservations.find(r => r.tableId === selectedTable.uuid)?.customerName}
+                                   </h4>
+                                </div>
+                             </div>
+                             <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                                   <p className="text-[9px] font-black text-gray-400 uppercase">Horario</p>
+                                   <p className="font-black text-gray-800">{reservations.find(r => r.tableId === selectedTable.uuid)?.time} hs</p>
+                                </div>
+                                <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                                   <p className="text-[9px] font-black text-gray-400 uppercase">Personas</p>
+                                   <p className="font-black text-gray-800">{reservations.find(r => r.tableId === selectedTable.uuid)?.people} pax</p>
+                                </div>
+                             </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-4">
+                             <p className="text-xs font-bold text-gray-400">Ocupada por cliente de paso.</p>
+                          </div>
+                        )}
+                        <Button className="w-full bg-gray-900 hover:bg-black text-white h-14 rounded-2xl font-black text-xs uppercase tracking-widest">
+                           Controlar Mesa
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                    <div className="flex items-center justify-between mb-2">
+                       <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Disponibilidad Próximos 14 días</h4>
+                    </div>
+                    
+                    <div className="grid grid-cols-7 gap-2">
+                       {getTableCalendarDays().map((day, idx) => {
+                          const status = getDayStatus(day, selectedTable.uuid);
+                          return (
+                             <div 
+                                key={idx} 
+                                className={`flex flex-col items-center p-2 rounded-xl border transition-all ${
+                                   status === 'reserved' ? 'bg-amber-50 border-amber-200' : 
+                                   status === 'past' ? 'bg-gray-50 border-gray-100 grayscale' : 
+                                   'bg-white border-gray-50'
+                                }`}
+                             >
+                                <span className="text-[8px] font-black text-gray-400 uppercase">{day.toLocaleDateString('es-ES', { weekday: 'short' }).charAt(0)}</span>
+                                <span className={`text-[11px] font-black ${status === 'reserved' ? 'text-amber-600' : 'text-gray-900'}`}>{day.getDate()}</span>
+                                <div className={`size-1.5 rounded-full mt-1 ${
+                                   status === 'reserved' ? 'bg-amber-500 animate-pulse' : 
+                                   status === 'past' ? 'bg-gray-300' : 
+                                   'bg-emerald-500'
+                                }`} />
+                             </div>
+                          );
+                       })}
+                    </div>
+
+                    <div className="space-y-3 mt-4 overflow-y-auto max-h-[150px] pr-2">
+                       {reservations.filter(r => r.tableId === selectedTable.uuid).map((res, i) => (
+                          <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+                             <div className="flex items-center gap-3">
+                                <div className={`size-2 rounded-full ${new Date(res.date) < new Date() ? 'bg-gray-300' : 'bg-amber-500'}`} />
+                                <p className="text-[10px] font-black text-gray-800">{res.customerName}</p>
+                             </div>
+                             <p className="text-[9px] font-bold text-gray-400">{new Date(res.date).toLocaleDateString()} - {res.time}hs</p>
+                          </div>
+                       ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* MODAL DE CREACIÓN (PASO A PASO) */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="sm:max-w-[450px] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
+          <DialogContent className="sm:max-w-[450px] rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden">
             <div className="bg-[#df0024] p-6 text-white">
               <DialogTitle className="text-xl font-black flex items-center gap-2 uppercase tracking-tight">
                 <Calendar className="text-white" size={20} />
                 Nueva Reserva
               </DialogTitle>
-              <p className="text-xs text-red-100 mt-1 font-medium opacity-80">Mesa #{tables.find(t => t.uuid === formData.tableId)?.number} seleccionada</p>
+              <p className="text-xs text-red-100 mt-1 font-medium opacity-80">Configurando Mesa #{tables.find(t => t.uuid === formData.tableId)?.number}</p>
             </div>
             
             <form onSubmit={handleSubmit} className="p-8 space-y-5 bg-white">
@@ -211,74 +369,6 @@ export default function ReservationsPage() {
           </DialogContent>
       </Dialog>
 
-      {/* MODAL DE DETALLES (MESA RESERVADA) */}
-      <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
-          <DialogContent className="sm:max-w-[400px] rounded-[2.5rem] border-none shadow-2xl p-0 overflow-hidden">
-            {selectedReservation && (
-              <div className="bg-white">
-                <div className="bg-amber-500 p-8 text-white flex flex-col items-center text-center">
-                  <div className="size-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
-                    <Calendar size={32} />
-                  </div>
-                  <h3 className="text-2xl font-black uppercase tracking-tight">Mesa #{selectedReservation.Table?.number}</h3>
-                  <p className="text-xs font-bold text-amber-100 uppercase tracking-widest mt-1 opacity-80">Reserva Confirmada</p>
-                </div>
-
-                <div className="p-8 space-y-6">
-                  <div className="flex items-center gap-4 border-b border-gray-50 pb-6">
-                    <div className="size-12 rounded-2xl bg-gray-900 flex items-center justify-center text-white font-black text-xl">
-                      {selectedReservation.customerName?.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Huésped</p>
-                      <h4 className="text-lg font-black text-gray-900 leading-tight">{selectedReservation.customerName}</h4>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Horario</p>
-                      <div className="flex items-center gap-2 text-gray-900 font-black">
-                        <Clock size={16} className="text-amber-500" />
-                        {selectedReservation.time} hs
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Personas</p>
-                      <div className="flex items-center gap-2 text-gray-900 font-black">
-                        <Users size={16} className="text-amber-500" />
-                        {selectedReservation.people} pax
-                      </div>
-                    </div>
-                  </div>
-
-                  {selectedReservation.observations && (
-                    <div className="bg-gray-50 p-4 rounded-2xl">
-                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Notas</p>
-                      <p className="text-xs text-gray-600 font-medium italic">"{selectedReservation.observations}"</p>
-                    </div>
-                  )}
-
-                  <div className="flex gap-3">
-                    <Button 
-                      onClick={() => setIsDetailModalOpen(false)}
-                      className="flex-1 bg-gray-900 hover:bg-black text-white rounded-2xl h-12 font-black text-xs uppercase tracking-widest shadow-lg"
-                    >
-                      Cerrar
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="size-12 rounded-2xl border-red-100 text-[#df0024] hover:bg-red-50 flex items-center justify-center p-0"
-                    >
-                      <Trash2 size={18} />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-      </Dialog>
-
       {/* --- SECCIÓN 1: MAPA DE MESAS --- */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -299,51 +389,52 @@ export default function ReservationsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {tables.map((table) => {
             const tableReservations = reservations.filter(r => r.tableId === table.uuid && r.status !== 'cancelled');
             return (
               <div 
                 key={table.id}
                 onClick={() => handleTableClick(table)}
-                className={`relative group p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer overflow-hidden
-                  ${table.status === 'free' ? 'bg-white border-gray-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5' : 
-                    table.status === 'occupied' ? 'bg-red-50/30 border-red-100 shadow-sm' : 
-                    'bg-amber-50/30 border-amber-100 shadow-lg shadow-amber-900/5 hover:scale-105 active:scale-95'}`}
+                className={`relative group p-6 rounded-[2.5rem] border transition-all duration-500 cursor-pointer overflow-hidden h-[180px] flex flex-col justify-center
+                  ${table.status === 'free' ? 'bg-white border-gray-100 hover:border-emerald-200 hover:shadow-2xl hover:shadow-emerald-900/10 hover:-translate-y-1' : 
+                    table.status === 'occupied' ? 'bg-red-50/40 border-red-100 hover:border-red-300 hover:shadow-2xl hover:shadow-red-900/10 hover:-translate-y-1' : 
+                    'bg-amber-50/40 border-amber-100 hover:border-amber-300 shadow-lg hover:-translate-y-1'}`}
               >
-                {/* Indicador de Status */}
-                <div className={`absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 rounded-full opacity-10 transition-transform group-hover:scale-150 ${getStatusColor(table.status)}`} />
+                {/* Efeito Visual de Status */}
+                <div className={`absolute top-0 right-0 w-24 h-24 -mr-12 -mt-12 rounded-full opacity-10 transition-transform duration-700 group-hover:scale-[2.5] ${getStatusColor(table.status)}`} />
                 
                 <div className="relative z-10 flex flex-col items-center text-center space-y-3">
-                  <div className={`size-12 rounded-2xl flex items-center justify-center transition-transform group-hover:-translate-y-1 ${
+                  <div className={`size-14 rounded-[1.5rem] flex items-center justify-center transition-all duration-500 group-hover:rotate-6 ${
                     table.status === 'free' ? 'bg-emerald-50 text-emerald-600' : 
                     table.status === 'occupied' ? 'bg-red-100 text-red-600' : 
-                    'bg-amber-500 text-white shadow-lg'
+                    'bg-amber-500 text-white shadow-xl'
                   }`}>
-                    <Users size={20} />
+                    <Users size={24} />
                   </div>
                   
                   <div>
-                    <h4 className="text-xl font-black text-gray-900 leading-none">#{table.number}</h4>
-                    <p className={`text-[9px] font-black uppercase tracking-widest mt-1.5 ${
-                      table.status === 'free' ? 'text-emerald-600' : 
-                      table.status === 'occupied' ? 'text-red-600' : 
+                    <h4 className="text-2xl font-black text-gray-900 tracking-tighter">#{table.number}</h4>
+                    <p className={`text-[10px] font-black uppercase tracking-widest mt-1 ${
+                      table.status === 'free' ? 'text-emerald-500' : 
+                      table.status === 'occupied' ? 'text-red-500' : 
                       'text-amber-600'
                     }`}>
                       {getStatusLabel(table.status)}
                     </p>
                   </div>
 
+                  {/* Botão Flutuante no Hover */}
+                  <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-[2.5rem]">
+                     <div className="bg-gray-900 text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-2xl scale-90 group-hover:scale-100 transition-transform">
+                        Ver Detalles
+                     </div>
+                  </div>
+
                   {table.status === 'reserved' && tableReservations.length > 0 && (
-                    <div className="pt-2 border-t border-amber-200/50 w-full">
+                    <div className="pt-2 border-t border-amber-200/50 w-full group-hover:opacity-0 transition-opacity">
                       <p className="text-[10px] font-black text-amber-900 truncate">{tableReservations[0].customerName}</p>
                       <p className="text-[9px] text-amber-700 font-bold">{tableReservations[0].time} hs</p>
-                    </div>
-                  )}
-
-                  {table.status === 'free' && (
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity pt-2">
-                       <span className="text-[9px] font-black text-[#df0024] uppercase border-b border-[#df0024]/20 pb-0.5">Reservar Ahora</span>
                     </div>
                   )}
                 </div>
