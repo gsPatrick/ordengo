@@ -117,64 +117,103 @@ function ManagerLayoutContent({ children }) {
     window.location.reload();
   };
 
+  // Verificação de permissões do usuário
+  const hasPermission = (permissionSlug) => {
+    if (!user) return false;
+    // Super-gerente raiz (manager padrão do sistema) sempre tem acesso total
+    if (user.role === 'manager' && !user.userRoleId) return true;
+    
+    // Checar permissões dinâmicas do Cargo
+    if (user.userRole && (user.userRole.Permissions || user.userRole.permissions)) {
+      const perms = user.userRole.Permissions || user.userRole.permissions;
+      return perms.some(p => p.slug === permissionSlug);
+    }
+    return false; // Bloqueia se não achar
+  };
+
   const menuItems = [
     {
       name: 'Visión General',
       sub: 'Dashboard',
       icon: LayoutDashboard,
-      path: '/dashboard'
+      path: '/dashboard',
+      permission: 'dashboard_view'
     },
     {
       name: 'Menu (Cardápio)',
       sub: 'Pizzas y Alérgenos',
       icon: UtensilsCrossed,
-      path: '/dashboard/menu'
+      path: '/dashboard/menu',
+      permission: 'menu_view'
     },
     {
       name: 'Reservas',
       sub: 'Lista y Calendario',
       icon: FileText,
-      path: '/dashboard/reservations'
+      path: '/dashboard/reservations',
+      permission: 'tables_view'
     },
     {
       name: 'Ofertas',
       sub: 'Promociones y Ads',
       icon: Megaphone,
-      path: '/dashboard/marketing'
+      path: '/dashboard/marketing',
+      permission: 'marketing_view'
     },
     {
       name: 'Financiero',
       sub: 'Historial de Caja',
       icon: CreditCard,
-      path: '/dashboard/finance'
+      path: '/dashboard/finance',
+      permission: 'finance_view'
     },
     {
       name: 'Tickets',
       sub: 'Soporte OrdenGO',
       icon: ShieldCheck,
-      path: '/dashboard/tickets'
+      path: '/dashboard/tickets',
+      permission: 'settings_view'
     },
     {
       name: 'Personalización',
       sub: 'Apariencia App',
       icon: Palette,
-      path: '/dashboard/appearance'
+      path: '/dashboard/appearance',
+      permission: 'settings_view'
     },
     {
       name: 'Equipe',
       sub: 'Roles y Permisos',
       icon: ChefHat,
-      path: '/dashboard/settings/team'
+      path: '/dashboard/settings/team',
+      permission: 'settings_view'
     },
     {
       name: 'Configuración',
       sub: 'General y Ticket',
       icon: Settings,
-      path: '/dashboard/settings'
+      path: '/dashboard/settings',
+      permission: 'settings_view'
     },
   ];
 
+  // Intercepta rotas não autorizadas se a página carregou
+  useEffect(() => {
+    if (isClient && user) {
+      if (pathname === '/dashboard/unauthorized') return;
+
+      const currentMenu = menuItems.find(item => pathname.startsWith(item.path));
+      // Se tiver menu correspondente e não tiver permissão
+      if (currentMenu && !hasPermission(currentMenu.permission)) {
+        router.replace('/dashboard/unauthorized');
+      }
+    }
+  }, [pathname, isClient, user, router]);
+
   if (!isClient || !user) return null;
+
+  // Filtrar itens do menu visíveis
+  const visibleMenuItems = menuItems.filter(item => hasPermission(item.permission));
 
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans text-gray-900">
@@ -208,7 +247,7 @@ function ManagerLayoutContent({ children }) {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
-          {menuItems.map((item) => {
+          {visibleMenuItems.map((item) => {
             const isActive = pathname === item.path;
             return (
               <Link
