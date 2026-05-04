@@ -385,7 +385,4 @@ export default function ReservationsPage() {
     </div>
     </ManagerLayout>
   );
-}</div>
-    </ManagerLayout>
-  );
 }
