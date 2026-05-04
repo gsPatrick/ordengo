@@ -15,6 +15,7 @@ import ManagerLayout from '@/components/ManagerLayout.js/ManagerLayout';
 
 export default function ReservationsPage() {
   const [reservations, setReservations] = useState([]);
+  const [tables, setTables] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,12 +25,14 @@ export default function ReservationsPage() {
     date: '',
     time: '',
     people: 2,
+    tableId: '',
     observations: '',
     status: 'confirmed'
   });
 
   useEffect(() => {
     fetchReservations();
+    fetchTables();
   }, []);
 
   const fetchReservations = async () => {
@@ -44,13 +47,30 @@ export default function ReservationsPage() {
     }
   };
 
+  const fetchTables = async () => {
+    try {
+      const res = await api.get('/tables');
+      setTables(res.data.data.tables || []);
+    } catch (error) {
+      console.error("Error al cargar mesas:", error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/reservations', formData);
+      // Formatar data/hora para o backend
+      const combinedDateTime = new Date(`${formData.date}T${formData.time}`);
+      
+      await api.post('/reservations', {
+        ...formData,
+        dateTime: combinedDateTime,
+        paxCount: parseInt(formData.people)
+      });
+      
       setIsModalOpen(false);
       fetchReservations();
-      setFormData({ customerName: '', date: '', time: '', people: 2, observations: '', status: 'confirmed' });
+      setFormData({ customerName: '', date: '', time: '', people: 2, tableId: '', observations: '', status: 'confirmed' });
     } catch (error) {
       console.error(error);
       alert("Error al guardar reserva.");
@@ -58,7 +78,8 @@ export default function ReservationsPage() {
   };
 
   const filteredReservations = reservations.filter(r => 
-    r.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
+    r.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    r.Table?.number?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -134,11 +155,19 @@ export default function ReservationsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Zona</label>
-                  <select className="w-full h-11 rounded-xl border border-gray-100 bg-gray-50/50 px-4 text-xs font-bold outline-none focus:ring-2 ring-red-50">
-                    <option>Interior</option>
-                    <option>Terraza</option>
-                    <option>VIP</option>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mesa Asignada</label>
+                  <select 
+                    required
+                    value={formData.tableId}
+                    onChange={e => setFormData({...formData, tableId: e.target.value})}
+                    className="w-full h-11 rounded-xl border border-gray-100 bg-gray-50/50 px-4 text-xs font-bold outline-none focus:ring-2 ring-red-50"
+                  >
+                    <option value="">Seleccionar mesa...</option>
+                    {tables.map(table => (
+                      <option key={table.uuid} value={table.uuid}>
+                        Mesa {table.number} ({table.status === 'occupied' ? 'Ocupada' : 'Libre'})
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -242,9 +271,15 @@ export default function ReservationsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Button variant="ghost" size="sm" className="h-8 rounded-lg border border-gray-100 text-[10px] font-black uppercase hover:bg-gray-50 text-gray-400">
-                      Asignar
-                    </Button>
+                    {res.Table ? (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-900 text-white rounded-lg text-[10px] font-black uppercase tracking-widest shadow-md">
+                        Mesa {res.Table.number}
+                      </div>
+                    ) : (
+                      <Button variant="ghost" size="sm" className="h-8 rounded-lg border border-gray-100 text-[10px] font-black uppercase hover:bg-gray-50 text-gray-400">
+                        Asignar
+                      </Button>
+                    )}
                   </td>
                 </tr>
               )) : (
