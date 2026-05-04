@@ -82,30 +82,48 @@ export default function ReservationsPage() {
     r.Table?.number?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'occupied': return 'bg-red-500';
+      case 'reserved': return 'bg-amber-500';
+      case 'free': return 'bg-emerald-500';
+      default: return 'bg-gray-400';
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'occupied': return 'Ocupada';
+      case 'reserved': return 'Reservada';
+      case 'free': return 'Libre';
+      default: return 'Desconocido';
+    }
+  };
+
   return (
     <ManagerLayout>
-      <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
+      <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700 pb-12">
       {/* Header Compacto */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-gray-900">Agenda de Reservas</h1>
-          <p className="text-sm text-gray-500 font-medium">Gestión inteligente de mesas y disponibilidad</p>
+          <h1 className="text-4xl font-black tracking-tight text-gray-900">Control de Salón</h1>
+          <p className="text-sm text-gray-500 font-medium">Gestiona tus mesas y reservas en tiempo real</p>
         </div>
         
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-xl shadow-red-100 h-11 px-6 rounded-xl font-bold transition-all hover:scale-105 active:scale-95">
+            <Button className="bg-[#df0024] hover:bg-red-700 text-white gap-2 shadow-xl shadow-red-100 h-12 px-8 rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 uppercase tracking-wider text-xs">
               <Plus size={18} />
-              Crear Reserva
+              Nueva Reserva Manual
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[450px] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
-            <div className="bg-gray-900 p-6 text-white">
-              <DialogTitle className="text-xl font-black flex items-center gap-2">
-                <Calendar className="text-red-500" size={20} />
-                Nueva Reserva Manual
+            <div className="bg-[#df0024] p-6 text-white">
+              <DialogTitle className="text-xl font-black flex items-center gap-2 uppercase tracking-tight">
+                <Calendar className="text-white" size={20} />
+                Agendar Reserva
               </DialogTitle>
-              <p className="text-xs text-gray-400 mt-1">Completa los datos para bloquear la mesa.</p>
+              <p className="text-xs text-red-100 mt-1 font-medium opacity-80">Completa los datos para bloquear la mesa seleccionada.</p>
             </div>
             
             <form onSubmit={handleSubmit} className="p-8 space-y-5 bg-white">
@@ -116,7 +134,7 @@ export default function ReservationsPage() {
                   placeholder="Ej: Alessandro Volpi" 
                   value={formData.customerName}
                   onChange={e => setFormData({...formData, customerName: e.target.value})}
-                  className="rounded-xl border-gray-100 h-11 bg-gray-50/50 focus:ring-red-500"
+                  className="rounded-xl border-gray-100 h-11 bg-gray-50/50 focus:ring-red-500 font-bold"
                 />
               </div>
               
@@ -128,7 +146,7 @@ export default function ReservationsPage() {
                     type="date" 
                     value={formData.date}
                     onChange={e => setFormData({...formData, date: e.target.value})}
-                    className="rounded-xl border-gray-100 h-11 bg-gray-50/50"
+                    className="rounded-xl border-gray-100 h-11 bg-gray-50/50 font-bold"
                   />
                 </div>
                 <div className="space-y-2">
@@ -138,20 +156,20 @@ export default function ReservationsPage() {
                     type="time" 
                     value={formData.time}
                     onChange={e => setFormData({...formData, time: e.target.value})}
-                    className="rounded-xl border-gray-100 h-11 bg-gray-50/50"
+                    className="rounded-xl border-gray-100 h-11 bg-gray-50/50 font-bold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Comensales</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Personas</label>
                   <Input 
                     type="number" 
                     min="1"
                     value={formData.people}
                     onChange={e => setFormData({...formData, people: e.target.value})}
-                    className="rounded-xl border-gray-100 h-11 bg-gray-50/50"
+                    className="rounded-xl border-gray-100 h-11 bg-gray-50/50 font-bold"
                   />
                 </div>
                 <div className="space-y-2">
@@ -160,12 +178,12 @@ export default function ReservationsPage() {
                     required
                     value={formData.tableId}
                     onChange={e => setFormData({...formData, tableId: e.target.value})}
-                    className="w-full h-11 rounded-xl border border-gray-100 bg-gray-50/50 px-4 text-xs font-bold outline-none focus:ring-2 ring-red-50"
+                    className="w-full h-11 rounded-xl border border-gray-100 bg-gray-50/50 px-4 text-xs font-bold outline-none focus:ring-2 ring-red-50 cursor-pointer"
                   >
                     <option value="">Seleccionar mesa...</option>
                     {tables.map(table => (
                       <option key={table.uuid} value={table.uuid}>
-                        Mesa {table.number} ({table.status === 'occupied' ? 'Ocupada' : 'Libre'})
+                        Mesa {table.number} ({getStatusLabel(table.status)})
                       </option>
                     ))}
                   </select>
@@ -173,133 +191,201 @@ export default function ReservationsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Observaciones</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Notas Especiales</label>
                 <textarea 
-                  className="w-full min-h-[80px] rounded-xl border border-gray-100 p-4 text-xs bg-gray-50/50 outline-none focus:ring-2 ring-red-50"
-                  placeholder="Ej: Cumpleaños, alergias..."
+                  className="w-full min-h-[80px] rounded-xl border border-gray-100 p-4 text-xs bg-gray-50/50 outline-none focus:ring-2 ring-red-50 font-medium"
+                  placeholder="Ej: Cumpleaños, terraza, alergias..."
                   value={formData.observations}
                   onChange={e => setFormData({...formData, observations: e.target.value})}
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-gray-900 hover:bg-black text-white rounded-xl h-12 font-black shadow-lg mt-2">
-                Confirmar Reserva
+              <Button type="submit" className="w-full bg-[#df0024] hover:bg-black text-white rounded-xl h-14 font-black shadow-lg mt-2 uppercase tracking-widest text-xs transition-all">
+                Confirmar y Bloquear Mesa
               </Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Stats y Buscador Compactos */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <div className="md:col-span-1 bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
-          <div className="size-10 bg-red-50 rounded-xl flex items-center justify-center text-[#df0024] mb-2">
-            <Calendar size={20} />
+      {/* --- SECCIÓN 1: MAPA DE MESAS --- */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400">Mapa de Mesas en Vivo</h2>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2">
+              <div className="size-2 rounded-full bg-emerald-500" />
+              <span className="text-[10px] font-bold text-gray-500 uppercase">Libre</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="size-2 rounded-full bg-red-500" />
+              <span className="text-[10px] font-bold text-gray-500 uppercase">Ocupada</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="size-2 rounded-full bg-amber-500" />
+              <span className="text-[10px] font-bold text-gray-500 uppercase">Reservada</span>
+            </div>
           </div>
-          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Hoy</p>
-          <h3 className="text-2xl font-black text-gray-900">{reservations.length}</h3>
         </div>
-        
-        <div className="md:col-span-5 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center px-4 relative">
-          <Search className="text-gray-300 absolute left-6" size={20} />
-          <Input 
-            placeholder="Buscar por nombre, mesa o fecha..." 
-            className="border-none h-14 bg-transparent focus-visible:ring-0 text-sm font-medium text-gray-700 placeholder:text-gray-300 pl-10 w-full"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-          />
-          <div className="flex gap-2">
-             <Button variant="ghost" className="rounded-lg h-10 px-3 text-gray-400 hover:bg-gray-50 flex items-center gap-2">
-                <Filter size={16} />
-                <span className="text-[10px] font-black uppercase">Filtros</span>
-             </Button>
-          </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {tables.map((table) => {
+            const tableReservations = reservations.filter(r => r.tableId === table.uuid && r.status !== 'cancelled');
+            return (
+              <div 
+                key={table.id}
+                onClick={() => {
+                  if (table.status === 'free') {
+                    setFormData({...formData, tableId: table.uuid});
+                    setIsModalOpen(true);
+                  }
+                }}
+                className={`relative group p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer overflow-hidden
+                  ${table.status === 'free' ? 'bg-white border-gray-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5' : 
+                    table.status === 'occupied' ? 'bg-red-50/30 border-red-100 shadow-sm' : 
+                    'bg-amber-50/30 border-amber-100 shadow-sm'}`}
+              >
+                {/* Indicador de Status */}
+                <div className={`absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 rounded-full opacity-10 transition-transform group-hover:scale-150 ${getStatusColor(table.status)}`} />
+                
+                <div className="relative z-10 flex flex-col items-center text-center space-y-3">
+                  <div className={`size-12 rounded-2xl flex items-center justify-center transition-transform group-hover:-translate-y-1 ${
+                    table.status === 'free' ? 'bg-emerald-50 text-emerald-600' : 
+                    table.status === 'occupied' ? 'bg-red-100 text-red-600' : 
+                    'bg-amber-100 text-amber-600'
+                  }`}>
+                    <Users size={20} />
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-xl font-black text-gray-900 leading-none">#{table.number}</h4>
+                    <p className={`text-[9px] font-black uppercase tracking-widest mt-1.5 ${
+                      table.status === 'free' ? 'text-emerald-600' : 
+                      table.status === 'occupied' ? 'text-red-600' : 
+                      'text-amber-600'
+                    }`}>
+                      {getStatusLabel(table.status)}
+                    </p>
+                  </div>
+
+                  {table.status === 'reserved' && tableReservations.length > 0 && (
+                    <div className="pt-2 border-t border-amber-100 w-full">
+                      <p className="text-[10px] font-bold text-amber-900 truncate">{tableReservations[0].customerName}</p>
+                      <p className="text-[9px] text-amber-700 font-medium">{tableReservations[0].time} hs</p>
+                    </div>
+                  )}
+
+                  {table.status === 'free' && (
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity pt-2">
+                       <span className="text-[9px] font-black text-[#df0024] uppercase border-b border-[#df0024]/20 pb-0.5">Reservar Ahora</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Tabla Estilizada */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[400px] flex flex-col">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-100">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Huésped</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Horario</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Grupo</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Mesa</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filteredReservations.length > 0 ? filteredReservations.map((res) => (
-                <tr key={res.id} className="hover:bg-gray-50/30 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="size-9 rounded-lg bg-gray-900 flex items-center justify-center text-white font-black text-sm">
-                        {res.customerName?.charAt(0)}
+      {/* --- SECCIÓN 2: LISTA DE PRÓXIMAS RESERVAS --- */}
+      <div className="space-y-4 pt-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400">Próximas Reservas</h2>
+          
+          <div className="flex bg-white rounded-2xl shadow-sm border border-gray-100 items-center px-4 relative w-full md:w-96">
+            <Search className="text-gray-300 absolute left-4" size={16} />
+            <Input 
+              placeholder="Buscar huésped o mesa..." 
+              className="border-none h-11 bg-transparent focus-visible:ring-0 text-xs font-bold text-gray-700 placeholder:text-gray-300 pl-8 w-full"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Cliente</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Fecha y Hora</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">Pax</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Mesa</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {filteredReservations.length > 0 ? filteredReservations.map((res) => (
+                  <tr key={res.id} className="hover:bg-gray-50/30 transition-colors group">
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="size-10 rounded-xl bg-gray-900 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-gray-200">
+                          {res.customerName?.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm text-gray-900 leading-tight">{res.customerName}</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter mt-1">
+                            {res.observations || 'Sin observaciones'}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-sm text-gray-900 leading-tight">{res.customerName}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate max-w-[150px]">
-                          {res.observations || 'Sin preferencias'}
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-red-50 text-[#df0024] px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-2 border border-red-100">
+                          <Clock size={14} />
+                          {res.time} hs
+                        </div>
+                        <p className="text-xs font-bold text-gray-500">
+                          {new Date(res.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
                         </p>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-1.5 text-xs font-black text-gray-700">
-                        <Clock size={12} className="text-[#df0024]" />
-                        {res.time} hs
+                    </td>
+                    <td className="px-8 py-5 text-center">
+                      <div className="inline-flex items-center gap-1.5 bg-gray-100 px-3 py-1 rounded-full">
+                        <span className="text-xs font-black text-gray-700">{res.people}</span>
+                        <Users size={12} className="text-gray-400" />
                       </div>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase">
-                        {new Date(res.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1">
-                      <div className="size-6 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-500">
-                        {res.people}
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
+                        res.status === 'confirmed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-gray-50 text-gray-500 border-gray-100'
+                      }`}>
+                        {res.status === 'confirmed' ? 'Confirmado' : res.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      {res.Table ? (
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg shadow-gray-200">
+                          Mesa {res.Table.number}
+                        </div>
+                      ) : (
+                        <Button variant="ghost" size="sm" className="h-9 rounded-xl border border-gray-100 text-[10px] font-black uppercase hover:bg-gray-50 text-gray-400 px-4">
+                          Asignar
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan="5" className="px-8 py-32 text-center text-gray-400">
+                      <div className="flex flex-col items-center justify-center grayscale opacity-50">
+                        <Calendar size={48} className="mb-4" />
+                        <p className="text-sm font-bold uppercase tracking-widest">No hay reservas para mostrar</p>
                       </div>
-                      <span className="text-[10px] font-black text-gray-400 uppercase">pax</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100">
-                      Confirmado
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {res.Table ? (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-900 text-white rounded-lg text-[10px] font-black uppercase tracking-widest shadow-md">
-                        Mesa {res.Table.number}
-                      </div>
-                    ) : (
-                      <Button variant="ghost" size="sm" className="h-8 rounded-lg border border-gray-100 text-[10px] font-black uppercase hover:bg-gray-50 text-gray-400">
-                        Asignar
-                      </Button>
-                    )}
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan="5" className="px-6 py-24 text-center">
-                    <div className="flex flex-col items-center max-w-xs mx-auto">
-                      <div className="size-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
-                        <Calendar size={32} className="text-gray-200" />
-                      </div>
-                      <h4 className="text-md font-black text-gray-900">Agenda libre</h4>
-                      <p className="text-xs text-gray-400 mt-1 leading-relaxed">No hay reservas registradas para hoy. Las nuevas aparecerán aquí automáticamente.</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
+    </ManagerLayout>
+  );
+}</div>
     </ManagerLayout>
   );
 }
