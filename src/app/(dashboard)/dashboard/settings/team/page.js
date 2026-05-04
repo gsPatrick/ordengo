@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { 
   Users, UserPlus, Shield, Lock, 
-  Trash2, Edit3, CheckCircle2, XCircle,
-  Mail, Phone, Briefcase, ChevronRight,
-  ShieldCheck, Search, Filter, Plus, Loader2, Key
+  Trash2, Edit3, Mail, ChevronRight,
+  ShieldCheck, Search, Filter, Plus, Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,64 +17,62 @@ import ManagerLayout from '@/components/ManagerLayout.js/ManagerLayout';
 import api from '@/lib/api';
 
 export default function TeamManagementPage() {
-  const [activeTab, setActiveTab] = useState('employees');
+  const [activeTab, setActiveTab] = useState('users');
   const [loading, setLoading] = useState(false);
-  const [employees, setEmployees] = useState([]);
+  const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Estados para Modal de Miembro
+  // Estados para Modal de Usuario del Panel
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingMember, setEditingMember] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
-    role: 'waiter',
-    pin: '',
+    role: 'manager',
     password: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    fetchTeamData();
+    fetchData();
   }, []);
 
-  const fetchTeamData = async () => {
+  const fetchData = async () => {
     setLoading(true);
     try {
       const [teamRes, rolesRes] = await Promise.all([
         api.get('/team'),
         api.get('/roles')
       ]);
-      setEmployees(teamRes.data.data.users || []);
+      // Filtrar solo usuarios que tienen acceso al panel (manager, admin, superadmin, etc)
+      const dashboardUsers = (teamRes.data.data.users || []).filter(u => 
+        !['waiter', 'kitchen'].includes(u.role)
+      );
+      setUsers(dashboardUsers);
       setRoles(rolesRes.data.data.roles || []);
     } catch (error) {
-      console.error("Error al cargar datos del equipo:", error);
+      console.error("Error al cargar datos:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenModal = (member = null) => {
-    if (member) {
-      setEditingMember(member);
+  const handleOpenModal = (user = null) => {
+    if (user) {
+      setEditingUser(user);
       setFormData({
-        name: member.name || '',
-        email: member.email || '',
-        phone: member.phone || '',
-        role: member.role || 'waiter',
-        pin: member.pin || '',
-        password: '' // No cargar contraseña existente
+        name: user.name || '',
+        email: user.email || '',
+        role: user.role || 'manager',
+        password: ''
       });
     } else {
-      setEditingMember(null);
+      setEditingUser(null);
       setFormData({
         name: '',
         email: '',
-        phone: '',
-        role: 'waiter',
-        pin: '',
+        role: 'manager',
         password: ''
       });
     }
@@ -86,24 +83,20 @@ export default function TeamManagementPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      // Validaciones básicas según el rol
-      if (formData.role === 'waiter' && !formData.pin) {
-        alert('Los camareros necesitan un PIN de 4 dígitos.');
-        return;
-      }
-      if (formData.role === 'manager' && !formData.email) {
-        alert('Los gerentes necesitan un email para acceder.');
+      if (!formData.email) {
+        alert('Los usuarios del panel necesitan un email de acceso.');
+        setIsSubmitting(false);
         return;
       }
 
-      if (editingMember) {
-        await api.patch(`/team/${editingMember.id}`, formData);
+      if (editingUser) {
+        await api.patch(`/team/${editingUser.id}`, formData);
       } else {
         await api.post('/team', formData);
       }
       
       setIsModalOpen(false);
-      fetchTeamData();
+      fetchData();
     } catch (error) {
       alert(error.response?.data?.message || 'Error al procesar la solicitud');
     } finally {
@@ -111,19 +104,19 @@ export default function TeamManagementPage() {
     }
   };
 
-  const handleDeleteMember = async (id) => {
-    if (!confirm('¿Estás seguro de eliminar a este miembro del equipo? Perderá el acceso de inmediato.')) return;
+  const handleDeleteUser = async (id) => {
+    if (!confirm('¿Estás seguro de eliminar a este usuario? Perderá el acceso al panel de control de inmediato.')) return;
     try {
       await api.delete(`/team/${id}`);
-      fetchTeamData();
+      fetchData();
     } catch (error) {
       alert(error.response?.data?.message || 'Error al eliminar');
     }
   };
 
-  const filteredEmployees = employees.filter(emp => 
-    emp.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    emp.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(u => 
+    u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    u.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -132,8 +125,8 @@ export default function TeamManagementPage() {
       {/* Header Compacto */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-gray-900">Equipo y Permisos</h1>
-          <p className="text-sm text-gray-500 font-medium">Administra tu personal y niveles de acceso</p>
+          <h1 className="text-3xl font-black tracking-tight text-gray-900">Usuarios y Permisos</h1>
+          <p className="text-sm text-gray-500 font-medium">Administra quién tiene acceso al panel de control</p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase border-gray-200 hover:bg-gray-50">
@@ -142,18 +135,18 @@ export default function TeamManagementPage() {
           </Button>
           <Button onClick={() => handleOpenModal()} className="bg-[#df0024] hover:bg-red-700 text-white rounded-xl h-10 px-6 text-[10px] font-black uppercase shadow-lg shadow-red-50">
             <UserPlus size={14} className="mr-2" />
-            Añadir Miembro
+            Añadir Usuario
           </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="employees" className="w-full">
+      <Tabs defaultValue="users" className="w-full">
         <TabsList className="bg-gray-100/50 p-1 rounded-xl mb-6">
-          <TabsTrigger value="employees" className="rounded-lg text-[10px] font-black uppercase px-6">Empleados</TabsTrigger>
-          <TabsTrigger value="roles" className="rounded-lg text-[10px] font-black uppercase px-6">Cargos y Permisos</TabsTrigger>
+          <TabsTrigger value="users" className="rounded-lg text-[10px] font-black uppercase px-6">Usuarios del Panel</TabsTrigger>
+          <TabsTrigger value="roles" className="rounded-lg text-[10px] font-black uppercase px-6">Roles y Permisos</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="employees" className="space-y-6 outline-none">
+        <TabsContent value="users" className="space-y-6 outline-none">
           {/* Buscador Compacto */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center px-4 relative">
             <Search className="text-gray-300 absolute left-6" size={18} />
@@ -166,15 +159,13 @@ export default function TeamManagementPage() {
             <Button variant="ghost" className="size-9 p-0 text-gray-400"><Filter size={18} /></Button>
           </div>
 
-          {/* Tabla Estilizada */}
           <Card className="border-none shadow-sm bg-white rounded-2xl overflow-hidden border border-gray-50 min-h-[400px]">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Miembro</th>
-                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Cargo</th>
-                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Contacto</th>
+                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Usuario</th>
+                    <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Rol de Acceso</th>
                     <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Estado</th>
                     <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400 text-right">Acciones</th>
                   </tr>
@@ -182,33 +173,27 @@ export default function TeamManagementPage() {
                 <tbody className="divide-y divide-gray-50">
                   {loading ? (
                     <tr>
-                      <td colSpan="5" className="px-6 py-12 text-center">
+                      <td colSpan="4" className="px-6 py-12 text-center">
                         <Loader2 className="animate-spin mx-auto text-gray-300" size={32} />
                       </td>
                     </tr>
-                  ) : filteredEmployees.length > 0 ? filteredEmployees.map((emp) => (
-                    <tr key={emp.id} className="hover:bg-gray-50/30 transition-colors group">
+                  ) : filteredUsers.length > 0 ? filteredUsers.map((user) => (
+                    <tr key={user.id} className="hover:bg-gray-50/30 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="size-9 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 font-black text-xs uppercase">
-                            {emp.name.charAt(0)}
+                          <div className="size-9 rounded-lg bg-gray-900 flex items-center justify-center text-white font-black text-xs uppercase">
+                            {user.name.charAt(0)}
                           </div>
                           <div>
-                            <p className="font-bold text-sm text-gray-900 leading-tight">{emp.name}</p>
-                            <p className="text-[10px] text-gray-400 font-medium">{emp.email || 'Acceso por PIN'}</p>
+                            <p className="font-bold text-sm text-gray-900 leading-tight">{user.name}</p>
+                            <p className="text-[10px] text-gray-400 font-medium">{user.email}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <Badge className="bg-gray-100 text-gray-500 border-none rounded-md px-2 py-0.5 text-[8px] font-black uppercase">
-                          {emp.role}
+                          {user.userRole?.name || (user.role === 'manager' ? 'Gerente (Sistema)' : user.role)}
                         </Badge>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold">
-                          <Phone size={12} className="text-gray-300" />
-                          {emp.phone || 'No asig.'}
-                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md text-[8px] font-black uppercase tracking-tighter border border-emerald-100">
@@ -217,10 +202,10 @@ export default function TeamManagementPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button onClick={() => handleOpenModal(emp)} variant="ghost" size="icon" className="size-8 rounded-lg hover:bg-gray-100">
+                          <Button onClick={() => handleOpenModal(user)} variant="ghost" size="icon" className="size-8 rounded-lg hover:bg-gray-100">
                             <Edit3 size={14} className="text-gray-400" />
                           </Button>
-                          <Button onClick={() => handleDeleteMember(emp.id)} variant="ghost" size="icon" className="size-8 rounded-lg hover:bg-red-50 hover:text-red-600">
+                          <Button onClick={() => handleDeleteUser(user.id)} variant="ghost" size="icon" className="size-8 rounded-lg hover:bg-red-50 hover:text-red-600">
                             <Trash2 size={14} />
                           </Button>
                         </div>
@@ -228,14 +213,14 @@ export default function TeamManagementPage() {
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan="5" className="px-6 py-24 text-center">
+                      <td colSpan="4" className="px-6 py-24 text-center">
                         <div className="flex flex-col items-center max-w-xs mx-auto">
                           <div className="size-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
-                            <Users size={32} className="text-gray-100" />
+                            <Shield size={32} className="text-gray-200" />
                           </div>
-                          <h4 className="text-md font-black text-gray-900">Sin equipo registrado</h4>
-                          <p className="text-xs text-gray-400 mt-1 leading-relaxed">Añade a tus empleados para que puedan acceder al panel operativo con sus propios roles.</p>
-                          <Button onClick={() => handleOpenModal()} className="mt-6 bg-gray-900 text-white rounded-xl h-10 px-6 text-[10px] font-black uppercase">Vincular mi primer empleado</Button>
+                          <h4 className="text-md font-black text-gray-900">Sin usuarios adicionales</h4>
+                          <p className="text-xs text-gray-400 mt-1 leading-relaxed">Crea accesos para que otros administradores o gerentes puedan gestionar el restaurante.</p>
+                          <Button onClick={() => handleOpenModal()} className="mt-6 bg-gray-900 text-white rounded-xl h-10 px-6 text-[10px] font-black uppercase">Crear nuevo acceso</Button>
                         </div>
                       </td>
                     </tr>
@@ -260,12 +245,12 @@ export default function TeamManagementPage() {
                     </Badge>
                   </div>
                   <h3 className="font-black text-gray-900 mb-1">{role.name}</h3>
-                  <p className="text-[10px] text-gray-400 font-medium mb-4 uppercase tracking-tighter">Panel Operativo</p>
+                  <p className="text-[10px] text-gray-400 font-medium mb-4 uppercase tracking-tighter">Acceso al Panel</p>
                   
                   <div className="flex flex-wrap gap-1.5 mt-2">
-                    {role.permissions?.map((perm, idx) => (
+                    {(role.Permissions || role.permissions || []).map((perm, idx) => (
                       <span key={idx} className="px-2 py-0.5 bg-gray-50 text-gray-400 rounded text-[8px] font-black uppercase border border-gray-100">
-                        {perm.slug}
+                        {perm.slug || perm}
                       </span>
                     ))}
                   </div>
@@ -282,8 +267,8 @@ export default function TeamManagementPage() {
               <div className="size-12 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 mb-4 group-hover:scale-110 group-hover:bg-red-50 group-hover:text-[#df0024] transition-all">
                 <Plus size={24} />
               </div>
-              <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight">Crear Cargo</h4>
-              <p className="text-[10px] text-gray-400 mt-1 max-w-[150px] font-medium">Define permisos personalizados para tu equipo</p>
+              <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight">Crear Rol de Acceso</h4>
+              <p className="text-[10px] text-gray-400 mt-1 max-w-[150px] font-medium">Define permisos personalizados para tus administradores</p>
             </Card>
           </div>
         </TabsContent>
@@ -296,23 +281,23 @@ export default function TeamManagementPage() {
             <Lock size={20} />
           </div>
           <div>
-            <h4 className="font-black text-amber-900 uppercase text-[10px] tracking-widest mb-1">Seguridad de la Plataforma</h4>
+            <h4 className="font-black text-amber-900 uppercase text-[10px] tracking-widest mb-1">Seguridad del Panel</h4>
             <p className="text-xs text-amber-700 leading-relaxed max-w-3xl font-medium">
-              Recuerda que solo el Administrador principal tiene acceso a la configuración de pasarelas de pago y eliminación total del restaurante. Los roles creados aquí solo limitan el uso del panel operativo para evitar acciones accidentales en la configuración base.
+              Esta sección es exclusiva para dar acceso al panel administrativo de OrdenGO. Para gestionar el personal de sala y cocina (Camareros), dirígete a la configuración general del restaurante. Los usuarios aquí creados tendrán acceso al Dashboard según su rol.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Modal Añadir/Editar Miembro */}
+      {/* Modal Añadir/Editar Usuario */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
           <div className="bg-gray-900 p-6 text-white">
             <div className="size-12 bg-white/10 rounded-2xl flex items-center justify-center mb-4">
-              <UserPlus size={24} className="text-white" />
+              <Shield size={24} className="text-white" />
             </div>
-            <DialogTitle className="text-xl font-black">{editingMember ? 'Editar Miembro' : 'Nuevo Miembro'}</DialogTitle>
-            <p className="text-xs text-gray-400 mt-1">Configura el acceso y perfil del empleado.</p>
+            <DialogTitle className="text-xl font-black">{editingUser ? 'Editar Usuario' : 'Nuevo Usuario de Panel'}</DialogTitle>
+            <p className="text-xs text-gray-400 mt-1">Configura el acceso administrativo al Dashboard.</p>
           </div>
           
           <form onSubmit={handleSubmit} className="p-8 space-y-4 bg-white">
@@ -331,82 +316,59 @@ export default function TeamManagementPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Cargo / Rol</label>
-                  <Select 
-                    value={formData.role} 
-                    onValueChange={(val) => setFormData({...formData, role: val})}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl border-gray-100 bg-gray-50 font-bold text-xs uppercase">
-                      <SelectValue placeholder="Rol" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-gray-100">
-                      <SelectItem value="manager">Gerente</SelectItem>
-                      <SelectItem value="waiter">Camarero</SelectItem>
-                      <SelectItem value="kitchen">Cocina</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Teléfono</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Rol de Acceso</label>
+                <Select 
+                  value={formData.userRoleId || 'manager'} 
+                  onValueChange={(val) => {
+                    if (val === 'manager') {
+                      setFormData({...formData, role: 'manager', userRoleId: null});
+                    } else {
+                      setFormData({...formData, role: 'manager', userRoleId: val});
+                    }
+                  }}
+                >
+                  <SelectTrigger className="h-12 rounded-xl border-gray-100 bg-gray-50 font-bold text-xs uppercase">
+                    <SelectValue placeholder="Rol" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-gray-100">
+                    <SelectItem value="manager">Gerente Total (Sistema)</SelectItem>
+                    {roles.map(r => (
+                      <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Email de Acceso</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
                   <Input 
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    placeholder="+34..." 
-                    className="h-12 rounded-xl border-gray-100 bg-gray-50 font-medium"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    placeholder="admin@restaurante.com" 
+                    className="pl-10 h-12 rounded-xl border-gray-100 bg-gray-50 font-medium"
                   />
                 </div>
               </div>
 
-              {formData.role === 'manager' ? (
-                <>
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Email de Acceso</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
-                      <Input 
-                        type="email"
-                        required={formData.role === 'manager'}
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        placeholder="admin@restaurante.com" 
-                        className="pl-10 h-12 rounded-xl border-gray-100 bg-gray-50 font-medium"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">{editingMember ? 'Nueva Contraseña (Opcional)' : 'Contraseña'}</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
-                      <Input 
-                        type="password"
-                        required={!editingMember && formData.role === 'manager'}
-                        value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
-                        placeholder="••••••••" 
-                        className="pl-10 h-12 rounded-xl border-gray-100 bg-gray-50 font-medium"
-                      />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-gray-400 ml-1">PIN de Acceso (4 dígitos)</label>
-                  <div className="relative">
-                    <Key className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
-                    <Input 
-                      required={formData.role === 'waiter'}
-                      maxLength={4}
-                      value={formData.pin}
-                      onChange={(e) => setFormData({...formData, pin: e.target.value})}
-                      placeholder="Ej: 1234" 
-                      className="pl-10 h-12 rounded-xl border-gray-100 bg-gray-50 font-black text-lg tracking-[0.5em]"
-                    />
-                  </div>
-                  <p className="text-[9px] text-gray-400 font-medium italic">Este código se usará en los dispositivos de mesa y comandas.</p>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">{editingUser ? 'Nueva Contraseña (Opcional)' : 'Contraseña'}</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
+                  <Input 
+                    type="password"
+                    required={!editingUser}
+                    value={formData.password}
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    placeholder="••••••••" 
+                    className="pl-10 h-12 rounded-xl border-gray-100 bg-gray-50 font-medium"
+                  />
                 </div>
-              )}
+              </div>
             </div>
 
             <div className="flex gap-3 pt-4">
@@ -418,7 +380,7 @@ export default function TeamManagementPage() {
                 disabled={isSubmitting}
                 className="flex-1 bg-[#df0024] hover:bg-red-700 text-white rounded-xl h-12 font-black shadow-lg shadow-red-50"
               >
-                {isSubmitting ? <Loader2 className="animate-spin size-4 mr-2" /> : (editingMember ? 'Actualizar' : 'Guardar Miembro')}
+                {isSubmitting ? <Loader2 className="animate-spin size-4 mr-2" /> : (editingUser ? 'Actualizar' : 'Crear Usuario')}
               </Button>
             </div>
           </form>

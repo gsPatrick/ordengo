@@ -139,8 +139,8 @@
 .redShape {
   position: absolute;
   top: 0;
-  right: -50vw; /* Estende para fora da tela */
-  width: 100vw; /* Muito largo */
+  left: 0; /* Começa exatamente no início da coluna visual */
+  width: 100vw; /* Preenche para a direita garantindo que nunca acabe antes da tela */
   height: 100%;
   background-color: var(--lp-red);
   z-index: 0;
@@ -217,7 +217,7 @@
   }
 
   .redShape {
-    right: -10vw;
+    left: -10vw; /* Estende um pouco para a esquerda em telas menores para envolver o tablet */
     width: 120vw;
     height: 120%;
     top: -10%;
@@ -276,8 +276,8 @@
   }
 
   .redShape {
+    left: -25vw;
     width: 150vw;
-    right: -25vw;
   }
 }
 
