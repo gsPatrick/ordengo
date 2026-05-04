@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { 
   Users, UserPlus, Shield, Lock, 
   Trash2, Edit3, Mail, ChevronRight,
-  ShieldCheck, Search, Filter, Plus, Loader2
+  ShieldCheck, Search, Filter, Plus, Loader2, Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +21,7 @@ export default function TeamManagementPage() {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
+  const [availablePermissions, setAvailablePermissions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Estados para Modal de Usuario del Panel
@@ -34,6 +35,15 @@ export default function TeamManagementPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Estados para Modal de Rol
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [roleFormData, setRoleFormData] = useState({
+    name: '',
+    description: '',
+    permissionIds: []
+  });
+  const [isRoleSubmitting, setIsRoleSubmitting] = useState(false);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -41,9 +51,10 @@ export default function TeamManagementPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [teamRes, rolesRes] = await Promise.all([
+      const [teamRes, rolesRes, permsRes] = await Promise.all([
         api.get('/team'),
-        api.get('/roles')
+        api.get('/roles'),
+        api.get('/roles/permissions')
       ]);
       // Filtrar solo usuarios que tienen acceso al panel (manager, admin, superadmin, etc)
       const dashboardUsers = (teamRes.data.data.users || []).filter(u => 
@@ -51,6 +62,7 @@ export default function TeamManagementPage() {
       );
       setUsers(dashboardUsers);
       setRoles(rolesRes.data.data.roles || []);
+      setAvailablePermissions(permsRes.data.data.permissions || []);
     } catch (error) {
       console.error("Error al cargar datos:", error);
     } finally {
@@ -112,6 +124,37 @@ export default function TeamManagementPage() {
     } catch (error) {
       alert(error.response?.data?.message || 'Error al eliminar');
     }
+  };
+
+  const handleCreateRole = async (e) => {
+    e.preventDefault();
+    setIsRoleSubmitting(true);
+    try {
+      if (!roleFormData.name) {
+        alert('El rol necesita un nombre.');
+        setIsRoleSubmitting(false);
+        return;
+      }
+      await api.post('/roles', roleFormData);
+      setIsRoleModalOpen(false);
+      setRoleFormData({ name: '', description: '', permissionIds: [] });
+      fetchData();
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error al crear rol');
+    } finally {
+      setIsRoleSubmitting(false);
+    }
+  };
+
+  const togglePermission = (permId) => {
+    setRoleFormData(prev => {
+      const isSelected = prev.permissionIds.includes(permId);
+      if (isSelected) {
+        return { ...prev, permissionIds: prev.permissionIds.filter(id => id !== permId) };
+      } else {
+        return { ...prev, permissionIds: [...prev.permissionIds, permId] };
+      }
+    });
   };
 
   const filteredUsers = users.filter(u => 
@@ -263,12 +306,15 @@ export default function TeamManagementPage() {
               </Card>
             ))}
 
-            <Card className="border-2 border-dashed border-gray-100 shadow-none bg-transparent rounded-2xl flex flex-col items-center justify-center p-8 text-center group hover:border-[#df0024] transition-colors cursor-pointer min-h-[220px]">
+            <Card 
+              onClick={() => setIsRoleModalOpen(true)}
+              className="border-2 border-dashed border-gray-100 shadow-none bg-transparent rounded-2xl flex flex-col items-center justify-center p-8 text-center group hover:border-[#df0024] hover:bg-red-50/30 transition-colors cursor-pointer min-h-[220px]"
+            >
               <div className="size-12 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 mb-4 group-hover:scale-110 group-hover:bg-red-50 group-hover:text-[#df0024] transition-all">
                 <Plus size={24} />
               </div>
-              <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight">Crear Rol de Acceso</h4>
-              <p className="text-[10px] text-gray-400 mt-1 max-w-[150px] font-medium">Define permisos personalizados para tus administradores</p>
+              <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight group-hover:text-[#df0024]">Crear Rol de Acceso</h4>
+              <p className="text-[10px] text-gray-400 mt-1 max-w-[150px] font-medium group-hover:text-red-900/60">Define permisos personalizados para tus administradores</p>
             </Card>
           </div>
         </TabsContent>
@@ -381,6 +427,87 @@ export default function TeamManagementPage() {
                 className="flex-1 bg-[#df0024] hover:bg-red-700 text-white rounded-xl h-12 font-black shadow-lg shadow-red-50"
               >
                 {isSubmitting ? <Loader2 className="animate-spin size-4 mr-2" /> : (editingUser ? 'Actualizar' : 'Crear Usuario')}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Crear Rol */}
+      <Dialog open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
+          <div className="bg-[#df0024] p-6 text-white">
+            <div className="size-12 bg-white/20 rounded-2xl flex items-center justify-center mb-4">
+              <ShieldCheck size={24} className="text-white" />
+            </div>
+            <DialogTitle className="text-xl font-black">Nuevo Rol de Acceso</DialogTitle>
+            <p className="text-xs text-red-100 mt-1">Selecciona qué pantallas y acciones podrá realizar este cargo.</p>
+          </div>
+          
+          <form onSubmit={handleCreateRole} className="p-8 space-y-6 bg-white max-h-[70vh] overflow-y-auto">
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Nombre del Cargo</label>
+                <Input 
+                  required
+                  value={roleFormData.name}
+                  onChange={(e) => setRoleFormData({...roleFormData, name: e.target.value})}
+                  placeholder="Ej: Gerente Financiero" 
+                  className="h-12 rounded-xl border-gray-100 bg-gray-50 focus:bg-white transition-all font-bold"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Descripción</label>
+                <Input 
+                  value={roleFormData.description}
+                  onChange={(e) => setRoleFormData({...roleFormData, description: e.target.value})}
+                  placeholder="Acceso exclusivo a métricas y reportes..." 
+                  className="h-12 rounded-xl border-gray-100 bg-gray-50 font-medium"
+                />
+              </div>
+
+              <div className="space-y-3 pt-4 border-t border-gray-50">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Permisos Disponibles</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {availablePermissions.map(perm => {
+                    const isChecked = roleFormData.permissionIds.includes(perm.id);
+                    return (
+                      <div 
+                        key={perm.id} 
+                        onClick={() => togglePermission(perm.id)}
+                        className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start gap-3 ${
+                          isChecked ? 'border-red-200 bg-red-50' : 'border-gray-100 bg-white hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className={`mt-0.5 size-4 rounded flex items-center justify-center shrink-0 border ${
+                          isChecked ? 'bg-[#df0024] border-[#df0024]' : 'bg-white border-gray-300'
+                        }`}>
+                          {isChecked && <Check size={12} className="text-white" />}
+                        </div>
+                        <div>
+                          <p className={`text-xs font-bold leading-tight ${isChecked ? 'text-red-900' : 'text-gray-700'}`}>
+                            {perm.name}
+                          </p>
+                          <p className="text-[9px] text-gray-400 mt-0.5 leading-tight">{perm.description || perm.slug}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-4 border-t border-gray-50">
+              <Button type="button" variant="ghost" onClick={() => setIsRoleModalOpen(false)} className="flex-1 rounded-xl h-12 font-bold text-gray-400 hover:bg-gray-100">
+                Cancelar
+              </Button>
+              <Button 
+                type="submit"
+                disabled={isRoleSubmitting}
+                className="flex-1 bg-[#df0024] hover:bg-red-700 text-white rounded-xl h-12 font-black shadow-lg shadow-red-50"
+              >
+                {isRoleSubmitting ? <Loader2 className="animate-spin size-4 mr-2" /> : 'Guardar Cargo'}
               </Button>
             </div>
           </form>
